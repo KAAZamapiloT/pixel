@@ -90,19 +90,28 @@ Vec4(T x,T y,T z,T a):x(x),y(y),z(z),a(a){
 
 class Window{
 public:
-  Window(uint8_t width,uint8_t height,std::string name){
+  Window(uint16_t width,uint16_t height,std::string name){
                 m_width=width;
                 m_height=height;
                 m_name=name;
                 frame_buffer=std::vector<Vec3<uint8_t>>(width*height,{0,0,0});
   }
-  inline uint8_t GetWidth(){return m_width;}
-  inline uint8_t GetHeight(){return m_height;}
+  inline uint16_t GetWidth(){return m_width;}
+  inline uint16_t GetHeight(){return m_height;}
 
+  void SetPixelColor(Vec2<uint16_t> cord,Vec3<uint8_t> Color){
+    frame_buffer[cord.x + cord.y * m_width]=Color;
+  }
+  Vec3<uint8_t> GetColor(Vec2<uint16_t> cord){
+    return frame_buffer[cord.x + cord.y * m_width];
+  }
 
+  Vec3<uint8_t> GetColor(uint32_t dex){
+      return frame_buffer[dex];
+  }
 
 private:
-  uint8_t m_width,m_height;
+  uint16_t m_width,m_height;
   std::string m_name;
   std::vector<Vec3<uint8_t>> frame_buffer;
 
