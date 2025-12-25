@@ -52,6 +52,24 @@ class renderer{
        DrawTriangle(p1,p2,p3,color);
 
      }
+    
+     void DrawPolynomial(float(*px)(float) ,INV::Vec2<uint16_t>start,INV::Vec2<uint16_t>end,INV::Vec3<uint8_t> Color){
+       
+       int xs=start.x;
+       int xe=end.x;
+       if(xe<xs){
+         std::cerr<<"INVALID FORMAT END SHOULD BE GREATER THAN START\n"<<std::endl;
+         return;
+       }
+       INV::Vec2<uint16_t> dims=GetDimensions();
+       for(int i=start.x;i<end.x;++i){
+          int y=static_cast<int>(px(i));
+          if(y>=dims.y||y<0) continue;
+           SetPixelColor(INV::Vec2<uint16_t>(i,y),Color);
+      
+       }
+
+     }
      void SetPixelColor(INV::Vec2<uint16_t> cord,INV::Vec3<uint8_t> Color){
          m_Window->SetPixelColor(cord,Color);
      }

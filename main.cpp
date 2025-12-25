@@ -9,7 +9,7 @@
 int main(){
 
     std::unique_ptr<renderer> r=std::make_unique<renderer>
-    (1,std::make_unique<INV::Window>(256,512,"Main_Window"));
+    (1,std::make_unique<INV::Window>(512,512,"Main_Window"));
 
     INV::Vec2<uint16_t> dims=r->GetDimensions();
 
@@ -29,12 +29,14 @@ int main(){
     */
 
     INV::Vec2<uint16_t> S(0,0);
-    INV::Vec2<uint16_t> U(200,200);
-    INV::Vec3<uint8_t> C(255,255,0);
+    INV::Vec2<uint16_t> U(500,500);
+    INV::Vec3<uint8_t> C(255,255,255);
 
    //r->DrawLine(S,U,C);
    // diaganol -> mirror points color
-    r->DrawPlane(S,U,INV::Vec2<uint16_t>(U.x,0),INV::Vec2<uint16_t>(0,U.y),C);
+//    r->DrawPlane(S,U,INV::Vec2<uint16_t>(U.x,0),INV::Vec2<uint16_t>(0,U.y),C);
+
+   r->DrawPolynomial([](float s){return s;},S,U,C);
     r->Create_PPM_File("output.ppm");
 
     std::cout << "Hello World!" << std::endl;
