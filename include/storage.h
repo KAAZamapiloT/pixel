@@ -1,4 +1,5 @@
 #pragma once
+#include <locale>
 #include<vector>
 #include<cstdint>
 #include"string"
@@ -63,8 +64,8 @@ class Vec2{
         return Vec2(y * other.x - x * other.y);
     }
 
-    Vec2 Dot(const Vec2& other) const {
-        return Vec2(x * other.x, y * other.y);
+    T Dot(const Vec2& other) const {
+        return x * other.x + y * other.y;
     }
 
     T x, y;
@@ -95,6 +96,9 @@ public:
                 m_height=height;
                 m_name=name;
                 frame_buffer=std::vector<Vec3<uint8_t>>(width*height,{0,0,0});
+
+
+
   }
   inline uint16_t GetWidth(){return m_width;}
   inline uint16_t GetHeight(){return m_height;}
@@ -102,6 +106,10 @@ public:
   void SetPixelColor(Vec2<uint16_t> cord,Vec3<uint8_t> Color){
     frame_buffer[cord.x + cord.y * m_width]=Color;
   }
+  void SetPixelColor(uint32_t index,Vec3<uint8_t> Color){
+    frame_buffer[index]=Color;
+  }
+
   Vec3<uint8_t> GetColor(Vec2<uint16_t> cord){
     return frame_buffer[cord.x + cord.y * m_width];
   }

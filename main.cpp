@@ -1,3 +1,4 @@
+#include <cstdio>
 #include<iostream>
 #include<cstdint>
 #include <memory>
@@ -8,17 +9,31 @@
 int main(){
 
     std::unique_ptr<renderer> r=std::make_unique<renderer>
-    (1,std::make_unique<INV::Window>(512,512,"Main_Window"));
+    (1,std::make_unique<INV::Window>(256,512,"Main_Window"));
 
     INV::Vec2<uint16_t> dims=r->GetDimensions();
-    printf("/n %d %d \n",dims.x,dims.y);
+
     // modification loop
-    for(uint16_t i=0;i<dims.x;i++){
-        for(uint16_t j=0;j<dims.y;j++){
-          r->SetPixelColor(INV::Vec2<uint16_t>(j,i),INV::Vec3<uint8_t>(j,i,128));
+      float f=255.0/static_cast<float>(dims.x);
+      float g=255.0/static_cast<float>(dims.y);
+/*
+    for(uint16_t i=0;i<dims.y;i++){
+        for(uint16_t j=0;j<dims.x;j++){
+
+         r->SetPixelColor(INV::Vec2<uint16_t>{j,i},INV::Vec3<uint8_t>(j*i*g,i*f*g,128*i*g));
+
         }
     }
-    //creation loop
+
+
+    */
+
+    INV::Vec2<uint16_t> S(0,0);
+    INV::Vec2<uint16_t> U(200,200);
+    INV::Vec3<uint8_t> C(255,255,0);
+
+   //r->DrawLine(S,U,C);
+   r->DrawTriangle(S,U,INV::Vec2<uint16_t>(U.x,0),C);
     r->Create_PPM_File("output.ppm");
 
     std::cout << "Hello World!" << std::endl;
