@@ -31,19 +31,26 @@ class renderer{
             }
 
      }
-
-     //virtual void DrawPlane()=0;
-     virtual void DrawTriangle(INV::Vec2<uint16_t> p1,INV::Vec2<uint16_t> p2,INV::Vec2<uint16_t> p3,INV::Vec3<uint8_t> colors  ){
+     template<typename p>
+    void DrawTriangle(INV::Vec2<p> p1,INV::Vec2<p> p2,INV::Vec2<p> p3,INV::Vec3<uint8_t> colors  ){
        INV::Vec2<uint16_t> dims=GetDimensions();
        for(int i=0;i<dims.y;++i){
          for(int j=0;j<dims.x;++j){
 
-           if(InsideTrig(INV::Vec2<uint16_t>(j,i),p1,p2,p3)){
+           if(InsideTrig(INV::Vec2<p>(j,i),p1,p2,p3)){
              SetPixelColor(INV::Vec2<uint16_t>(j,i),colors);
            }
 
          }
        }
+     }
+
+     template<typename p>
+     void DrawPlane(INV::Vec2<p> p1,INV::Vec2<p>p2,INV::Vec2<p>p3,INV::Vec2<p> p4,INV::Vec3<uint8_t> color){
+
+       DrawTriangle(p1,p2,p4,color);
+       DrawTriangle(p1,p2,p3,color);
+
      }
      void SetPixelColor(INV::Vec2<uint16_t> cord,INV::Vec3<uint8_t> Color){
          m_Window->SetPixelColor(cord,Color);
@@ -100,31 +107,30 @@ class renderer{
   private:
     uint8_t m_id;
     std::unique_ptr<INV::Window> m_Window;
+template<typename T>
+    bool InsideTrig(INV::Vec2<T> Point,INV::Vec2<T> a,INV::Vec2<T> b,INV::Vec2<T> c){
 
-    bool InsideTrig(INV::Vec2<uint16_t> Point,INV::Vec2<uint16_t> a,INV::Vec2<uint16_t> b,INV::Vec2<uint16_t> c){
 
+      INV::Vec2<double> ab=INV::Vec2<double>(b.x,b.y)-INV::Vec2<double>(a.x,a.y);
+      INV::Vec2<double> ac=INV::Vec2<double>(c.x,c.y)-INV::Vec2<double>(a.x,a.y);
 
-      INV::Vec2<float> ab=INV::Vec2<float>(b.x,b.y)-INV::Vec2<float>(a.x,a.y);
-      INV::Vec2<float> ac=INV::Vec2<float>(c.x,c.y)-INV::Vec2<float>(a.x,a.y);
+      INV::Vec2<double> ap=INV::Vec2<double>(Point.x,Point.y)-INV::Vec2<double>(a.x,a.y);
 
-      INV::Vec2<float> ap=INV::Vec2<float>(Point.x,Point.y)-INV::Vec2<float>(a.x,a.y);
+    INV::Vec2<double> v0=ab;
+    INV::Vec2<double> v1=ac;
+    INV::Vec2<double> v2=ap;
 
-    INV::Vec2<float> v0=ab;
-    INV::Vec2<float> v1=ac;
-    INV::Vec2<float> v2=ap;
+    double d00=v0.Dot(v0);
+    double d01=v0.Dot(v1);
+    double d11=v1.Dot(v1);
+    double d20=v2.Dot(v0);
+    double d21=v2.Dot(v1);
 
-    float d00=v0.Dot(v0);
-    float d01=v0.Dot(v1);
-    float d11=v1.Dot(v1);
-    float d20=v2.Dot(v0);
-    float d21=v2.Dot(v1);
+    double denominator=d00*d11-d01*d01;
+    double u=(d11*d20-d01*d21)/denominator;
+    double v=(d00*d21-d01*d20)/denominator;
+    double w=1-u-v;
 
-    float denominator=d00*d11-d01*d01;
-    float u=(d11*d20-d01*d21)/denominator;
-    float v=(d00*d21-d01*d20)/denominator;
-    float w=1-u-v;
     return(u>=0&&v>=0&&w>=0);
-
-
     }
 };

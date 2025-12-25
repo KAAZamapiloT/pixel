@@ -33,7 +33,8 @@ int main(){
     INV::Vec3<uint8_t> C(255,255,0);
 
    //r->DrawLine(S,U,C);
-   r->DrawTriangle(S,U,INV::Vec2<uint16_t>(U.x,0),C);
+   // diaganol -> mirror points color
+    r->DrawPlane(S,U,INV::Vec2<uint16_t>(U.x,0),INV::Vec2<uint16_t>(0,U.y),C);
     r->Create_PPM_File("output.ppm");
 
     std::cout << "Hello World!" << std::endl;
