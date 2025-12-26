@@ -52,9 +52,9 @@ class renderer{
        DrawTriangle(p1,p2,p3,color);
 
      }
-    
+
      void DrawPolynomial(float(*px)(float) ,INV::Vec2<uint16_t>start,INV::Vec2<uint16_t>end,INV::Vec3<uint8_t> Color){
-       
+
        int xs=start.x;
        int xe=end.x;
        if(xe<xs){
@@ -66,7 +66,9 @@ class renderer{
           int y=static_cast<int>(px(i));
           if(y>=dims.y||y<0) continue;
            SetPixelColor(INV::Vec2<uint16_t>(i,y),Color);
-      
+           if(i==0) continue;
+           linear_interpolation(INV::Vec2<uint16_t>(i-1,px(i)),INV::Vec2<uint16_t>(i,y),Color);
+           printf("inter");
        }
 
      }
@@ -122,6 +124,14 @@ class renderer{
      }
 
 
+     void Draw_Cube(INV::Vec3<uint16_t> p1,INV::Vec3<uint16_t>p2,INV::Vec3<uint16_t>p3,INV::Vec2<uint16_t>p4
+         ,INV::Vec3<uint16_t> p5,INV::Vec3<uint16_t>p6,INV::Vec3<uint16_t> p7,INV::Vec3<uint16_t> p8,INV::vec3<uint16_t> Color){
+          
+
+
+     }
+
+
   private:
     uint8_t m_id;
     std::unique_ptr<INV::Window> m_Window;
@@ -151,4 +161,10 @@ template<typename T>
 
     return(u>=0&&v>=0&&w>=0);
     }
+   void linear_interpolation(INV::Vec2<uint16_t> p1,INV::Vec2<uint16_t>p2,INV::Vec3<uint8_t> color){
+
+     DrawLine(p1,p2,color);
+
+
+   }
 };
