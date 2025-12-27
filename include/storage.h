@@ -37,7 +37,9 @@ class Vec3{
     Vec3 Dot(const Vec3& other) const {
         return Vec3(x * other.x, y * other.y, z * other.z);
     }
-
+    double magnitude_squared(){
+        return x*x+y*y+z*z;
+    }
     T x, y, z;
 };
 
@@ -72,7 +74,9 @@ class Vec2{
     T Dot(const Vec2& other) const {
         return x * other.x + y * other.y;
     }
-
+    double magnitude_squared(){
+        return x*x+y*y;
+    }
     T x, y;
 };
 
@@ -80,11 +84,18 @@ template <typename T>
 
 class Vec4{
 
-Vec4(T x,T y,T z,T a):x(x),y(y),z(z),a(a){
+Vec4(T x,T y,T z,T w):x(x),y(y),z(z),w(w){
 
 }
 
-  T x,y,z,a;
+Vec4<T> Dot(Vec4<T> other){return x*other.x+y*other.y+z*other.z+w*other.w;}
+
+Vec4<T> Cross(Vec4<T> other){return Vec4<T>(y*other.z-z*other.y,z*other.x-x*other.z,x*other.y-y*other.x);}
+
+double magnitude_squared(){
+    return x*x+y*y+z*z+w*w;
+}
+  T x,y,z,w;
 };
 
 
@@ -101,7 +112,7 @@ public:
                 m_height=height;
                 m_name=name;
                 frame_buffer=std::vector<Vec3<uint8_t>>(width*height,{0,0,0});
-
+                depth_buffer=std::vector<uint8_t>(width*height,{0});
 
 
   }
@@ -123,12 +134,18 @@ public:
       return frame_buffer[dex];
   }
 
+  friend class renderer;
 private:
   uint16_t m_width,m_height;
   std::string m_name;
   std::vector<Vec3<uint8_t>> frame_buffer;
-
+  
+  // really useful for ovellaping images
+  std::vector<uint8_t> depth_buffer;
 
 };
 
 }
+
+
+

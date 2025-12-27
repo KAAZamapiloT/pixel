@@ -11,26 +11,32 @@ class renderer{
 
     renderer(uint8_t id,std::unique_ptr<INV::Window> wind)
     {
-   m_id=id;
-   m_Window=std::move(wind);
+    m_id=id;
+    m_Window=std::move(wind);
     }
 
    //---------------------Mods-----------------------------//
-     virtual void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_t> Color){
+     void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_t> Color){
      INV::Vec2<uint16_t> dim=GetDimensions();
      if(start.x>end.x){
          std::cerr<<"invalid arguments"<<std::endl;
          return;
      }
-      float slope=(float)(end.y-start.y)/(end.x-start.x);
 
-      float constant=start.y-slope*start.x;
-            for(uint16_t i=start.x;i<=end.x;++i){
-                uint16_t y=round(slope*i+constant);
-                SetPixelColor(INV::Vec2<uint16_t>{i,y},Color);
-            }
+}
+void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_t> Color,
+    INV::Vec3<uint8_t>(*F)(INV::Vec2<uint16_t>,float) )
+{
+ float p=256.0/static_cast<float>(end.x-start.x);
+ float slope=(float)(end.y-start.y)/(end.x-start.x);
 
-     }
+ float constant=start.y-slope*start.x;
+       for(uint16_t i=start.x;i<=end.x;++i){
+           uint16_t y=round(slope*i+constant);
+           SetPixelColor(INV::Vec2<uint16_t>(i,y),F(INV::Vec2<uint16_t>(i,y),1));
+       }
+
+}
      template<typename p>
     void DrawTriangle(INV::Vec2<p> p1,INV::Vec2<p> p2,INV::Vec2<p> p3,INV::Vec3<uint8_t> colors ){
 
@@ -67,7 +73,7 @@ class renderer{
 
 
 float p=256.0/static_cast<float>(may-miy);
-             for(uint16_t i=miy;i<=may;++i){
+             for(uint16_t i=miy;i<may;++i){
                for(uint16_t j=mix;j<=max;++j){
                   if(InsideTrig(INV::Vec2<uint16_t>(j,i),p1,p2,p3)){
                     SetPixelColor(INV::Vec2<uint16_t>(j,i),X(INV::Vec2<uint16_t>(j,i),p));
@@ -163,6 +169,18 @@ float p=256.0/static_cast<float>(may-miy);
 
      }
 
+     // Drawing a triangle in 3d space but then it can also accept a function pointer(can be passes as null)
+     // but here main thing is to set color val
+  void Draw_Tiangle_3d(INV::Vec3<double> p1,INV::Vec3<double> p2,INV::Vec3<double> p3,
+      INV::Vec3<uint8_t> color,INV::Vec3<uint8_t> (*f)(INV::Vec3<double>)
+  ){
+      if(f==nullptr){
+          
+      }else{
+          
+      }
+
+      }
 
   private:
     uint8_t m_id;

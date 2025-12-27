@@ -8,4 +8,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(pixel_ppm main.cpp)
 
 
-target_include_directories(pixel_ppm PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_include_directories(pixel_ppm PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
