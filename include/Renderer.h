@@ -32,10 +32,17 @@ class renderer{
 
      }
      template<typename p>
-    void DrawTriangle(INV::Vec2<p> p1,INV::Vec2<p> p2,INV::Vec2<p> p3,INV::Vec3<uint8_t> colors  ){
-       INV::Vec2<uint16_t> dims=GetDimensions();
-       for(int i=0;i<dims.y;++i){
-         for(int j=0;j<dims.x;++j){
+    void DrawTriangle(INV::Vec2<p> p1,INV::Vec2<p> p2,INV::Vec2<p> p3,INV::Vec3<uint8_t> colors ){
+
+
+       uint16_t mix=std::min({p1.x,p2.x,p3.x});
+       uint16_t max=std::max({p1.x,p2.x,p3.x});
+
+       uint16_t may=std::max({p1.y,p2.y,p3.y});
+       uint16_t miy=std::min({p1.y,p2.y,p3.y});
+
+       for(int i=miy;i<=may;++i){
+         for(int j=mix;j<=max;++j){
 
            if(InsideTrig(INV::Vec2<p>(j,i),p1,p2,p3)){
              SetPixelColor(INV::Vec2<uint16_t>(j,i),colors);
@@ -45,6 +52,31 @@ class renderer{
        }
      }
 
+     // drawing with a color function
+      template<typename F>
+     void DrawTriangle(INV::Vec2<F> p1,INV::Vec2<F>p2,INV::Vec2<F>p3,INV::Vec3<uint8_t> basecolor
+
+         ,INV::Vec3<uint8_t>(*X)(INV::Vec2<uint16_t>,float)){
+
+
+             uint16_t mix=std::min({p1.x,p2.x,p3.x});
+             uint16_t max=std::max({p1.x,p2.x,p3.x});
+
+             uint16_t may=std::max({p1.y,p2.y,p3.y});
+             uint16_t miy=std::min({p1.y,p2.y,p3.y});
+
+
+float p=256.0/static_cast<float>(may-miy);
+             for(uint16_t i=miy;i<=may;++i){
+               for(uint16_t j=mix;j<=max;++j){
+                  if(InsideTrig(INV::Vec2<uint16_t>(j,i),p1,p2,p3)){
+                    SetPixelColor(INV::Vec2<uint16_t>(j,i),X(INV::Vec2<uint16_t>(j,i),p));
+
+                  }
+                }
+              }
+
+     }
      template<typename p>
      void DrawPlane(INV::Vec2<p> p1,INV::Vec2<p>p2,INV::Vec2<p>p3,INV::Vec2<p> p4,INV::Vec3<uint8_t> color){
 
@@ -125,8 +157,8 @@ class renderer{
 
 
      void Draw_Cube(INV::Vec3<uint16_t> p1,INV::Vec3<uint16_t>p2,INV::Vec3<uint16_t>p3,INV::Vec2<uint16_t>p4
-         ,INV::Vec3<uint16_t> p5,INV::Vec3<uint16_t>p6,INV::Vec3<uint16_t> p7,INV::Vec3<uint16_t> p8,INV::vec3<uint16_t> Color){
-          
+         ,INV::Vec3<uint16_t> p5,INV::Vec3<uint16_t>p6,INV::Vec3<uint16_t> p7,INV::Vec3<uint16_t> p8,INV::Vec3<uint16_t> Color){
+
 
 
      }
