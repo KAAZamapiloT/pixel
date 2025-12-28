@@ -27,4 +27,5 @@ class camera{
     INV::Vec2<T> Location_2d; // I dont know if i will use it
     // struct orthographics/presective values
     // matrices projection vs prespective
+
 };
