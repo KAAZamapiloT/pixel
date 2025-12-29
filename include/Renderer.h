@@ -22,7 +22,7 @@ class renderer{
          std::cerr<<"invalid arguments"<<std::endl;
          return;
      }
- 
+
 }
 void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_t> Color,
     INV::Vec3<uint8_t>(*F)(INV::Vec2<uint16_t>,float) )
@@ -161,7 +161,7 @@ float p=256.0/static_cast<float>(may-miy);
          return {m_Window->GetWidth(),m_Window->GetHeight()};
      }
 
-
+//-----------------------------------
      void Draw_Cube(INV::Vec3<uint16_t> p1,INV::Vec3<uint16_t>p2,INV::Vec3<uint16_t>p3,INV::Vec2<uint16_t>p4
          ,INV::Vec3<uint16_t> p5,INV::Vec3<uint16_t>p6,INV::Vec3<uint16_t> p7,INV::Vec3<uint16_t> p8,INV::Vec3<uint16_t> Color){
 
@@ -170,18 +170,57 @@ float p=256.0/static_cast<float>(may-miy);
      }
 
      // Drawing a triangle in 3d space but then it can also accept a function pointer(can be passes as null)
-     // but here main thing is to set color val
+    // but here main thing is to set color val
+  // assuming world space cordinates-> otherwise local->world transformation
   void Draw_Tiangle_3d(Camera*camera,INV::Vec3<double> p1,INV::Vec3<double> p2,INV::Vec3<double> p3,
       INV::Vec3<uint8_t> color,INV::Vec3<uint8_t> (*f)(INV::Vec3<double>)
   ){
+       INV::Vec3<double> maxvals;
+      INV::Vec3<double> minvals;
+      minvals.x=std::min({p1.x,p2.x,p3.x});
+      minvals.y=std::min({p1.y,p2.y,p3.y});
+      minvals.z=std::min({p1.z,p2.z,p3.z});
+      maxvals.x=std::max({p1.x,p2.x,p3.x});
+      maxvals.y=std::max({p1.y,p2.y,p3.y});
+      maxvals.z=std::max({p1.z,p2.z,p3.z});
+    Matrix4<double> ProjectionView=camera->GetProjectionView();
+
       if(f==nullptr){
-          
+          for(int i=minvals.z;i<=maxvals.z;++i){
+              for(int j=minvals.y;j<=maxvals.y;++j){
+                  for(int k=minvals.x;k<=maxvals.x;++k){
+                    INV::Vec4<double>p=INV::Vec4<double>(k,j,i,1);
+                    INV::Vec4<double>clip=ProjectionView*p;
+                    INV::Vec3<double> ndc=INV::Vec3<double>(clip.x/clip.w,clip.y/clip.w,clip.z/clip.w);
+                    INV::Vec2<double> screen=INV::Vec2<double>((ndc.x+1)*0.5*m_Window->m_width,(1-ndc.y)*0.5*m_Window->m_height);
+                    if(screen.x>=0 && screen.x<m_Window->m_width && screen.y>=0 && screen.y<m_Window->m_height){
+                      m_Window->framebuffer[screen.y*m_Window->m_width+screen.x]=INV::Vec3<uint8_t>(color.x,color.y,color.z);
+                    }
+                  }
+              }
+          }
       }else{
-          
+          for(int i=minvals.z;i<=maxvals.z;++i){
+              for(int j=minvals.y;j<=maxvals.y;++j){
+                  for(int k=minvals.x;k<=maxvals.x;++k){
+                    INV::Vec4<double>p=INV::Vec4<double>(k,j,i,1);
+                    INV::Vec4<double>clip=ProjectionView*p;
+                    INV::Vec3<double> ndc=INV::Vec3<double>(clip.x/clip.w,clip.y/clip.w,clip.z/clip.w);
+                    INV::Vec2<double> screen=INV::Vec2<double>((ndc.x+1)*0.5*m_Window->m_width,(1-ndc.y)*0.5*m_Window->m_height);
+                    if(screen.x>=0 && screen.x<m_Window->m_width && screen.y>=0 && screen.y<m_Window->m_height){
+                      m_Window->SetPixelColor(screen.x,screen.y,INV::Vec3<uint8_t>(color.x,color.y,color.z),f(j,i,k));
+                    }
+                  }
+              }
+          }
       }
 
       }
 
+   void ClearColor(INV::Vec4<uint8_t> Color){
+       m_Window->framebuffer=std::vector<uint8_t>(m_Window->m_width*m_Window->m_height,
+           INV::Vec3<uint8_t>(Color.x,Color.y,Color.z));
+   }
   private:
     uint8_t m_id;
     std::unique_ptr<INV::Window> m_Window;

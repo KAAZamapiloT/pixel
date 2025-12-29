@@ -83,9 +83,15 @@ class Vec2{
 template <typename T>
 
 class Vec4{
-
+public:
 Vec4(T x,T y,T z,T w):x(x),y(y),z(z),w(w){
 
+}
+Vec4(Vec3<T>s,T sd){
+    x=s.x;
+    y=s.y;
+    z=s.z;
+    w=sd;
 }
 
 Vec4<T> Dot(Vec4<T> other){return x*other.x+y*other.y+z*other.z+w*other.w;}
@@ -144,7 +150,14 @@ public:
 Matrix4(T a,T b,T c,T d,T e,T f,T g,T h,T i,T j,T k,T l,T m,T n,T o,T p):Mat{{a,b,c,d},{e,f,g,h},{i,j,k,l},{m,n,o,p}}{
 
 }
-
+Matrix4(T x)
+        : Mat{
+            {x, x, x, x},
+            {x, x, x, x},
+            {x, x, x, x},
+            {x, x, x, x}
+          }
+    {}
 Matrix4 operator+(Matrix4&other ){
     Matrix4 result;
     for(int i=0;i<4;i++){
@@ -201,8 +214,9 @@ T Mat[4][4];
 };
 template<typename T>
 class Quat{
+public:
 
-
+T x,y,z,w;
 };
 // now i need a way to represent window
 //
@@ -239,8 +253,7 @@ public:
       return frame_buffer[dex];
   }
 
-  friend class renderer;
-private:
+
   uint16_t m_width,m_height;
   std::string m_name;
   std::vector<Vec3<uint8_t>> frame_buffer;
