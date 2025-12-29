@@ -4,7 +4,7 @@
 #include <iostream>
 #include<string>
 #include<fstream>
-
+#include"Camera.h"
 class renderer{
 
   public:
@@ -22,7 +22,7 @@ class renderer{
          std::cerr<<"invalid arguments"<<std::endl;
          return;
      }
-
+ 
 }
 void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_t> Color,
     INV::Vec3<uint8_t>(*F)(INV::Vec2<uint16_t>,float) )
@@ -171,7 +171,7 @@ float p=256.0/static_cast<float>(may-miy);
 
      // Drawing a triangle in 3d space but then it can also accept a function pointer(can be passes as null)
      // but here main thing is to set color val
-  void Draw_Tiangle_3d(INV::Vec3<double> p1,INV::Vec3<double> p2,INV::Vec3<double> p3,
+  void Draw_Tiangle_3d(Camera*camera,INV::Vec3<double> p1,INV::Vec3<double> p2,INV::Vec3<double> p3,
       INV::Vec3<uint8_t> color,INV::Vec3<uint8_t> (*f)(INV::Vec3<double>)
   ){
       if(f==nullptr){

@@ -98,7 +98,71 @@ double magnitude_squared(){
   T x,y,z,w;
 };
 
+template<typename T>
+class Matrix2{
+public:
+Matrix2(T a,T b,T c,T d):Mat{{a,b},{c,d}}{
 
+}
+
+Matrix2 operator+(const Matrix2& other){
+    Matrix2 result;
+    for(int i=0;i<2;i++){
+        for(int j=0;j<2;j++){
+            result.Mat[i][j]=Mat[i][j]+other.Mat[i][j];
+        }
+    }
+    return result;
+}
+
+
+T Mat[2][2];
+};
+
+template<typename T>
+class Matrix3{
+    public:
+    Matrix3(T a,T b,T c,T d,T e,T f,T g,T h,T i):Mat{{a,b,c},{d,e,f},{g,h,i}}{
+
+    }
+    Matrix3 operator+(Matrix3&other ){
+        Matrix3 result;
+        for(int i=0;i<3;i++){
+            for(int j=0;j<3;j++){
+                result.Mat[i][j]=Mat[i][j]+other.Mat[i][j];
+            }
+        }
+        return result;
+    }
+
+    T Mat[3][3];
+};
+
+template<typename T>
+class Matrix4{
+public:
+Matrix4(T a,T b,T c,T d,T e,T f,T g,T h,T i,T j,T k,T l,T m,T n,T o,T p):Mat{{a,b,c,d},{e,f,g,h},{i,j,k,l},{m,n,o,p}}{
+
+}
+
+Matrix4 operator+(Matrix4&other ){
+    Matrix4 result;
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){
+            result.Mat[i][j]=Mat[i][j]+other.Mat[i][j];
+        }
+    }
+    return result;
+}
+
+
+T Mat[4][4];
+};
+template<typename T>
+class Quat{
+
+
+};
 // now i need a way to represent window
 //
 //
@@ -139,13 +203,10 @@ private:
   uint16_t m_width,m_height;
   std::string m_name;
   std::vector<Vec3<uint8_t>> frame_buffer;
-  
+
   // really useful for ovellaping images
   std::vector<uint8_t> depth_buffer;
 
 };
 
 }
-
-
-
