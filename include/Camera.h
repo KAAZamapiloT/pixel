@@ -22,7 +22,28 @@ class camera{
 
     private:
 
-    void UpdateViewMatrix()
+    void UpdateViewMatrix(){
+        m_ViewMatrix[0][0] =right.x ;
+           m_ViewMatrix[0][1] = up.x;
+           m_ViewMatrix[0][2] = forward.x;
+           m_ViewMatrix[0][3] = 0.0f;
+
+           m_ViewMatrix[1][0] = right.y;
+           m_ViewMatrix[1][1] = up.y;
+           m_ViewMatrix[1][2] = forward.y;
+           m_ViewMatrix[1][3] = 0.0f;
+
+           m_ViewMatrix[2][0] = right.z;
+           m_ViewMatrix[2][1] = up.z;
+           m_ViewMatrix[2][2] = forward.z;
+           m_ViewMatrix[2][3] = 0.0f;
+
+           m_ViewMatrix[3][0] = right.dot(Location_3d);
+           m_ViewMatrix[3][1] = up.dot(Location_3d);
+           m_ViewMatrix[3][2] = forward.dot(Location_3d);
+           m_ViewMatrix[3][3] = 1.0f;
+
+    }
     //default camera_type
     Type camera_type=Type::Orthographic;
 
@@ -53,5 +74,10 @@ class camera{
     mutable INV::Matrix4<double> m_ViewProjectionMatrix;
     bool bViewDirty=false;
     bool bProjectionFirty=false;
+
+    // camera specific vector
+    INV::Vec3<double> right;
+    INV::Vec3<double> forward;
+    INV::Vec3<double> up;
 
 };

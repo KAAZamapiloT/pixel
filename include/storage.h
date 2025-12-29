@@ -155,7 +155,48 @@ Matrix4 operator+(Matrix4&other ){
     return result;
 }
 
+// Fov must be in radians
+Matrix4 perspective(float fov, float aspect, float near, float far){
+    assert(near > 0.0f);
+        assert(far  > near);
+        assert(aspect > 0.0f);
 
+        float t=std::tan(fov*0.05f)
+        Matrix4 m{}; // zero-initialized
+
+           m[0][0] = 1.0f / (aspect * t);
+           m[1][1] = 1.0f / t;
+
+           m[2][2] = -(far + near) / (far - near);
+           m[2][3] = -(2.0f * far * near) / (far - near);
+
+           m[3][2] = -1.0f;
+           m[3][3] = 0.0f;
+
+           return m;
+}
+Matrix4 ortho(
+    float left, float right,
+    float bottom, float top,
+    float near, float far)
+{
+    assert(right != left);
+    assert(top   != bottom);
+    assert(far   != near);
+
+    Matrix4 m{}; // zero-initialized
+
+    m[0][0] =  2.0f / (right - left);
+    m[1][1] =  2.0f / (top - bottom);
+    m[2][2] = -2.0f / (far - near);
+
+    m[3][0] = -(right + left)   / (right - left);
+    m[3][1] = -(top + bottom)   / (top - bottom);
+    m[3][2] = -(far + near)     / (far - near);
+    m[3][3] =  1.0f;
+
+    return m;
+}
 T Mat[4][4];
 };
 template<typename T>
