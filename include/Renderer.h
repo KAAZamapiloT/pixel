@@ -218,7 +218,8 @@ float p=256.0/static_cast<float>(may-miy);
       }
 
    void ClearColor(INV::Vec4<uint8_t> Color){
-       m_Window->framebuffer=std::vector<uint8_t>(m_Window->m_width*m_Window->m_height,
+       std::fill(m_Window->framebuffer.begin()
+           ,m_Window->framebuffer.end(),
            INV::Vec3<uint8_t>(Color.x,Color.y,Color.z));
    }
   private:

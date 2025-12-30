@@ -19,13 +19,13 @@ class camera{
         Location_3d=location_3d;
         Location_2d=INV::Vec2<T>(location_3d.x,location_3d.y);
     }
-    Matrix4<double> GetProjectionView(){
+    INV::Matrix4<double> GetProjectionView(){
          return m_ProjectionViewMatrix;
     }
-    INV::Vec3<T> GetLocation{return Location_3d;}
-    INV::Vec3<float> GetRoationEuler(return INV::Vec3<float>(m_pitch,m_yaw,m_roll);)
+    INV::Vec3<T> GetLocation(){ return Location_3d;}
+    INV::Vec3<float> GetRoationEuler( ){return INV::Vec3<float>(m_pitch,m_yaw,m_roll);}
     void updateMatrix(){
-      if(bviewDirty){
+      if(bViewDirty){
         UpdateViewMatrix();
       }
 
@@ -34,8 +34,8 @@ class camera{
     void MultiplyMats(){
       m_ProjectionViewMatrix=m_ProjectionViewMatrix*m_ViewMatrix;
     }
-    void UpdateVector(){
-        //roation can change them
+    void UpdateOrientaionVector(){
+
         INV::Vec3<double> right=INV::Vec3<double>(std::cos(m_yaw),std::sin(m_yaw),0.0);
         INV::Vec3<double> up=INV::Vec3<double>(std::sin(m_pitch)*std::cos(m_yaw),std::sin(m_pitch)*std::sin(m_yaw),std::cos(m_pitch));
         INV::Vec3<double> forward=INV::Vec3<double>(-std::sin(m_yaw),std::cos(m_yaw),0.0);
@@ -87,9 +87,9 @@ class camera{
 
     // matrices and satate
 
-    mutable INV::Matrix4<double> m_ViewMatrix(1.0f);
-    mutable INV::Matrix4<double> m_ProjectionMatrix(1.0f);
-    mutable INV::Matrix4<double> m_ProjectionViewMatrix(1.0f);
+     INV::Matrix4<double> m_ViewMatrix(1.0f);
+     INV::Matrix4<double> m_ProjectionMatrix(1.0f);
+     INV::Matrix4<double> m_ProjectionViewMatrix(1.0f);
     bool bViewDirty=false;
     bool bProjectionFirty=false;
 

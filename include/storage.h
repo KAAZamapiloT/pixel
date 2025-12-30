@@ -97,6 +97,9 @@ Vec4(Vec3<T>s,T sd){
 Vec4<T> Dot(Vec4<T> other){return x*other.x+y*other.y+z*other.z+w*other.w;}
 
 Vec4<T> Cross(Vec4<T> other){return Vec4<T>(y*other.z-z*other.y,z*other.x-x*other.z,x*other.y-y*other.x);}
+static Vec4<T> Cross_product(Vec4<T> v1, Vec4<T> v2){
+    return Vec4<T>(v1.y*v2.z-v1.z*v2.y,v1.z*v2.x-v1.x*v2.z,v1.x*v2.y-v1.y*v2.x);
+}
 
 double magnitude_squared(){
     return x*x+y*y+z*z+w*w;
@@ -158,7 +161,12 @@ Matrix4(T x)
             {x, x, x, x}
           }
     {}
-Matrix4 operator+(Matrix4&other ){
+    Matrix4() {
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+                Mat[i][j] = T(0);
+    }
+Matrix4 operator+(const Matrix4& other) const{
     Matrix4 result;
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
@@ -167,14 +175,26 @@ Matrix4 operator+(Matrix4&other ){
     }
     return result;
 }
+Matrix4 operator*(const Matrix4& rhs) const
+{
+    Matrix4 result;
+
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            result.Mat[i][j] = T(0);
+            for (int k = 0; k < 4; k++) {
+                result.Mat[i][j] += Mat[i][k] * rhs.Mat[k][j];
+            }
+        }
+    }
+    return result;
+}
 
 // Fov must be in radians
-Matrix4 perspective(float fov, float aspect, float near, float far){
-    assert(near > 0.0f);
-        assert(far  > near);
-        assert(aspect > 0.0f);
+static Matrix4 perspective(float fov, float aspect, float near, float far){
 
-        float t=std::tan(fov*0.05f)
+
+        float t=std::tan(fov*0.5f);
         Matrix4 m{}; // zero-initialized
 
            m[0][0] = 1.0f / (aspect * t);
@@ -188,7 +208,7 @@ Matrix4 perspective(float fov, float aspect, float near, float far){
 
            return m;
 }
-Matrix4 ortho(
+static Matrix4 ortho(
     float left, float right,
     float bottom, float top,
     float near, float far)
