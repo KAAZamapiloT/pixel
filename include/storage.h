@@ -1,5 +1,6 @@
 #pragma once
 #include <locale>
+#include <system_error>
 #include<vector>
 #include<cstdint>
 #include"string"
@@ -232,16 +233,88 @@ static Matrix4 ortho(
 }
 T Mat[4][4];
 };
+
+
+
+
+
 template<typename T>
 class Quat{
 public:
+Quat(T x,T y,T z,T w):x(x),y(y),z(z),w(w){}
+Quat():x(0),y(0),z(0),w(1){}
+//
+Quat(T angle,Vec3<T> axis){
+    T halfAngle=angle/2;
+    T sinHalfAngle=sin(halfAngle);
+    x=axis.x*sinHalfAngle;
+    y=axis.y*sinHalfAngle;
+    z=axis.z*sinHalfAngle;
+    w=cos(halfAngle);
+}
 
+T lenth_sq(){
+   return x*x+y*y+z*z+w*w;
+}
+
+Quat<T> conjugate(){
+    return Quat(-x,-y,-z,w);
+}
+void normalize(){
+    T l= length_sq();
+    if(l==0) return;
+    x=x/l;
+    y=y/l;
+    z=z/l;
+    w=w/l;
+
+}
+Quat<T> inverse(){
+    return conjugate()/lenth_sq();
+}
+Vec3<T> rotate(const Vec3<T>& v) const {
+    Quat p(v.x, v.y, v.z, 0);
+    Quat r = (*this) * p * conjugate();
+    return { r.x, r.y, r.z };
+}
+static Quat<T> Multiply(Quat<T> A,Quat<T> B){
+    return Quat(A.w*B.x+A.x*B.w+A.y*B.z-A.z*B.y,
+        A.w*B.y-A.x*B.z+A.y*B.w+A.z*B.x
+        ,A.w*B.z+A.x*B.y-A.y*B.x+A.z*B.w
+        ,A.w*B.w-A.x*B.x-A.y*B.y-A.z*B.z);
+}
+static T Dot(Quat<T> A,Quat<T> B){
+    return A.w*B.w+A.x*B.x+A.y*B.y+A.z*B.z;
+}
+
+static Quat<T> nlerp(const Quat<T>& A,const Quat<T>& B,T t){
+    T dot =Dot(A, B);
+    Quat<T> result;
+    if(dot <0){
+        result=A*(1-t)+(B*-1)*t;
+    }else{
+        result=A*(1-t)+B*t;
+    }
+    result.normalize();
+    return result;
+}
 T x,y,z,w;
-};
-// now i need a way to represent window
-//
-//
 
+
+Quat operator*(const Quat& q) const{
+    return Multiply(*this,q);
+}
+
+Quat operator+(const Quat& q) const{
+    return Quat(x+q.x,y+q.y,z+q.z,w+q.w);
+}
+Quat operator*(T scalar) const{
+    return Quat(x*scalar,y*scalar,z*scalar,w*scalar);
+}
+Quat operator/(T scalar) const{
+    return Quat(x/scalar,y/scalar,z/scalar,w/scalar);
+}
+};
 
 
 class Window{
