@@ -356,44 +356,4 @@ Quat& operator=(const Quat& q) = default;
 
 };
 
-
-class Window{
-public:
-  Window(uint16_t width,uint16_t height,std::string name){
-                m_width=width;
-                m_height=height;
-                m_name=name;
-                frame_buffer=std::vector<Vec3<uint8_t>>(width*height,{0,0,0});
-                depth_buffer=std::vector<uint8_t>(width*height,{0});
-
-
-  }
-  inline uint16_t GetWidth(){return m_width;}
-  inline uint16_t GetHeight(){return m_height;}
-
-  void SetPixelColor(Vec2<uint16_t> cord,Vec3<uint8_t> Color){
-    frame_buffer[cord.x + cord.y * m_width]=Color;
-  }
-  void SetPixelColor(uint32_t index,Vec3<uint8_t> Color){
-    frame_buffer[index]=Color;
-  }
-
-  Vec3<uint8_t> GetColor(Vec2<uint16_t> cord){
-    return frame_buffer[cord.x + cord.y * m_width];
-  }
-
-  Vec3<uint8_t> GetColor(uint32_t dex){
-      return frame_buffer[dex];
-  }
-
-
-  uint16_t m_width,m_height;
-  std::string m_name;
-  std::vector<Vec3<uint8_t>> frame_buffer;
-
-  // really useful for ovellaping images
-  std::vector<uint8_t> depth_buffer;
-
-};
-
 }
