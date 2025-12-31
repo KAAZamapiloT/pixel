@@ -10,7 +10,14 @@ template <typename T>
 class Vec3{
     public:
     Vec3(T x, T y, T z) : x(x), y(y), z(z) {}
+    Vec3(){
 
+    }
+    Vec3(T a){
+        x=a;
+        y=a;
+        z=a;
+    }
     Vec3 operator+(const Vec3& other) const {
         return Vec3(x + other.x, y + other.y, z + other.z);
     }
@@ -154,42 +161,41 @@ public:
 Matrix4(T a,T b,T c,T d,T e,T f,T g,T h,T i,T j,T k,T l,T m,T n,T o,T p):Mat{{a,b,c,d},{e,f,g,h},{i,j,k,l},{m,n,o,p}}{
 
 }
-Matrix4(T x)
-        : Mat{
-            {x, x, x, x},
-            {x, x, x, x},
-            {x, x, x, x},
-            {x, x, x, x}
-          }
-    {}
-    Matrix4() {
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < 4; j++)
-                Mat[i][j] = T(0);
-    }
-Matrix4 operator+(const Matrix4& other) const{
-    Matrix4 result;
-    for(int i=0;i<4;i++){
-        for(int j=0;j<4;j++){
-            result.Mat[i][j]=Mat[i][j]+other.Mat[i][j];
-        }
-    }
-    return result;
-}
-Matrix4 operator*(const Matrix4& rhs) const
-{
-    Matrix4 result;
+constexpr explicit Matrix4(T v) {
+      for (int i = 0; i < 4; ++i)
+          for (int j = 0; j < 4; ++j)
+              Mat[i][j] = v;
+  }
+    constexpr Matrix4() = default;
 
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            result.Mat[i][j] = T(0);
-            for (int k = 0; k < 4; k++) {
-                result.Mat[i][j] += Mat[i][k] * rhs.Mat[k][j];
-            }
+
+    constexpr T* operator[](int r) { return Mat[r]; }
+    constexpr const T* operator[](int r) const { return Mat[r]; }
+
+    // Addition
+        friend constexpr Matrix4 operator+(const Matrix4& a, const Matrix4& b) {
+            Matrix4 r;
+            for (int i = 0; i < 4; ++i)
+                for (int j = 0; j < 4; ++j)
+                    r.Mat[i][j] = a.Mat[i][j] + b.Mat[i][j];
+            return r;
         }
-    }
-    return result;
-}
+
+        // Multiplication
+        friend constexpr Matrix4 operator*(const Matrix4& a, const Matrix4& b) {
+            Matrix4 r;
+            for (int i = 0; i < 4; ++i) {
+                for (int j = 0; j < 4; ++j) {
+                    T sum{};
+                    for (int k = 0; k < 4; ++k)
+                        sum += a.Mat[i][k] * b.Mat[k][j];
+                    r.Mat[i][j] = sum;
+                }
+            }
+            return r;
+        }
+
+
 
 // Fov must be in radians
 static Matrix4 perspective(float fov, float aspect, float near, float far){
@@ -214,9 +220,7 @@ static Matrix4 ortho(
     float bottom, float top,
     float near, float far)
 {
-    assert(right != left);
-    assert(top   != bottom);
-    assert(far   != near);
+
 
     Matrix4 m{}; // zero-initialized
 
@@ -231,6 +235,16 @@ static Matrix4 ortho(
 
     return m;
 }
+
+static INV::Vec4<T> Matrix4_Vec4_mul(const Matrix4<T>&mat,const Vec4<T>&v){
+
+    return  INV::Vec4<T>(mat[0][0]*v.x+mat[0][1]*v.y+mat[0][2]*v.z+mat[0][3]*v.w,
+                         mat[1][0]*v.x+mat[1][1]*v.y+mat[1][2]*v.z+mat[1][3]*v.w,
+                         mat[2][0]*v.x+mat[2][1]*v.y+mat[2][2]*v.z+mat[2][3]*v.w,
+                         mat[3][0]*v.x+mat[3][1]*v.y+mat[3][2]*v.z+mat[3][3]*v.w);
+}
+
+
 T Mat[4][4];
 };
 
@@ -261,7 +275,7 @@ Quat<T> conjugate(){
     return Quat(-x,-y,-z,w);
 }
 void normalize(){
-    T l= length_sq();
+    T l= lenth_sq();
     if(l==0) return;
     x=x/l;
     y=y/l;
@@ -298,6 +312,28 @@ static Quat<T> nlerp(const Quat<T>& A,const Quat<T>& B,T t){
     result.normalize();
     return result;
 }
+
+static Quat<T> slerp(const Quat<T>& A,const Quat<T>& B,T t){
+    T dot =Dot(A, B);
+  Quat bCopy = B;
+  if(dot<0){
+dot =-dot;
+bCopy=-1*bCopy;
+  }
+  const T EPS = 1e-6;
+    if (dot > 1 - EPS) {
+        return nlerp(A, bCopy, t);
+    }
+    T theta = std::acos(dot);
+     T sinTheta = std::sin(theta);
+     T w1 = std::sin((1 - t) * theta) / sinTheta;
+         T w2 = std::sin(t * theta) / sinTheta;
+
+         return (A * w1 + bCopy * w2);
+}
+
+
+
 T x,y,z,w;
 
 
@@ -313,6 +349,9 @@ Quat operator*(T scalar) const{
 }
 Quat operator/(T scalar) const{
     return Quat(x/scalar,y/scalar,z/scalar,w/scalar);
+}
+Quat operator=(const Quat<T>&q){
+    return Quat(x=q.x,y=q.y,z=q.z,w=q.w);
 }
 };
 

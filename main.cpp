@@ -38,7 +38,7 @@ int main(){
    //r->DrawPolynomial([](float s){return std::log(s*s)*std::log(s*s*s);},S,U,C);
   //  r->DrawTriangle(S,U,INV::Vec2<uint16_t>(U.x,0),C,[](INV::Vec2<uint16_t> o,float norm){
       //         return INV::Vec3<uint8_t>(o.x*norm,o.y*norm,128);});
-    r->ClearColor(C);
+    r->ClearColor(INV::Vec4<uint8_t>(C,0));
     r->Create_PPM_File("output.ppm");
 
     std::cout << "Hello World!" << std::endl;

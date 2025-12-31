@@ -1,3 +1,5 @@
+
+#pragma once
 #include"storage.h"
 
 
@@ -13,12 +15,35 @@
 
 template<typename T>
 class camera{
-
-    camera(Type p,INV::Vec3<T> location_3d){
+public:
+    camera(Type p,INV::Vec3<T> location_3d,  float fov, float AspectRatio,
+    double NearPlane,
+    double FarPlane){
         camera_type=p;
+        m_fov=fov;
+        m_AspectRatio=AspectRatio;
+        m_NearPlane=NearPlane;
+        m_FarPlane=FarPlane;
         Location_3d=location_3d;
         Location_2d=INV::Vec2<T>(location_3d.x,location_3d.y);
+        m_ProjectionMatrix=INV::Matrix4<double>::perspective(fov,AspectRatio,NearPlane,FarPlane);
     }
+
+    camera(Type p,INV::Vec3<T> location_3d,float left,float right,float bottom,float top,double NearPlane,double FarPlane){
+        camera_type=p;
+
+        Location_3d=location_3d;
+        Location_2d=INV::Vec2<T>(location_3d.x,location_3d.y);
+
+        m_OrthoLeft=left;
+        m_OrthoRight=right;
+        m_OrthoBottom=bottom;
+        m_OrthoTop=top;
+        m_NearPlane=NearPlane;
+        m_FarPlane=FarPlane;
+        m_Ortho=INV::Matrix4<double>::ortho(left,right,bottom,top,NearPlane,FarPlane);
+    }
+
     INV::Matrix4<double> GetProjectionView(){
          return m_ProjectionViewMatrix;
     }
@@ -31,9 +56,9 @@ class camera{
 
     }
   private:
-    void MultiplyMats(){
-      m_ProjectionViewMatrix=m_ProjectionViewMatrix*m_ViewMatrix;
-    }
+  void UpdateProjectionView(){
+    m_ProjectionViewMatrix = m_ProjectionMatrix*m_ViewMatrix;
+  }
     void UpdateOrientaionVector(){
 
         INV::Vec3<double> right=INV::Vec3<double>(std::cos(m_yaw),std::sin(m_yaw),0.0);
@@ -56,9 +81,9 @@ class camera{
            m_ViewMatrix[2][2] = forward.z;
            m_ViewMatrix[2][3] = 0.0f;
 
-           m_ViewMatrix[3][0] = right.dot(Location_3d);
-           m_ViewMatrix[3][1] = up.dot(Location_3d);
-           m_ViewMatrix[3][2] = forward.dot(Location_3d);
+           m_ViewMatrix[3][0] = right.Dot(Location_3d);
+           m_ViewMatrix[3][1] = up.Dot(Location_3d);
+           m_ViewMatrix[3][2] = forward.Dot(Location_3d);
            m_ViewMatrix[3][3] = 1.0f;
 
     }
@@ -70,7 +95,7 @@ class camera{
     INV::Quat<T> m_Rotation;
     // Projection parameters
     float m_fov=45.0f;
-    float m_AspectRation=16.0f/9.0f;
+    float m_AspectRatio=16.0f/9.0f;
     double m_NearPlane=0.1f;
     double m_FarPlane=50.f;
 
@@ -87,9 +112,10 @@ class camera{
 
     // matrices and satate
 
-     INV::Matrix4<double> m_ViewMatrix(1.0f);
-     INV::Matrix4<double> m_ProjectionMatrix(1.0f);
-     INV::Matrix4<double> m_ProjectionViewMatrix(1.0f);
+     INV::Matrix4<double> m_ViewMatrix;
+     INV::Matrix4<double> m_ProjectionMatrix;
+     INV::Matrix4<double> m_ProjectionViewMatrix;
+     INV::Matrix4<double> m_Ortho;
     bool bViewDirty=false;
     bool bProjectionFirty=false;
 
