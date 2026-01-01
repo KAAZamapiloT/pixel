@@ -217,11 +217,11 @@ float p=256.0/static_cast<float>(may-miy);
      // Drawing a triangle in 3d space but then it can also accept a function pointer(can be passes as null)
     // but here main thing is to set color val
   // assuming world space cordinates-> otherwise local->world transformation
-  void Draw_Tiangle_3d(camera<double>&cam,INV::Vec3<double> p1,INV::Vec3<double> p2,INV::Vec3<double> p3,
-      INV::Vec3<uint8_t> color,INV::Vec3<uint8_t> (*f)(INV::Vec3<double>)
+  void Draw_Tiangle_3d(camera<float>&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec3<float> p3,
+      INV::Vec3<uint8_t> color,INV::Vec3<uint8_t> (*f)(INV::Vec3<float>)
   ){
-      INV::Vec3<double> maxvals;
-      INV::Vec3<double> minvals;
+      INV::Vec3<float> maxvals;
+      INV::Vec3<float> minvals;
       minvals.x=std::min({p1.x,p2.x,p3.x});
       minvals.y=std::min({p1.y,p2.y,p3.y});
       minvals.z=std::min({p1.z,p2.z,p3.z});
@@ -229,17 +229,17 @@ float p=256.0/static_cast<float>(may-miy);
       maxvals.y=std::max({p1.y,p2.y,p3.y});
       maxvals.z=std::max({p1.z,p2.z,p3.z});
 
-     INV::Matrix4<double> ProjectionView = cam.GetProjectionView();
+     INV::Matrix4<float> ProjectionView = cam.GetProjectionView();
 
       if(f==nullptr){
           for(int i=minvals.z;i<=maxvals.z;++i){
               for(int j=minvals.y;j<=maxvals.y;++j){
                   for(int k=minvals.x;k<=maxvals.x;++k){
-                    INV::Vec4<double>p=INV::Vec4<double>(k,j,i,1);
-                    INV::Vec4<double>clip=INV::Matrix4<double>::Matrix4_Vec4_mul(ProjectionView,p);
+                    INV::Vec4<float>p=INV::Vec4<float>(k,j,i,1);
+                    INV::Vec4<float>clip=INV::Matrix4<float>::Matrix4_Vec4_mul(ProjectionView,p);
 
-                    INV::Vec3<double> ndc=INV::Vec3<double>(clip.x/clip.w,clip.y/clip.w,clip.z/clip.w);
-                    INV::Vec2<double> screen=INV::Vec2<double>((ndc.x+1)*0.5*m_Window->m_width,(1-ndc.y)*0.5*m_Window->m_height);
+                    INV::Vec3<float> ndc=INV::Vec3<float>(clip.x/clip.w,clip.y/clip.w,clip.z/clip.w);
+                    INV::Vec2<float> screen=INV::Vec2<float>((ndc.x+1)*0.5*m_Window->m_width,(1-ndc.y)*0.5*m_Window->m_height);
                     if(screen.x>=0 && screen.x<m_Window->m_width && screen.y>=0 && screen.y<m_Window->m_height){
                       m_Window->frame_buffer[screen.y*m_Window->m_width+screen.x]=INV::Vec3<uint8_t>(color.x,color.y,color.z);
                     }
@@ -250,13 +250,13 @@ float p=256.0/static_cast<float>(may-miy);
           for(int i=minvals.z;i<=maxvals.z;++i){
               for(int j=minvals.y;j<=maxvals.y;++j){
                   for(int k=minvals.x;k<=maxvals.x;++k){
-                    INV::Vec4<double>p=INV::Vec4<double>(k,j,i,1);
-                    INV::Vec4<double>clip=INV::Matrix4<double>::Matrix4_Vec4_mul(ProjectionView,p);
-                    INV::Vec3<double> ndc=INV::Vec3<double>(clip.x/clip.w,clip.y/clip.w,clip.z/clip.w);
-                    INV::Vec2<double> screen=INV::Vec2<double>((ndc.x+1)*0.5*m_Window->m_width,(1-ndc.y)*0.5*m_Window->m_height);
+                    INV::Vec4<float>p=INV::Vec4<float>(k,j,i,1);
+                    INV::Vec4<float>clip=INV::Matrix4<float>::Matrix4_Vec4_mul(ProjectionView,p);
+                    INV::Vec3<float> ndc=INV::Vec3<float>(clip.x/clip.w,clip.y/clip.w,clip.z/clip.w);
+                    INV::Vec2<float> screen=INV::Vec2<float>((ndc.x+1)*0.5*m_Window->m_width,(1-ndc.y)*0.5*m_Window->m_height);
                     if(screen.x>=0 && screen.x<m_Window->m_width && screen.y>=0 && screen.y<m_Window->m_height){
 
-                      m_Window->SetPixelColor(INV::Vec2<uint16_t>(screen.x,screen.y),f(INV::Vec3<double>(k,j,i)));
+                      m_Window->SetPixelColor(INV::Vec2<uint16_t>(screen.x,screen.y),f(INV::Vec3<float>(k,j,i)));
                     }
                   }
               }
@@ -278,25 +278,25 @@ template<typename T>
     bool InsideTrig(INV::Vec2<T> Point,INV::Vec2<T> a,INV::Vec2<T> b,INV::Vec2<T> c){
 
 
-      INV::Vec2<double> ab=INV::Vec2<double>(b.x,b.y)-INV::Vec2<double>(a.x,a.y);
-      INV::Vec2<double> ac=INV::Vec2<double>(c.x,c.y)-INV::Vec2<double>(a.x,a.y);
+      INV::Vec2<float> ab=INV::Vec2<float>(b.x,b.y)-INV::Vec2<float>(a.x,a.y);
+      INV::Vec2<float> ac=INV::Vec2<float>(c.x,c.y)-INV::Vec2<float>(a.x,a.y);
 
-      INV::Vec2<double> ap=INV::Vec2<double>(Point.x,Point.y)-INV::Vec2<double>(a.x,a.y);
+      INV::Vec2<float> ap=INV::Vec2<float>(Point.x,Point.y)-INV::Vec2<float>(a.x,a.y);
 
-    INV::Vec2<double> v0=ab;
-    INV::Vec2<double> v1=ac;
-    INV::Vec2<double> v2=ap;
+    INV::Vec2<float> v0=ab;
+    INV::Vec2<float> v1=ac;
+    INV::Vec2<float> v2=ap;
 
-    double d00=v0.Dot(v0);
-    double d01=v0.Dot(v1);
-    double d11=v1.Dot(v1);
-    double d20=v2.Dot(v0);
-    double d21=v2.Dot(v1);
+    float d00=v0.Dot(v0);
+    float d01=v0.Dot(v1);
+    float d11=v1.Dot(v1);
+    float d20=v2.Dot(v0);
+    float d21=v2.Dot(v1);
 
-    double denominator=d00*d11-d01*d01;
-    double u=(d11*d20-d01*d21)/denominator;
-    double v=(d00*d21-d01*d20)/denominator;
-    double w=1-u-v;
+    float denominator=d00*d11-d01*d01;
+    float u=(d11*d20-d01*d21)/denominator;
+    float v=(d00*d21-d01*d20)/denominator;
+    float w=1-u-v;
 
     return(u>=0&&v>=0&&w>=0);
     }

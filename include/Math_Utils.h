@@ -45,7 +45,7 @@ class Vec3{
     Vec3 Dot(const Vec3& other) const {
         return Vec3(x * other.x, y * other.y, z * other.z);
     }
-    double magnitude_squared(){
+    float magnitude_squared(){
         return x*x+y*y+z*z;
     }
     T x, y, z;
@@ -82,7 +82,7 @@ class Vec2{
     T Dot(const Vec2& other) const {
         return x * other.x + y * other.y;
     }
-    double magnitude_squared(){
+    float magnitude_squared(){
         return x*x+y*y;
     }
     T x, y;
@@ -109,7 +109,7 @@ static Vec4<T> Cross_product(Vec4<T> v1, Vec4<T> v2){
     return Vec4<T>(v1.y*v2.z-v1.z*v2.y,v1.z*v2.x-v1.x*v2.z,v1.x*v2.y-v1.y*v2.x);
 }
 
-double magnitude_squared(){
+float magnitude_squared(){
     return x*x+y*y+z*z+w*w;
 }
   T x,y,z,w;
