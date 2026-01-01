@@ -25,7 +25,6 @@ public:
         m_NearPlane=NearPlane;
         m_FarPlane=FarPlane;
         Location_3d=location_3d;
-        Location_2d=INV::Vec2<T>(location_3d.x,location_3d.y);
         m_ProjectionMatrix=INV::Matrix4<double>::perspective(fov,AspectRatio,NearPlane,FarPlane);
     }
 
@@ -33,7 +32,6 @@ public:
         camera_type=p;
 
         Location_3d=location_3d;
-        Location_2d=INV::Vec2<T>(location_3d.x,location_3d.y);
 
         m_OrthoLeft=left;
         m_OrthoRight=right;
@@ -91,7 +89,6 @@ public:
     Type camera_type=Type::Orthographic;
 
     INV::Vec3<T> Location_3d;
-    INV::Vec2<T> Location_2d; // I dont know if i will use it
     INV::Quat<T> m_Rotation;
     // Projection parameters
     float m_fov=45.0f;

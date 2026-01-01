@@ -38,7 +38,8 @@ int main(){
    //r->DrawPolynomial([](float s){return std::log(s*s)*std::log(s*s*s);},S,U,C);
   //  r->DrawTriangle(S,U,INV::Vec2<uint16_t>(U.x,0),C,[](INV::Vec2<uint16_t> o,float norm){
       //         return INV::Vec3<uint8_t>(o.x*norm,o.y*norm,128);});
-    r->ClearColor(INV::Vec4<uint8_t>(C,0));
+    camera<double> cam(Type::Perspective,INV::Vec3<double>(0.0,0.0,0.0),60.0,dims.y/dims.x,0.001,50.0);
+    r->Draw_Tiangle_3d(cam,INV::Vec3<double>(S.x,S.y,3),INV::Vec3<double>(U.x,U.y,3),INV::Vec3<double>(0,U.y,3),C,nullptr);
     r->Create_PPM_File("output.ppm");
 
     std::cout << "Hello World!" << std::endl;

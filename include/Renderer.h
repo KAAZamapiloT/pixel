@@ -217,7 +217,7 @@ float p=256.0/static_cast<float>(may-miy);
      // Drawing a triangle in 3d space but then it can also accept a function pointer(can be passes as null)
     // but here main thing is to set color val
   // assuming world space cordinates-> otherwise local->world transformation
-  void Draw_Tiangle_3d(camera<double>*cam,INV::Vec3<double> p1,INV::Vec3<double> p2,INV::Vec3<double> p3,
+  void Draw_Tiangle_3d(camera<double>&cam,INV::Vec3<double> p1,INV::Vec3<double> p2,INV::Vec3<double> p3,
       INV::Vec3<uint8_t> color,INV::Vec3<uint8_t> (*f)(INV::Vec3<double>)
   ){
       INV::Vec3<double> maxvals;
@@ -229,7 +229,7 @@ float p=256.0/static_cast<float>(may-miy);
       maxvals.y=std::max({p1.y,p2.y,p3.y});
       maxvals.z=std::max({p1.z,p2.z,p3.z});
 
-     INV::Matrix4<double> ProjectionView = cam->GetProjectionView();
+     INV::Matrix4<double> ProjectionView = cam.GetProjectionView();
 
       if(f==nullptr){
           for(int i=minvals.z;i<=maxvals.z;++i){
