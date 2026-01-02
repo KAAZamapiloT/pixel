@@ -5,8 +5,13 @@
 #include "Renderer.h"
 #include "SDL3/SDL.h"
 
-
-int main(int argc,char* argv){
+#include <SDL3/SDL_main.h>
+int main(int argc,char* argv[]){
+    SDL_SetMainReady();
+    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_EVENTS) != 0) {
+        std::cerr << "SDL_Init Error: " << SDL_GetError() << "\n";
+        return -1;
+    }
 
     std::unique_ptr<renderer> r=std::make_unique<renderer>
     (1,std::make_unique<INV::Window>(512,512,"Main_Window"));
@@ -17,26 +22,7 @@ int main(int argc,char* argv){
       float f=255.0/static_cast<float>(dims.x);
       float g=255.0/static_cast<float>(dims.y);
 
-      if(SDL_Init(SDL_INIT_VIDEO)!=0){
-          return -1;
-      }
-      SDL_Window* window = SDL_CreateWindow(
-           "SDL3 + MSVC",
-           dims.x, dims.y,
-           SDL_WINDOW_RESIZABLE
-       );
-       bool running = true;
-          SDL_Event e;
 
-          while (running) {
-              while (SDL_PollEvent(&e)) {
-                  if (e.type == SDL_EVENT_QUIT)
-                      running = false;
-              }
-          }
-
-          SDL_DestroyWindow(window);
-          SDL_Quit();
 /*
     for(uint16_t i=0;i<dims.y;i++){
         for(uint16_t j=0;j<dims.x;j++){
@@ -64,7 +50,24 @@ int main(int argc,char* argv){
  //   r->Create_PPM_File("output.ppm");
 
 
-    std::cout << "Hello World!" << std::endl;
+    SDL_Window* window = SDL_CreateWindow(
+         "SDL3 + MSVC",
+         dims.x, dims.y,
+         SDL_WINDOW_RESIZABLE
+     );
+     bool running = true;
+     SDL_Event e;
+
+        while (running) {
+            while (SDL_PollEvent(&e)) {
+                if (e.type == SDL_EVENT_QUIT)
+                    running = false;
+            }
+        }
+
+        SDL_DestroyWindow(window);
+
+        SDL_Quit();
     return 0;
 }
 
