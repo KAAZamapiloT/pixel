@@ -1,18 +1,21 @@
+
+
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
 #include <cstdio>
-#include<iostream>
+#include <iostream>
 #include<cstdint>
 #include <memory>
 #include "Renderer.h"
-#include "SDL3/SDL.h"
 
-#include <SDL3/SDL_main.h>
 int main(int argc,char* argv[]){
-    SDL_SetMainReady();
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_EVENTS) != 0) {
-        std::cerr << "SDL_Init Error: " << SDL_GetError() << "\n";
+
+    if (!SDL_Init(SDL_INIT_VIDEO|SDL_INIT_EVENTS)) {
+        SDL_Log("SDL_Init Error: %s", SDL_GetError());
         return -1;
     }
 
+    std::cout << "Events initialized successfully!\n";
     std::unique_ptr<renderer> r=std::make_unique<renderer>
     (1,std::make_unique<INV::Window>(512,512,"Main_Window"));
 

@@ -24,12 +24,13 @@ add_executable(pixel_ppm
 )
 
 # Your own headers
-target_include_directories(pixel_ppm PRIVATE
+target_include_directories(pixel_ppm PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${SDL3_ROOT}/include"
 )
 
 # Link SDL3 correctly (pulls required Win32 system libs)
-target_link_libraries(pixel_ppm PRIVATE
+target_link_libraries(pixel_ppm PUBLIC
     SDL3::SDL3
 )
 
