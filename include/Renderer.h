@@ -271,6 +271,9 @@ float p=256.0/static_cast<float>(may-miy);
            ,m_Window->frame_buffer.end(),
            INV::Vec3<uint8_t>(Color.x,Color.y,Color.z));
    }
+   const uint8_t* GetColorBufferBytes() const {
+       return reinterpret_cast<const uint8_t*>(m_Window->frame_buffer.data());
+   }
   private:
     uint8_t m_id;
     std::unique_ptr<INV::Window> m_Window;
