@@ -4,7 +4,16 @@
 
 #include <iostream>
 #include <memory>
+#include <winnt.h>
 #include "Renderer.h"
+
+
+INV::Vec3<uint8_t> Shader(
+    INV::Vec2<uint16_t> p,
+    float f
+) {
+    return {p.x, p.y, static_cast<uint8_t>(f)};
+}
 
 int main(int argc, char* argv[])
 {
@@ -43,10 +52,11 @@ int main(int argc, char* argv[])
     SDL_Event e;
 
     INV::Vec2<double> A(45,45);
-     INV::Vec2<double> B(100,100);
-     INV::Vec2<double> C(150,150);
+     INV::Vec2<double> B(200,0);
+     INV::Vec2<double> C(0,200);
+
      INV::Vec3<uint8_t> w_color(1,1,121);
-     INV::Vec3<uint8_t> col=(178,72,1);
+     INV::Vec3<uint8_t> col=(178,72,123);
      while (running) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT)
@@ -54,10 +64,10 @@ int main(int argc, char* argv[])
         }
 
         r->ClearColor(INV::Vec4<uint8_t>(w_color, 255));
-
+        r->DrawTriangle(A, B, C, col,Shader);
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);
         SDL_RenderClear(sdlRenderer);
-        r->DrawTriangle(A, B, C, col);
+
 
         SDL_RenderTexture(sdlRenderer, texture, nullptr, nullptr);
         SDL_RenderPresent(sdlRenderer);

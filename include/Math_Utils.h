@@ -1,6 +1,4 @@
 #pragma once
-#include <locale>
-#include <system_error>
 #include<vector>
 #include<cstdint>
 #include"string"
