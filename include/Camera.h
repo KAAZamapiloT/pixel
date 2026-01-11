@@ -46,6 +46,7 @@ public:
          return m_ProjectionViewMatrix;
     }
     INV::Vec3<T> GetLocation(){ return Location_3d;}
+
     INV::Vec3<float> GetRoationEuler( ){return INV::Vec3<float>(m_pitch,m_yaw,m_roll);}
     void updateMatrix(){
       if(bViewDirty){
