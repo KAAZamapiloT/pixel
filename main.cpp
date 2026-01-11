@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <memory>
-
+#include<algorithm>
 #include "Renderer.h"
 
 
@@ -15,7 +15,7 @@ void UpdateColor(INV::Vec3<uint8_t>& color,float deltatime)
   color.z=255*std::cos(std::sin(deltatime+1)*color.z+1*std::sin(deltatime));
 }
 
-void UpdateLocation(INV::Vec2<double>& A,float x , float y,float deltatime){
+void UpdateLocation(INV::Vec2<double>& A, float x , float y,float deltatime){
     A.x+=x*deltatime;
     A.y+=y*deltatime;
 }
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
         1, std::make_unique<INV::Window>(512, 512, "Main_Window")
     );
 
-    auto dims = r->GetDimensions();
+    INV::Vec2<uint16_t> dims = r->GetDimensions();
 
     SDL_Window* window = SDL_CreateWindow(
         "SDL3 + MSVC",
@@ -66,13 +66,16 @@ int main(int argc, char* argv[])
             if (e.type == SDL_EVENT_QUIT)
                 running = false;
         }
+        float time = SDL_GetTicks() / 1000.0f;
 
         r->ClearColor(INV::Vec4<uint8_t>(w_color, 255));
         r->DrawTriangle(A, B, C, col);
-        UpdateColor(col,SDL_GetTicks());
-        UpdateLocation(A,10*abs(std::sin(SDL_GetTicks()/1000.0)),0,std::cos(SDL_GetTicks()/1000.0));
-        UpdateLocation(B,10*abs(std::sin(SDL_GetTicks()/1000.0)),0,std::cos(SDL_GetTicks()/1000.0));
-        UpdateLocation(C,10*abs(std::sin(SDL_GetTicks()/1000.0)),0,std::cos(SDL_GetTicks()/1000.0));
+        UpdateColor(col,time);
+        float y = std::sin(time);
+        float z = std::cos(time);
+        UpdateLocation(A,y,z,time);
+       // UpdateLocation(B,10*abs(std::sin(SDL_GetTicks()/1000.0)),std::sin(SDL_GetTicks()/1000.0),(SDL_GetTicks()/1000.0));
+       // UpdateLocation(C,10*abs(std::sin(SDL_GetTicks()/1000.0)),0,std::cos(SDL_GetTicks()/1000.0));
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);
         SDL_RenderClear(sdlRenderer);
 

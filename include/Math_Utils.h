@@ -355,3 +355,8 @@ Quat& operator=(const Quat& q) = default;
 };
 
 }
+
+// will implement math function here
+class Math{
+
+};
