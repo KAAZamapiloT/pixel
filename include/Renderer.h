@@ -134,6 +134,7 @@ void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_
  float constant=start.y-slope*start.x;
        for(uint16_t i=start.x;i<=end.x;++i){
            uint16_t y=round(slope*i+constant);
+
            SetPixelColor(INV::Vec2<uint16_t>(i,y),F(INV::Vec2<uint16_t>(i,y),1));
        }
 
@@ -149,6 +150,11 @@ void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_
 
        int may=std::max({p1.y,p2.y,p3.y});
        int miy=std::min({p1.y,p2.y,p3.y});
+
+       mix = std::max(mix, 0);
+       miy = std::max(miy, 0);
+       max = std::min(max, m_Window->m_width  - 1);
+       may= std::min(may,m_Window->m_height - 1);
 
        for(int i=miy;i<=may;++i){
          for(int j=mix;j<=max;++j){
@@ -174,6 +180,11 @@ void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_
              int may=std::max({p1.y,p2.y,p3.y});
              int miy=std::min({p1.y,p2.y,p3.y});
 
+
+             mix = std::max(mix, 0);
+             miy = std::max(miy, 0);
+             max = std::min(max, m_Window->m_width  - 1);
+             may= std::min(may,m_Window->m_height - 1);
 
 float p=256.0/static_cast<float>(may-miy);
              for(int i=miy;i<may;++i){
@@ -369,5 +380,14 @@ template<typename T>
 
      DrawLine(p1,p2,color);
 
+   }
+
+   bool InsideScreenSpace(INV::Vec2<int> Point,INV::Vec2<float> a,INV::Vec2<float> b,INV::Vec2<float> c){
+
+     bool h=(Point.x>=0 && Point.x<m_Window->m_width && Point.y>=0 && Point.y<m_Window->m_height);
+     bool j=(a.x>=0 && a.x<m_Window->m_width && a.y>=0 && a.y<m_Window->m_height);
+     bool k=(b.x>=0 && b.x<m_Window->m_width && b.y>=0 && b.y<m_Window->m_height);
+     bool l=(c.x>=0 && c.x<m_Window->m_width && c.y>=0 && c.y<m_Window->m_height);
+     return(h&&j&&k&&l);
    }
 };

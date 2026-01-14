@@ -130,6 +130,13 @@ Matrix2 operator+(const Matrix2& other){
     return result;
 }
 
+Vec2<T> operator*(const Vec2<T>& vec) const
+{
+    return Vec2<T>(
+        Mat[0][0] * vec.x + Mat[0][1] * vec.y,
+        Mat[1][0] * vec.x + Mat[1][1] * vec.y
+    );
+}
 
 T Mat[2][2];
 };
@@ -358,5 +365,14 @@ Quat& operator=(const Quat& q) = default;
 
 // will implement math function here
 class Math{
+public:
+static INV::Matrix2<float> ScaleMatrix2D(float scale){
+    return INV::Matrix2<float>(scale,0,0,scale);
+}
+static INV::Matrix2<float> RotateMatrix2D(float angle){
+    float c = std::cos(angle);
+    float s = std::sin(angle);
+    return INV::Matrix2<float>(c,-s,s,c);
+}
 
 };

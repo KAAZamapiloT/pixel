@@ -91,6 +91,12 @@ int main(int argc, char* argv[])
         B.x=B.x+cos(time)*deltaTime*100;
         C.x=C.x+sin(time)*deltaTime*100;
 
+        float x=1;
+        x=std::clamp(x,0.8f,1.2f);
+        A = Math::ScaleMatrix2D(x+abs(std::sin(time))) * A;
+        B = Math::ScaleMatrix2D(x+abs(std::sin(time))) * B;
+        C = Math::ScaleMatrix2D(x+abs(std::sin(time))) * C;
+       x+=time;
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);
         SDL_RenderClear(sdlRenderer);
         SDL_RenderTexture(sdlRenderer, texture, nullptr, nullptr);
