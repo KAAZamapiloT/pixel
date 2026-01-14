@@ -15,8 +15,8 @@ void UpdateColor(INV::Vec3<uint8_t>& color,INV::Vec3<uint8_t> u_color)
 }
 
 void UpdateLocation(INV::Vec2<double>& A, float x , float y,float deltatime){
-    A.x+=x;
-    A.y+=y;
+    A.x+=x*deltatime;
+    A.y+=y*deltatime;
 }
 int main(int argc, char* argv[])
 {
@@ -61,9 +61,7 @@ int main(int argc, char* argv[])
      INV::Vec3<uint8_t> w_color(1,1,121);
      INV::Vec3<uint8_t> col(178,72,123);
      INV::Vec3<uint8_t> U_Color(123,234,13);
-     uint64_t counter=0;
-     uint16_t switcher=0;
-     bool switchb=false;
+
 
 
      while (running) {
@@ -77,10 +75,9 @@ int main(int argc, char* argv[])
         lastTime = time;
 
         r->ClearColor(INV::Vec4<uint8_t>(w_color, 255));
-        r->DrawTriangle(A, B, C, col);
+
         UpdateColor(col,U_Color);
-       counter=(counter+time)/dims.x-std::sin(time);
-       counter=std::clamp((float)counter,0.0f,(float)dims.x-1);
+
         float y = std::sin(time);
         float z = std::cos(time);
 
@@ -88,22 +85,14 @@ int main(int argc, char* argv[])
         U_Color.y=abs(cos(time/2))*255;
         U_Color.z=abs(sin(time))*255;
 
-        UpdateLocation(A,y,z,deltaTime);
-        UpdateLocation(B,y,z,deltaTime);
-        UpdateLocation(C,y,z,deltaTime);
+        r->DrawTriangle(A, B, C, col);
 
-       A.x=std::clamp((float)A.x,0.0f,(float)dims.x-1);
-       B.x=std::clamp((float)B.x,0.0f,(float)dims.x-1);
-       C.x=std::clamp((float)C.x,0.0f,(float)dims.x-1);
-
-       A.y=std::clamp((float)A.y,0.0f,(float)dims.y-1);
-       B.y=std::clamp((float)B.y,0.0f,(float)dims.y-1);
-       C.y=std::clamp((float)C.y,0.0f,(float)dims.y-1);
+        A.x=A.x+sin(time)*deltaTime*100;
+        B.x=B.x+cos(time)*deltaTime*100;
+        C.x=C.x+sin(time)*deltaTime*100;
 
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);
         SDL_RenderClear(sdlRenderer);
-
-
         SDL_RenderTexture(sdlRenderer, texture, nullptr, nullptr);
         SDL_RenderPresent(sdlRenderer);
         }

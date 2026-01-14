@@ -138,19 +138,7 @@ void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_
        }
 
 }
-void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec4<uint8_t> Color,
-    INV::Vec3<uint8_t>(*F)(INV::Vec2<uint16_t>,float) )
-{
- float p=256.0/static_cast<float>(end.x-start.x);
- float slope=(float)(end.y-start.y)/(end.x-start.x);
 
- float constant=start.y-slope*start.x;
-       for(uint16_t i=start.x;i<=end.x;++i){
-           uint16_t y=round(slope*i+constant);
-           SetPixelColor(INV::Vec2<uint16_t>(i,y),F(INV::Vec2<uint16_t>(i,y),1));
-       }
-
-}
 
      template<typename p>
     void DrawTriangle(INV::Vec2<p> p1,INV::Vec2<p> p2,INV::Vec2<p> p3,INV::Vec3<uint8_t> colors ){
@@ -232,7 +220,7 @@ float p=256.0/static_cast<float>(may-miy);
          m_Window->SetPixelColor(index,Color);
      }
         //---------------------Result-----------------------------//
-     void Create_PPM_File(std::string filename){
+    /*  void Create_PPM_File(std::string filename){
          INV::Vec2<uint16_t> dim=GetDimensions();
          std::ofstream outFile(filename);
          if(!outFile){
@@ -265,7 +253,7 @@ float p=256.0/static_cast<float>(may-miy);
 
      }
 
-
+*/
 
      //---------------------Getters-----------------------------//
      INV::Vec3<uint8_t> GetColor(INV::Vec2<uint16_t> cord){
@@ -311,7 +299,9 @@ float p=256.0/static_cast<float>(may-miy);
                     INV::Vec3<float> ndc=INV::Vec3<float>(clip.x/clip.w,clip.y/clip.w,clip.z/clip.w);
                     INV::Vec2<float> screen=INV::Vec2<float>((ndc.x+1)*0.5*m_Window->m_width,(1-ndc.y)*0.5*m_Window->m_height);
                     if(screen.x>=0 && screen.x<m_Window->m_width && screen.y>=0 && screen.y<m_Window->m_height){
-                      m_Window->frame_buffer[screen.y*m_Window->m_width+screen.x]=INV::Vec3<uint8_t>(color.x,color.y,color.z);
+                        INV::Vec3<uint8_t>C(color.x,color.y,color.z);
+                        uint16_t c=screen.y*m_Window->m_width+screen.x;
+                        SetPixelColor(c,C);
                     }
                   }
               }
@@ -339,7 +329,7 @@ float p=256.0/static_cast<float>(may-miy);
    //    printf("%d %d",m_Window->frame_buffer.begin(),m_Window->frame_buffer.end());
        std::fill(m_Window->frame_buffer.begin()
            ,m_Window->frame_buffer.end(),
-           INV::Vec3<uint8_t>(Color.x,Color.y,Color.z));
+           INV::Vec4<uint8_t>(Color.x,Color.y,Color.z,Color.w));
    }
    const uint8_t* GetColorBufferBytes() const {
        return reinterpret_cast<const uint8_t*>(m_Window->frame_buffer.data());
@@ -376,7 +366,6 @@ template<typename T>
    void linear_interpolation(INV::Vec2<uint16_t> p1,INV::Vec2<uint16_t>p2,INV::Vec3<uint8_t> color){
 
      DrawLine(p1,p2,color);
-
 
    }
 };
