@@ -2,17 +2,16 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 
+#include <cstdint>
 #include <iostream>
 #include <memory>
 #include<algorithm>
 #include "Renderer.h"
 
 
-void UpdateColor(INV::Vec3<uint8_t>& color,float deltatime)
+void UpdateColor(INV::Vec3<uint8_t>& color,INV::Vec3<uint8_t> u_color)
 {
-  color.x=255*std::sin(std::sin(deltatime)*color.x+1*std::sin(deltatime));
-  color.y=255*std::cos(std::cos(deltatime)*color.y)+1*std::sin(deltatime);
-  color.z=255*std::cos(std::sin(deltatime+1)*color.z+1*std::sin(deltatime));
+  color=u_color;
 }
 
 void UpdateLocation(INV::Vec2<double>& A, float x , float y,float deltatime){
@@ -61,6 +60,8 @@ int main(int argc, char* argv[])
 
      INV::Vec3<uint8_t> w_color(1,1,121);
      INV::Vec3<uint8_t> col=(178,72,123);
+     INV::Vec3<uint8_t> U_Color=(123,234,13);
+     uint64_t counter=0;
      while (running) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT)
@@ -70,11 +71,24 @@ int main(int argc, char* argv[])
 
         r->ClearColor(INV::Vec4<uint8_t>(w_color, 255));
         r->DrawTriangle(A, B, C, col);
-        UpdateColor(col,time);
-        float y = std::sin(time);
-        float z = std::cos(time);
-        UpdateLocation(A,y,z,time);
-       // UpdateLocation(B,10*abs(std::sin(SDL_GetTicks()/1000.0)),std::sin(SDL_GetTicks()/1000.0),(SDL_GetTicks()/1000.0));
+        UpdateColor(col,U_Color);
+       counter=(counter+time)/255-124;
+        float y = 2*std::sin(counter);
+        float z = 2*std::cos(counter);
+        U_Color.x=abs(sin(time/2))*255;
+        U_Color.y=abs(cos(time/2))*255;
+        U_Color.z=abs(sin(time))*255;
+       UpdateLocation(A,y,z,time);
+       UpdateLocation(B,y,z,time);
+       UpdateLocation(C,y,z,time);
+       std::clamp((float)A.x,0.0f,(float)dims.x-1);
+       std::clamp((float)A.y,0.0f,(float)dims.y-1);
+       std::clamp((float)B.x,0.0f,(float)dims.x-1);
+       std::clamp((float)B.y,0.0f,(float)dims.y-1);
+       std::clamp((float)C.x,0.0f,(float)dims.x-1);
+       std::clamp((float)C.y,0.0f,(float)dims.y-1);
+
+      //  UpdateLocation(B,10*abs(std::sin(SDL_GetTicks()/1000.0)),std::sin(SDL_GetTicks()/1000.0),(SDL_GetTicks()/1000.0));
        // UpdateLocation(C,10*abs(std::sin(SDL_GetTicks()/1000.0)),0,std::cos(SDL_GetTicks()/1000.0));
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);
         SDL_RenderClear(sdlRenderer);

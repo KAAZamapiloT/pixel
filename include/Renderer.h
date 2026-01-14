@@ -15,7 +15,7 @@ namespace INV{
                     m_width=width;
                     m_height=height;
                     m_name=name;
-                    frame_buffer=std::vector<Vec3<uint8_t>>(width*height,{0,0,0});
+                    frame_buffer=std::vector<Vec4<uint8_t>>(width*height,{0,0,0,0});
                     depth_buffer=std::vector<uint8_t>(width*height,{0});
 
 
@@ -24,24 +24,80 @@ namespace INV{
       inline uint16_t GetHeight(){return m_height;}
 
       void SetPixelColor(Vec2<uint16_t> cord,Vec3<uint8_t> Color){
-        frame_buffer[cord.x + cord.y * m_width]=Color;
+        frame_buffer[cord.x + cord.y * m_width].x=Color.x;
+        frame_buffer[cord.x + cord.y * m_width].y=Color.y;
+        frame_buffer[cord.x + cord.y * m_width].z=Color.z;
+      }
+      void SetPixelColor(Vec2<uint16_t> cord,Vec4<uint8_t> Color){
+
+          int c = cord.x + cord.y * m_width;
+              float srcA = Color.w / 255.0f;
+              float srcR = Color.x / 255.0f;
+              float srcG = Color.y / 255.0f;
+              float srcB = Color.z / 255.0f;
+
+              float dstR = frame_buffer[c].x / 255.0f;
+              float dstG = frame_buffer[c].y / 255.0f;
+              float dstB = frame_buffer[c].z / 255.0f;
+
+              float outR = srcR * srcA + dstR * (1.0f - srcA);
+              float outG = srcG * srcA + dstG * (1.0f - srcA);
+              float outB = srcB * srcA + dstB * (1.0f - srcA);
+
+              frame_buffer[c].x = (uint8_t)(outR * 255.0f);
+              frame_buffer[c].y = (uint8_t)(outG * 255.0f);
+              frame_buffer[c].z = (uint8_t)(outB * 255.0f);
+              frame_buffer[c].w = 255;
       }
       void SetPixelColor(uint32_t index,Vec3<uint8_t> Color){
-        frame_buffer[index]=Color;
-      }
 
+        frame_buffer[index].x=Color.x;
+         frame_buffer[index].y=Color.y;
+          frame_buffer[index].z=Color.z;
+      }
+      void SetPixelColor(uint32_t index,Vec4<uint8_t> Color){
+              int c = index;
+              float srcA = Color.w / 255.0f;
+              float srcR = Color.x / 255.0f;
+              float srcG = Color.y / 255.0f;
+              float srcB = Color.z / 255.0f;
+
+              float dstR = frame_buffer[c].x / 255.0f;
+              float dstG = frame_buffer[c].y / 255.0f;
+              float dstB = frame_buffer[c].z / 255.0f;
+
+              float outR = srcR * srcA + dstR * (1.0f - srcA);
+              float outG = srcG * srcA + dstG * (1.0f - srcA);
+              float outB = srcB * srcA + dstB * (1.0f - srcA);
+
+              frame_buffer[c].x = (uint8_t)(outR * 255.0f);
+              frame_buffer[c].y = (uint8_t)(outG * 255.0f);
+              frame_buffer[c].z = (uint8_t)(outB * 255.0f);
+              frame_buffer[c].w = 255;
+      }
       Vec3<uint8_t> GetColor(Vec2<uint16_t> cord){
-        return frame_buffer[cord.x + cord.y * m_width];
+          int c=cord.x + cord.y * m_width;
+        return INV::Vec3<uint8_t>(frame_buffer[c].x,frame_buffer[c].y,frame_buffer[c].z);
       }
 
       Vec3<uint8_t> GetColor(uint32_t dex){
+          return INV::Vec3<uint8_t>(frame_buffer[dex].x,frame_buffer[dex].y,
+              frame_buffer[dex].z);
+      }
+
+      Vec4<uint8_t> GetColor_A(Vec2<uint16_t> cord){
+          int c=cord.x + cord.y * m_width;
+        return frame_buffer[c];
+      }
+
+      Vec4<uint8_t> GetColor_A(uint32_t dex){
           return frame_buffer[dex];
       }
 
 
       uint16_t m_width,m_height;
       std::string m_name;
-      std::vector<Vec3<uint8_t>> frame_buffer;
+      std::vector<Vec4<uint8_t>> frame_buffer;
 
       // really useful for ovellaping images
       std::vector<uint8_t> depth_buffer;
