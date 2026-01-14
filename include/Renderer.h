@@ -138,6 +138,20 @@ void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_
        }
 
 }
+void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec4<uint8_t> Color,
+    INV::Vec3<uint8_t>(*F)(INV::Vec2<uint16_t>,float) )
+{
+ float p=256.0/static_cast<float>(end.x-start.x);
+ float slope=(float)(end.y-start.y)/(end.x-start.x);
+
+ float constant=start.y-slope*start.x;
+       for(uint16_t i=start.x;i<=end.x;++i){
+           uint16_t y=round(slope*i+constant);
+           SetPixelColor(INV::Vec2<uint16_t>(i,y),F(INV::Vec2<uint16_t>(i,y),1));
+       }
+
+}
+
      template<typename p>
     void DrawTriangle(INV::Vec2<p> p1,INV::Vec2<p> p2,INV::Vec2<p> p3,INV::Vec3<uint8_t> colors ){
 
@@ -160,7 +174,7 @@ void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_
      }
 
      // drawing with a color function
-      template<typename F>
+     template<typename F>
      void DrawTriangle(INV::Vec2<F> p1,INV::Vec2<F>p2,INV::Vec2<F>p3,INV::Vec3<uint8_t> basecolor
 
          ,INV::Vec3<uint8_t>(*X)(INV::Vec2<uint16_t>,float)){

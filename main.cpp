@@ -15,8 +15,8 @@ void UpdateColor(INV::Vec3<uint8_t>& color,INV::Vec3<uint8_t> u_color)
 }
 
 void UpdateLocation(INV::Vec2<double>& A, float x , float y,float deltatime){
-    A.x+=x*deltatime;
-    A.y+=y*deltatime;
+    A.x+=x;
+    A.y+=y;
 }
 int main(int argc, char* argv[])
 {
@@ -59,37 +59,47 @@ int main(int argc, char* argv[])
      INV::Vec2<double> C(0,200);
 
      INV::Vec3<uint8_t> w_color(1,1,121);
-     INV::Vec3<uint8_t> col=(178,72,123);
-     INV::Vec3<uint8_t> U_Color=(123,234,13);
+     INV::Vec3<uint8_t> col(178,72,123);
+     INV::Vec3<uint8_t> U_Color(123,234,13);
      uint64_t counter=0;
+     uint16_t switcher=0;
+     bool switchb=false;
+
+
      while (running) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT)
                 running = false;
         }
+        static float lastTime = 0.0f;
         float time = SDL_GetTicks() / 1000.0f;
+        float deltaTime = time - lastTime;
+        lastTime = time;
 
         r->ClearColor(INV::Vec4<uint8_t>(w_color, 255));
         r->DrawTriangle(A, B, C, col);
         UpdateColor(col,U_Color);
-       counter=(counter+time)/255-124;
-        float y = 2*std::sin(counter);
-        float z = 2*std::cos(counter);
+       counter=(counter+time)/dims.x-std::sin(time);
+       counter=std::clamp((float)counter,0.0f,(float)dims.x-1);
+        float y = std::sin(time);
+        float z = std::cos(time);
+
         U_Color.x=abs(sin(time/2))*255;
         U_Color.y=abs(cos(time/2))*255;
         U_Color.z=abs(sin(time))*255;
-       UpdateLocation(A,y,z,time);
-       UpdateLocation(B,y,z,time);
-       UpdateLocation(C,y,z,time);
-       std::clamp((float)A.x,0.0f,(float)dims.x-1);
-       std::clamp((float)A.y,0.0f,(float)dims.y-1);
-       std::clamp((float)B.x,0.0f,(float)dims.x-1);
-       std::clamp((float)B.y,0.0f,(float)dims.y-1);
-       std::clamp((float)C.x,0.0f,(float)dims.x-1);
-       std::clamp((float)C.y,0.0f,(float)dims.y-1);
 
-      //  UpdateLocation(B,10*abs(std::sin(SDL_GetTicks()/1000.0)),std::sin(SDL_GetTicks()/1000.0),(SDL_GetTicks()/1000.0));
-       // UpdateLocation(C,10*abs(std::sin(SDL_GetTicks()/1000.0)),0,std::cos(SDL_GetTicks()/1000.0));
+        UpdateLocation(A,y,z,deltaTime);
+        UpdateLocation(B,y,z,deltaTime);
+        UpdateLocation(C,y,z,deltaTime);
+
+       A.x=std::clamp((float)A.x,0.0f,(float)dims.x-1);
+       B.x=std::clamp((float)B.x,0.0f,(float)dims.x-1);
+       C.x=std::clamp((float)C.x,0.0f,(float)dims.x-1);
+
+       A.y=std::clamp((float)A.y,0.0f,(float)dims.y-1);
+       B.y=std::clamp((float)B.y,0.0f,(float)dims.y-1);
+       C.y=std::clamp((float)C.y,0.0f,(float)dims.y-1);
+
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);
         SDL_RenderClear(sdlRenderer);
 
