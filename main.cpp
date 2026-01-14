@@ -14,7 +14,7 @@ void UpdateColor(INV::Vec3<uint8_t>& color,INV::Vec3<uint8_t> u_color)
   color=u_color;
 }
 
-void UpdateLocation(INV::Vec2<double>& A, float x , float y,float deltatime){
+void UpdateLocation(INV::Vec2<float>& A, float x , float y,float deltatime){
     A.x+=x*deltatime;
     A.y+=y*deltatime;
 }
@@ -43,20 +43,20 @@ int main(int argc, char* argv[])
 
     SDL_Texture* texture = SDL_CreateTexture(
         sdlRenderer,
-        SDL_PIXELFORMAT_RGB24,
+        SDL_PIXELFORMAT_RGBA32,
         SDL_TEXTUREACCESS_STREAMING,
         dims.x, dims.y
     );
 
     const uint8_t* pixels = r->GetColorBufferBytes();
-    int pitch = dims.x * 3;
+    int pitch = dims.x * 4;
 
     bool running = true;
     SDL_Event e;
 
-    INV::Vec2<double> A(45,45);
-     INV::Vec2<double> B(200,0);
-     INV::Vec2<double> C(0,200);
+    INV::Vec2<float> A(45,45);
+     INV::Vec2<float> B(200,0);
+     INV::Vec2<float> C(0,200);
 
      INV::Vec3<uint8_t> w_color(1,1,121);
      INV::Vec3<uint8_t> col(178,72,123);
@@ -102,4 +102,6 @@ int main(int argc, char* argv[])
     SDL_DestroyRenderer(sdlRenderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+
+    return 0;
 }

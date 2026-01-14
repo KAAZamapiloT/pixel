@@ -144,11 +144,11 @@ void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_
     void DrawTriangle(INV::Vec2<p> p1,INV::Vec2<p> p2,INV::Vec2<p> p3,INV::Vec3<uint8_t> colors ){
 
 
-       uint16_t mix=std::min({p1.x,p2.x,p3.x});
-       uint16_t max=std::max({p1.x,p2.x,p3.x});
+       int mix=std::min({p1.x,p2.x,p3.x});
+       int max=std::max({p1.x,p2.x,p3.x});
 
-       uint16_t may=std::max({p1.y,p2.y,p3.y});
-       uint16_t miy=std::min({p1.y,p2.y,p3.y});
+       int may=std::max({p1.y,p2.y,p3.y});
+       int miy=std::min({p1.y,p2.y,p3.y});
 
        for(int i=miy;i<=may;++i){
          for(int j=mix;j<=max;++j){
@@ -168,17 +168,17 @@ void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_
          ,INV::Vec3<uint8_t>(*X)(INV::Vec2<uint16_t>,float)){
 
 
-             uint16_t mix=std::min({p1.x,p2.x,p3.x});
-             uint16_t max=std::max({p1.x,p2.x,p3.x});
+             int mix=std::min({p1.x,p2.x,p3.x});
+             int max=std::max({p1.x,p2.x,p3.x});
 
-             uint16_t may=std::max({p1.y,p2.y,p3.y});
-             uint16_t miy=std::min({p1.y,p2.y,p3.y});
+             int may=std::max({p1.y,p2.y,p3.y});
+             int miy=std::min({p1.y,p2.y,p3.y});
 
 
 float p=256.0/static_cast<float>(may-miy);
-             for(uint16_t i=miy;i<may;++i){
-               for(uint16_t j=mix;j<=max;++j){
-                  if(InsideTrig(INV::Vec2<uint16_t>(j,i),p1,p2,p3)){
+             for(int i=miy;i<may;++i){
+               for(int j=mix;j<=max;++j){
+                  if(InsideTrig(INV::Vec2<int>(j,i),p1,p2,p3)){
                     SetPixelColor(INV::Vec2<uint16_t>(j,i),X(INV::Vec2<uint16_t>(j,i),p));
 
                   }
@@ -327,9 +327,11 @@ float p=256.0/static_cast<float>(may-miy);
 
    void ClearColor(INV::Vec4<uint8_t> Color){
    //    printf("%d %d",m_Window->frame_buffer.begin(),m_Window->frame_buffer.end());
-       std::fill(m_Window->frame_buffer.begin()
-           ,m_Window->frame_buffer.end(),
-           INV::Vec4<uint8_t>(Color.x,Color.y,Color.z,Color.w));
+   std::fill(
+       m_Window->frame_buffer.begin(),
+       m_Window->frame_buffer.end(),
+       Color
+   );
    }
    const uint8_t* GetColorBufferBytes() const {
        return reinterpret_cast<const uint8_t*>(m_Window->frame_buffer.data());
