@@ -117,32 +117,45 @@ class renderer{
     }
 
    //---------------------Mods-----------------------------//
-     void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_t> Color){
+     void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Color){
+
      INV::Vec2<uint16_t> dim=GetDimensions();
-     if(start.x>end.x){
-         std::cerr<<"invalid arguments"<<std::endl;
-         return;
+     if (start.x > end.x)
+         std::swap(start, end);
+     float dx=end.x-start.x;
+     float dy=end.y-start.y;
+     int steps=static_cast<int>(std::max(std::abs(dx),std::abs(dy)));
+if(steps==0) return;
+
+    float xInc = dx / steps;
+    float yInc = dy / steps;
+
+    float x=start.x;
+    float y=start.y;
+
+     for(int i=start.x;i<=end.x;++i){
+         SetPixelColor(INV::Vec2<uint16_t>(i,y),Color);
+         y+=yInc;
      }
 
 }
-void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_t> Color,
+void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Color,
     INV::Vec3<uint8_t>(*F)(INV::Vec2<uint16_t>,float) )
 {
  float p=256.0/static_cast<float>(end.x-start.x);
  float slope=(float)(end.y-start.y)/(end.x-start.x);
 
  float constant=start.y-slope*start.x;
-       for(uint16_t i=start.x;i<=end.x;++i){
-           uint16_t y=round(slope*i+constant);
-
+       for(int i=start.x;i<=end.x;++i){
+           int y=round(slope*i+constant);
+          if(y<0) continue;
            SetPixelColor(INV::Vec2<uint16_t>(i,y),F(INV::Vec2<uint16_t>(i,y),1));
        }
 
 }
 
 
-     template<typename p>
-    void DrawTriangle(INV::Vec2<p> p1,INV::Vec2<p> p2,INV::Vec2<p> p3,INV::Vec3<uint8_t> colors ){
+    void DrawTriangle(INV::Vec2<float> p1,INV::Vec2<float> p2,INV::Vec2<float> p3,INV::Vec3<uint8_t> colors ){
 
 
        int mix=std::min({p1.x,p2.x,p3.x});
@@ -159,7 +172,7 @@ void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_
        for(int i=miy;i<=may;++i){
          for(int j=mix;j<=max;++j){
 
-           if(InsideTrig(INV::Vec2<p>(j,i),p1,p2,p3)){
+           if(InsideTrig(INV::Vec2<float>(j,i),p1,p2,p3)){
              SetPixelColor(INV::Vec2<uint16_t>(j,i),colors);
            }
 
@@ -168,8 +181,8 @@ void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_
      }
 
      // drawing with a color function
-     template<typename F>
-     void DrawTriangle(INV::Vec2<F> p1,INV::Vec2<F>p2,INV::Vec2<F>p3,INV::Vec3<uint8_t> basecolor
+
+     void DrawTriangle(INV::Vec2<float> p1,INV::Vec2<float>p2,INV::Vec2<float>p3,INV::Vec3<uint8_t> basecolor
 
          ,INV::Vec3<uint8_t>(*X)(INV::Vec2<uint16_t>,float)){
 
@@ -189,7 +202,7 @@ void DrawLine(INV::Vec2<uint16_t> start,INV::Vec2<uint16_t> end,INV::Vec3<uint8_
 float p=256.0/static_cast<float>(may-miy);
              for(int i=miy;i<may;++i){
                for(int j=mix;j<=max;++j){
-                  if(InsideTrig(INV::Vec2<int>(j,i),p1,p2,p3)){
+                  if(InsideTrig(INV::Vec2<float>(j,i),p1,p2,p3)){
                     SetPixelColor(INV::Vec2<uint16_t>(j,i),X(INV::Vec2<uint16_t>(j,i),p));
 
                   }
@@ -197,8 +210,7 @@ float p=256.0/static_cast<float>(may-miy);
               }
 
      }
-     template<typename p>
-     void DrawPlane(INV::Vec2<p> p1,INV::Vec2<p>p2,INV::Vec2<p>p3,INV::Vec2<p> p4,INV::Vec3<uint8_t> color){
+     void DrawPlane(INV::Vec2<float> p1,INV::Vec2<float>p2,INV::Vec2<float>p3,INV::Vec2<float> p4,INV::Vec3<uint8_t> color){
 
        DrawTriangle(p1,p2,p4,color);
        DrawTriangle(p1,p2,p3,color);
@@ -350,8 +362,8 @@ float p=256.0/static_cast<float>(may-miy);
   private:
     uint8_t m_id;
     std::unique_ptr<INV::Window> m_Window;
-template<typename T>
-    bool InsideTrig(INV::Vec2<T> Point,INV::Vec2<T> a,INV::Vec2<T> b,INV::Vec2<T> c){
+
+    bool InsideTrig(INV::Vec2<float> Point,INV::Vec2<float> a,INV::Vec2<float> b,INV::Vec2<float> c){
 
 
       INV::Vec2<float> ab=INV::Vec2<float>(b.x,b.y)-INV::Vec2<float>(a.x,a.y);
@@ -378,7 +390,8 @@ template<typename T>
     }
    void linear_interpolation(INV::Vec2<uint16_t> p1,INV::Vec2<uint16_t>p2,INV::Vec3<uint8_t> color){
 
-     DrawLine(p1,p2,color);
+       //TODO: FIX THIS
+   //  DrawLine(p1,p2,color);
 
    }
 
