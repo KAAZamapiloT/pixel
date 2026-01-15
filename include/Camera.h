@@ -7,7 +7,7 @@
  *
  */
 
- enum class Type{
+ enum class ECameraType{
      Perspective,
      Orthographic
  };
@@ -16,7 +16,7 @@
 template<typename T>
 class camera{
 public:
-    camera(Type p,INV::Vec3<T> location_3d,  float fov, float AspectRatio,
+    camera(ECameraType p,INV::Vec3<T> location_3d,  float fov, float AspectRatio,
     float NearPlane,
     float FarPlane){
         camera_type=p;
@@ -26,9 +26,10 @@ public:
         m_FarPlane=FarPlane;
         Location_3d=location_3d;
         m_ProjectionMatrix=INV::Matrix4<float>::perspective(fov,AspectRatio,NearPlane,FarPlane);
+        Init();
     }
 
-    camera(Type p,INV::Vec3<T> location_3d,float left,float right,float bottom,float top,float NearPlane,float FarPlane){
+    camera(ECameraType p,INV::Vec3<T> location_3d,float left,float right,float bottom,float top,float NearPlane,float FarPlane){
         camera_type=p;
 
         Location_3d=location_3d;
@@ -40,10 +41,16 @@ public:
         m_NearPlane=NearPlane;
         m_FarPlane=FarPlane;
         m_Ortho=INV::Matrix4<float>::ortho(left,right,bottom,top,NearPlane,FarPlane);
+        UpdateViewMatrix();
+        UpdateOrientation();
+        UpdateProjectionView();
     }
 
     INV::Matrix4<float> GetProjectionView(){
          return m_ProjectionViewMatrix;
+    }
+    INV::Matrix4<float> GetViewMatrix(){
+         return m_ViewMatrix;
     }
     INV::Vec3<T> GetLocation(){ return Location_3d;}
 
@@ -52,11 +59,21 @@ public:
       if(bViewDirty){
         UpdateViewMatrix();
       }
-
     }
   private:
+
+  void Init(){
+      UpdateViewMatrix();
+      UpdateOrientation();
+      UpdateProjectionMatrix();
+  }
   void UpdateProjectionView(){
     m_ProjectionViewMatrix = m_ProjectionMatrix*m_ViewMatrix;
+  }
+
+  void UpdateProjectionMatrix(){
+    m_ProjectionMatrix=INV::Matrix4<float>::perspective(m_fov,m_AspectRatio,m_NearPlane,m_FarPlane);
+    UpdateProjectionView();
   }
     void UpdateOrientaionVector(){
 
@@ -87,7 +104,7 @@ public:
 
     }
     //default camera_type
-    Type camera_type=Type::Orthographic;
+    ECameraType camera_type=ECameraType::Orthographic;
 
     INV::Vec3<T> Location_3d;
     INV::Quat<T> m_Rotation;

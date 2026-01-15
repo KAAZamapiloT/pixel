@@ -63,8 +63,21 @@ int main(int argc, char* argv[])
      INV::Vec3<uint8_t> U_Color(123,234,13);
 
 
+camera<float> camera(ECameraType::Perspective,INV::Vec3<float>(0,0,0),60.f,static_cast<float>(dims.x/dims.y),0.1f,1.f);
+INV::Matrix4<float> projectionViewMatrix = camera.GetProjectionView();
+INV::Matrix4<float> viewMatrix = camera.GetViewMatrix();
+for(int i=0;i<4;++i){
+    for(int j=0;j<4;++j){
+        printf("ProjectionView Matrix Element %d %d: %f\n", i,j, projectionViewMatrix[i][j]);
+    }
+}
+for(int i=0;i<4;++i){
+    for(int j=0;j<4;++j){
+        printf("View Matrix Element %d %d: %f\n", i,j, viewMatrix[i][j]);
+    }
+}
 
-     while (running) {
+while (running) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT)
                 running = false;
@@ -85,9 +98,10 @@ int main(int argc, char* argv[])
         U_Color.y=abs(cos(time/2))*255;
         U_Color.z=abs(sin(time))*255;
 
-        r->DrawTriangle(A, B, C, col);
+     //   r->DrawTriangle(A, B, C, col);
 
-        r->DrawLine(A,B+B,col);
+       // r->DrawLine(A,B+B,col);
+       r->Draw_Triangle_3d(camera,INV::Vec3<float>(C,12),INV::Vec3<float>(A,12),INV::Vec3<float>(B,12),col,nullptr);
       //  A.x=A.x+sin(time)*deltaTime*100;
       //  B.x=B.x+cos(time)*deltaTime*100;
       //  C.x=C.x+sin(time)*deltaTime*100;

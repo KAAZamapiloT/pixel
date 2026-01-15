@@ -298,7 +298,7 @@ float p=256.0/static_cast<float>(may-miy);
      // Drawing a triangle in 3d space but then it can also accept a function pointer(can be passes as null)
     // but here main thing is to set color val
   // assuming world space cordinates-> otherwise local->world transformation
-  void Draw_Tiangle_3d(camera<float>&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec3<float> p3,
+  void Draw_Triangle_3d(camera<float>&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec3<float> p3,
       INV::Vec3<uint8_t> color,INV::Vec3<uint8_t> (*f)(INV::Vec3<float>)
   ){
       INV::Vec3<float> maxvals;
