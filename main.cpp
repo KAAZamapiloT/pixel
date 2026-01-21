@@ -2,6 +2,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 
+#include <atomic>
 #include <cstdint>
 #include <iostream>
 #include <memory>
@@ -63,7 +64,7 @@ int main(int argc, char* argv[])
      INV::Vec3<uint8_t> U_Color(123,234,13);
 
 
-camera<float> camera(ECameraType::Perspective,INV::Vec3<float>(0,0,0),60.f,static_cast<float>(dims.x/dims.y),0.1f,1.f);
+camera camera(ECameraType::Perspective,INV::Vec3<float>(0,0,0),60.f,static_cast<float>(dims.x/dims.y),0.1f,1.f);
 INV::Matrix4<float> projectionViewMatrix = camera.GetProjectionView();
 INV::Matrix4<float> viewMatrix = camera.GetViewMatrix();
 for(int i=0;i<4;++i){
@@ -99,9 +100,9 @@ while (running) {
         U_Color.z=abs(sin(time))*255;
 
      //   r->DrawTriangle(A, B, C, col);
-
+r->DrawLine(A,B,col);
        // r->DrawLine(A,B+B,col);
-       r->Draw_Triangle_3d(camera,INV::Vec3<float>(C,12),INV::Vec3<float>(A,12),INV::Vec3<float>(B,12),col,nullptr);
+     //  r->Draw_Triangle_3d(camera,INV::Vec3<float>(C,12),INV::Vec3<float>(A,12),INV::Vec3<float>(B,12),col,nullptr);
       //  A.x=A.x+sin(time)*deltaTime*100;
       //  B.x=B.x+cos(time)*deltaTime*100;
       //  C.x=C.x+sin(time)*deltaTime*100;

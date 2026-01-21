@@ -117,15 +117,15 @@ class renderer{
     }
 
    //---------------------Mods-----------------------------//
-     void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Color){
+void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Color){
 
      INV::Vec2<uint16_t> dim=GetDimensions();
      if (start.x > end.x)
-         std::swap(start, end);
+        std::swap(start, end);
      float dx=end.x-start.x;
      float dy=end.y-start.y;
-     int steps=static_cast<int>(std::max(std::abs(dx),std::abs(dy)));
-if(steps==0) return;
+     uint16_t steps=static_cast<uint16_t>(std::max(std::abs(dx),std::abs(dy)));
+     if(steps==0) return;
 
     float xInc = dx / steps;
     float yInc = dy / steps;
@@ -133,9 +133,13 @@ if(steps==0) return;
     float x=start.x;
     float y=start.y;
 
-     for(int i=start.x;i<=end.x;++i){
+     for(uint16_t i=start.x;i<=end.x;++i){
          SetPixelColor(INV::Vec2<uint16_t>(i,y),Color);
-         y+=yInc;
+
+         // FCG impl
+         if(-dy*i+dx*y+(start.x*end.y-start.x*end.y)<0){
+            y+=yInc;
+         }
      }
 
 }
@@ -298,7 +302,7 @@ float p=256.0/static_cast<float>(may-miy);
      // Drawing a triangle in 3d space but then it can also accept a function pointer(can be passes as null)
     // but here main thing is to set color val
   // assuming world space cordinates-> otherwise local->world transformation
-  void Draw_Triangle_3d(camera<float>&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec3<float> p3,
+  void Draw_Triangle_3d(camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec3<float> p3,
       INV::Vec3<uint8_t> color,INV::Vec3<uint8_t> (*f)(INV::Vec3<float>)
   ){
       INV::Vec3<float> maxvals;
