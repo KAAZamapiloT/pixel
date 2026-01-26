@@ -9,16 +9,20 @@ class Vec2{
     public:
     Vec2(T x, T y) : x(x), y(y) {}
 
-    Vec2 operator+(const Vec2& other) const {
+   constexpr Vec2 operator+(const Vec2& other) const {
         return Vec2(x + other.x, y + other.y);
     }
 
-    Vec2 operator-(const Vec2& other) const {
+    constexpr Vec2 operator-(const Vec2& other) const {
         return Vec2(x - other.x, y - other.y);
     }
 
-    Vec2 operator*(const Vec2& other) const {
+    constexpr Vec2 operator*(const Vec2& other) const {
         return Vec2(x * other.x, y * other.y);
+    }
+
+     constexpr   Vec2 operator*(const T scaler) const{
+        return Vec2(x*scaler,y*scaler);
     }
 
 
@@ -36,6 +40,11 @@ class Vec2{
     }
     float magnitude_squared(){
         return x*x+y*y;
+    }
+
+    void iMul(int i){
+       x = x*i;
+       y = y*1;
     }
     T x, y;
 };
@@ -57,34 +66,39 @@ class Vec3{
      y=a.y;
      z=b;
     }
-    Vec3 operator+(const Vec3& other) const {
+   constexpr Vec3 operator+(const Vec3& other) const {
         return Vec3(x + other.x, y + other.y, z + other.z);
     }
 
-    Vec3 operator-(const Vec3& other) const {
+   constexpr Vec3 operator-(const Vec3& other) const {
         return Vec3(x - other.x, y - other.y, z - other.z);
     }
 
-    Vec3 operator*(const Vec3& other) const {
+   constexpr Vec3 operator*(const Vec3& other) const {
         return Vec3(x * other.x, y * other.y, z * other.z);
     }
 
-    Vec3 operator/(const Vec3& other) const {
+    constexpr Vec3 operator/(const Vec3& other) const {
         return Vec3(x / other.x, y / other.y, z / other.z);
     }
 
-    Vec3 operator%(const Vec3& other) const {
+    constexpr Vec3 operator%(const Vec3& other) const {
         return Vec3(x % other.x, y % other.y, z % other.z);
     }
 
-    Vec3 Cross(const Vec3& other) const {
+   constexpr Vec3 Cross(const Vec3& other) const {
         return Vec3(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
     }
 
-    Vec3 Dot(const Vec3& other) const {
+   constexpr T Dot(const Vec3& other) const {
+        return (x * other.x+ y * other.y+ z * other.z);
+    }
+
+    Vec3 Hadamard(const Vec3& other) const {
         return Vec3(x * other.x, y * other.y, z * other.z);
     }
-    float magnitude_squared(){
+
+    constexpr T magnitude_squared(){
         return x*x+y*y+z*z;
     }
     T x, y, z;
@@ -126,6 +140,12 @@ Matrix2(T a,T b,T c,T d):Mat{{a,b},{c,d}}{
 
 }
 
+Matrix2(){
+    Mat[0][0]=1;
+    Mat[0][1]=0;
+    Mat[1][0]=0;
+    Mat[1][1]=1;
+}
 Matrix2 operator+(const Matrix2& other){
     Matrix2 result;
     for(int i=0;i<2;i++){
@@ -153,6 +173,9 @@ class Matrix3{
     Matrix3(T a,T b,T c,T d,T e,T f,T g,T h,T i):Mat{{a,b,c},{d,e,f},{g,h,i}}{
 
     }
+    Matrix3(){
+
+    }
     Matrix3 operator+(Matrix3&other ){
         Matrix3 result;
         for(int i=0;i<3;i++){
@@ -161,6 +184,14 @@ class Matrix3{
             }
         }
         return result;
+    }
+    Vec3<T> operator*(const Vec3<T>& vec) const
+    {
+        return Vec3<T>(
+            Mat[0][0] * vec.x + Mat[0][1] * vec.y + Mat[0][2] * vec.z,
+            Mat[1][0] * vec.x + Mat[1][1] * vec.y + Mat[1][2] * vec.z,
+            Mat[2][0] * vec.x + Mat[2][1] * vec.y + Mat[2][2] * vec.z
+        );
     }
 
     T Mat[3][3];
@@ -375,10 +406,33 @@ public:
 static INV::Matrix2<float> ScaleMatrix2D(float scale){
     return INV::Matrix2<float>(scale,0,0,scale);
 }
+static INV::Matrix3<float> TranslateMatrix2D(float x,float y){
+    return INV::Matrix3<float>(
+           1, 0, x,
+           0, 1, y,
+           0, 0, 1
+       );
+}
+
 static INV::Matrix2<float> RotateMatrix2D(float angle){
     float c = std::cos(angle);
     float s = std::sin(angle);
     return INV::Matrix2<float>(c,-s,s,c);
 }
 
+static INV::Matrix3<float> ScaleRotateTranslateMatrix2D(
+    float scale,
+    float rotate_angle,
+    float translateX,
+    float translateY
+) {
+    float c = std::cos(rotate_angle);
+    float s = std::sin(rotate_angle);
+
+    return INV::Matrix3<float>(
+        scale * c, -scale * s, translateX,
+        scale * s,  scale * c, translateY,
+        0.0f,       0.0f,      1.0f
+    );
+}
 };

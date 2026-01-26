@@ -328,7 +328,10 @@ float p=256.0/static_cast<float>(may-miy);
                     if(screen.x>=0 && screen.x<m_Window->m_width && screen.y>=0 && screen.y<m_Window->m_height){
                         INV::Vec3<uint8_t>C(color.x,color.y,color.z);
                         uint16_t c=screen.y*m_Window->m_width+screen.x;
-                        SetPixelColor(c,C);
+                         if(InsideTriangle_3D(INV::Vec3<float>(INV::Vec3<float>(i,j,k)),p1, p2,p3)){
+                          SetPixelColor(c,C);
+                         }
+
                     }
                   }
               }
@@ -343,7 +346,10 @@ float p=256.0/static_cast<float>(may-miy);
                     INV::Vec2<float> screen=INV::Vec2<float>((ndc.x+1)*0.5*m_Window->m_width,(1-ndc.y)*0.5*m_Window->m_height);
                     if(screen.x>=0 && screen.x<m_Window->m_width && screen.y>=0 && screen.y<m_Window->m_height){
 
+                        if(InsideTriangle_3D(INV::Vec3<float>(INV::Vec3<float>(i,j,k)),p1, p2,p3)){
                       m_Window->SetPixelColor(INV::Vec2<uint16_t>(screen.x,screen.y),f(INV::Vec3<float>(k,j,i)));
+
+                        }
                     }
                   }
               }
@@ -392,6 +398,29 @@ float p=256.0/static_cast<float>(may-miy);
 
     return(u>=0&&v>=0&&w>=0);
     }
+    bool InsideTriangle_3D(INV::Vec3<float> Point,INV::Vec3<float> a,INV::Vec3<float> b,INV::Vec3<float> c){
+   INV::Vec3<float> ab=b-a;
+   INV::Vec3<float> ac=c-a;
+   INV::Vec3<float> ap=c-Point;
+
+   INV::Vec3<float> v0=ab;
+   INV::Vec3<float> v1=ac;
+   INV::Vec3<float> v2=ap;
+
+   float d00=v0.Dot(v0);
+   float d01=v0.Dot(v1);
+   float d11=v1.Dot(v1);
+   float d20=v2.Dot(v0);
+   float d21=v2.Dot(v1);
+
+   float denominator=d00*d11-d01*d01;
+   float u=(d11*d20-d01*d21)/denominator;
+   float v=(d00*d21-d01*d20)/denominator;
+   float w=1-u-v;
+
+   return(u>=0&&v>=0&&w>=0);
+      return true;
+    };
    void linear_interpolation(INV::Vec2<uint16_t> p1,INV::Vec2<uint16_t>p2,INV::Vec3<uint8_t> color){
 
        //TODO: FIX THIS

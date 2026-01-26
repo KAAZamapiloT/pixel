@@ -8,6 +8,7 @@
 #include <memory>
 #include<algorithm>
 #include "Renderer.h"
+#include "include/Math_Utils.h"
 
 
 void UpdateColor(INV::Vec3<uint8_t>& color,INV::Vec3<uint8_t> u_color)
@@ -55,9 +56,9 @@ int main(int argc, char* argv[])
     bool running = true;
     SDL_Event e;
 
-    INV::Vec2<float> A(45,45);
-     INV::Vec2<float> B(200,0);
-     INV::Vec2<float> C(0,200);
+    INV::Vec2<float> A(145,145);
+     INV::Vec2<float> B(500,120);
+     INV::Vec2<float> C(20,300);
 
      INV::Vec3<uint8_t> w_color(1,1,121);
      INV::Vec3<uint8_t> col(178,72,123);
@@ -67,6 +68,7 @@ int main(int argc, char* argv[])
 camera camera(ECameraType::Perspective,INV::Vec3<float>(0,0,0),60.f,static_cast<float>(dims.x/dims.y),0.1f,1.f);
 INV::Matrix4<float> projectionViewMatrix = camera.GetProjectionView();
 INV::Matrix4<float> viewMatrix = camera.GetViewMatrix();
+/*
 for(int i=0;i<4;++i){
     for(int j=0;j<4;++j){
         printf("ProjectionView Matrix Element %d %d: %f\n", i,j, projectionViewMatrix[i][j]);
@@ -77,7 +79,12 @@ for(int i=0;i<4;++i){
         printf("View Matrix Element %d %d: %f\n", i,j, viewMatrix[i][j]);
     }
 }
+*/
 
+INV::Matrix3<float> modelMatrix = Math::ScaleRotateTranslateMatrix2D(1,0.2,0,0);
+INV::Vec3<float> A3=INV::Vec3<float>(A.x,A.y,0);
+INV::Vec3<float> B3=INV::Vec3<float>(B.x,B.y,0);
+INV::Vec3<float> C3=INV::Vec3<float>(C.x,C.y,0);
 while (running) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT)
@@ -99,8 +106,15 @@ while (running) {
         U_Color.y=abs(cos(time/2))*255;
         U_Color.z=abs(sin(time))*255;
 
-     //   r->DrawTriangle(A, B, C, col);
-r->DrawLine(A,B,col);
+    r->DrawTriangle(INV::Vec2<float>(A3.x,A3.y), INV::Vec2<float>(B3.x,B3.y),
+        INV::Vec2<float>(C3.x,C3.y), col);
+
+   //  r->DrawLine(INV::Vec2<float>(A3.x,A3.y),INV::Vec2<float>(B3.x,B3.y),col);
+
+     A3=modelMatrix*A3;
+     B3=modelMatrix*B3;
+     C3=modelMatrix*C3;
+
        // r->DrawLine(A,B+B,col);
      //  r->Draw_Triangle_3d(camera,INV::Vec3<float>(C,12),INV::Vec3<float>(A,12),INV::Vec3<float>(B,12),col,nullptr);
       //  A.x=A.x+sin(time)*deltaTime*100;
