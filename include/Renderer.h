@@ -203,7 +203,7 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
              max = std::min(max, m_Window->m_width  - 1);
              may= std::min(may,m_Window->m_height - 1);
 
-float p=256.0/static_cast<float>(may-miy);
+             float p=256.0/static_cast<float>(may-miy);
              for(int i=miy;i<may;++i){
                for(int j=mix;j<=max;++j){
                   if(InsideTrig(INV::Vec2<float>(j,i),p1,p2,p3)){

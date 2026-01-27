@@ -420,6 +420,16 @@ static INV::Matrix2<float> RotateMatrix2D(float angle){
     return INV::Matrix2<float>(c,-s,s,c);
 }
 
+static void E_Rotation(INV::Vec3<float>& A,float angle,INV::Vec3<float> pivot){
+
+    INV::Vec3<float> direction = A - pivot;
+    float c = std::cos(angle);
+    float s = std::sin(angle);
+    INV::Matrix3<float> rotationMatrix(c,-s,0,s,c,0,0,0,1);
+    A = rotationMatrix * direction + pivot;
+}
+
+
 static INV::Matrix3<float> ScaleRotateTranslateMatrix2D(
     float scale,
     float rotate_angle,
@@ -435,4 +445,33 @@ static INV::Matrix3<float> ScaleRotateTranslateMatrix2D(
         0.0f,       0.0f,      1.0f
     );
 }
+
+
+static INV::Matrix4<float> ScaleRotateTranslateMatrix3D(
+    float scale,
+    INV::Quat<float> rot,
+    float translateX,
+    float translateY,
+    float translateZ
+){
+
+return INV::Matrix4<float>(
+        scale * rot.x, -scale * rot.y, scale * rot.z, translateX,
+        scale * rot.y,  scale * rot.x, -scale * rot.w, translateY,
+        scale * rot.z,  scale * rot.w, -scale * rot.x, translateZ,
+        0.0f,       0.0f,      0.0f,      1.0f
+    );
+}
+
 };
+
+
+using Mat4f= INV::Matrix4<float>;
+using Mat3f= INV::Matrix3<float>;
+using Mat2f= INV::Matrix2<float>;
+
+using Vec4f= INV::Vec4<float>;
+using Vec3f= INV::Vec3<float>;
+using Vec2f= INV::Vec2<float>;
+
+using quat= INV::Quat<float>;

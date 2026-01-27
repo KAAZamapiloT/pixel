@@ -81,10 +81,12 @@ for(int i=0;i<4;++i){
 }
 */
 
-INV::Matrix3<float> modelMatrix = Math::ScaleRotateTranslateMatrix2D(1,0.2,0,0);
-INV::Vec3<float> A3=INV::Vec3<float>(A.x,A.y,0);
-INV::Vec3<float> B3=INV::Vec3<float>(B.x,B.y,0);
-INV::Vec3<float> C3=INV::Vec3<float>(C.x,C.y,0);
+float scale_cnt=1.0000001f;
+INV::Matrix3<float> modelMatrix = Math::ScaleRotateTranslateMatrix2D(1.0000001,0,0,0);
+
+INV::Vec3<float> A3=INV::Vec3<float>(A.x,A.y,3);
+INV::Vec3<float> B3=INV::Vec3<float>(B.x,B.y,3);
+INV::Vec3<float> C3=INV::Vec3<float>(C.x,C.y,3);
 while (running) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT)
@@ -106,21 +108,30 @@ while (running) {
         U_Color.y=abs(cos(time/2))*255;
         U_Color.z=abs(sin(time))*255;
 
-    r->DrawTriangle(INV::Vec2<float>(A3.x,A3.y), INV::Vec2<float>(B3.x,B3.y),
-        INV::Vec2<float>(C3.x,C3.y), col);
+   r->DrawTriangle(INV::Vec2<float>(A3.x,A3.y),INV::Vec2<float>(B3.x,B3.y),INV::Vec2<float>(C.x,C.y),col);
 
    //  r->DrawLine(INV::Vec2<float>(A3.x,A3.y),INV::Vec2<float>(B3.x,B3.y),col);
 
-     A3=modelMatrix*A3;
-     B3=modelMatrix*B3;
-     C3=modelMatrix*C3;
-
-       // r->DrawLine(A,B+B,col);
-     //  r->Draw_Triangle_3d(camera,INV::Vec3<float>(C,12),INV::Vec3<float>(A,12),INV::Vec3<float>(B,12),col,nullptr);
+   //  A3=modelMatrix*A3;
+   //  B3=modelMatrix*B3;
+   //  C3=modelMatrix*C3;
+    Math::E_Rotation(A3,0.001f,INV::Vec3<float>(100,100,0));
+    Math::E_Rotation(B3,0.001f,INV::Vec3<float>(100,100,0));
+    Math::E_Rotation(C3,0.001f,INV::Vec3<float>(100,100,0));
+    // r->DrawLine(A,B+B,col);
+      //  r->Draw_Triangle_3d(camera,C3,A3,B3,col,nullptr);
       //  A.x=A.x+sin(time)*deltaTime*100;
       //  B.x=B.x+cos(time)*deltaTime*100;
       //  C.x=C.x+sin(time)*deltaTime*100;
-
+if(scale_cnt>2){
+    INV::Matrix3<float> TmodelMatrix = Math::ScaleRotateTranslateMatrix2D(0.5,0.2,0,0);
+    A3=modelMatrix*A3;
+    B3=modelMatrix*B3;
+    C3=modelMatrix*C3;
+    scale_cnt=1.00001f;
+}
+scale_cnt*=scale_cnt;
+printf("[%f]\n",scale_cnt);
         float x=1;
         x=std::clamp(x,0.8f,1.2f);
       //  A = Math::ScaleMatrix2D(x+abs(std::sin(time))) * A;

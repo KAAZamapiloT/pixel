@@ -1,0 +1,33 @@
+
+/**
+ * @file Objects.h
+ * @brief Defines Basic component for holding data for arendering a scene
+ */
+
+#pragma once
+
+#include"Math_Utils.h"
+#include<array>
+
+
+/// Defines data for a object in a spcae///
+/**
+ * @struct Transform
+ * @brief Define Data about peresence of a objecct in space
+ */
+struct Transform{
+   Vec3f position;
+   Vec3f scale;
+   Vec3f rotation;
+
+    Vec3f pivot;//optional thing
+
+};
+
+/**
+ * @struct Triangle
+ * @brief Define  a triangle in space
+ */
+struct Triangle{
+     std::array<Vec3f, 3> vertices;
+};

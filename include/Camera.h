@@ -3,6 +3,7 @@
 #include"Math_Utils.h"
 #include "iostream"
 
+
 /* A SIMPLE IMPLEMETAION OF CAMERA WHAT IT IS AND WHAT IT CAN DO
  *
  */
@@ -16,7 +17,7 @@
 
 class camera{
 public:
-    camera(ECameraType p,INV::Vec3<float> location_3d,  float fov, float AspectRatio,
+    camera(ECameraType p,Vec3f location_3d,  float fov, float AspectRatio,
     float NearPlane,
     float FarPlane){
         camera_type=p;
@@ -25,11 +26,11 @@ public:
         m_NearPlane=NearPlane;
         m_FarPlane=FarPlane;
         Location_3d=location_3d;
-        m_ProjectionMatrix=INV::Matrix4<float>::perspective(fov,AspectRatio,NearPlane,FarPlane);
+        m_ProjectionMatrix=Mat4f::perspective(fov,AspectRatio,NearPlane,FarPlane);
         Init();
     }
 
-    camera(ECameraType p,INV::Vec3<float> location_3d,float left,float right,float bottom,float top,float NearPlane,float FarPlane){
+    camera(ECameraType p,Vec3f location_3d,float left,float right,float bottom,float top,float NearPlane,float FarPlane){
         camera_type=p;
 
         Location_3d=location_3d;
@@ -40,21 +41,21 @@ public:
         m_OrthoTop=top;
         m_NearPlane=NearPlane;
         m_FarPlane=FarPlane;
-        m_Ortho=INV::Matrix4<float>::ortho(left,right,bottom,top,NearPlane,FarPlane);
+        m_Ortho=Mat4f::ortho(left,right,bottom,top,NearPlane,FarPlane);
         UpdateViewMatrix();
         UpdateOrientaionVector();
         UpdateProjectionView();
     }
 
-    INV::Matrix4<float> GetProjectionView(){
+    Mat4f GetProjectionView(){
          return m_ProjectionViewMatrix;
     }
-    INV::Matrix4<float> GetViewMatrix(){
+    Mat4f GetViewMatrix(){
          return m_ViewMatrix;
     }
-    INV::Vec3<float> GetLocation(){ return Location_3d;}
+    Vec3f GetLocation(){ return Location_3d;}
 
-    INV::Vec3<float> GetRoationEuler( ){return INV::Vec3<float>(m_pitch,m_yaw,m_roll);}
+    Vec3f GetRoationEuler( ){return Vec3f(m_pitch,m_yaw,m_roll);}
     void updateMatrix(){
       if(bViewDirty){
         UpdateViewMatrix();
@@ -74,14 +75,14 @@ public:
   }
 
   void UpdateProjectionMatrix(){
-    m_ProjectionMatrix=INV::Matrix4<float>::perspective(m_fov,m_AspectRatio,m_NearPlane,m_FarPlane);
+    m_ProjectionMatrix=Mat4f::perspective(m_fov,m_AspectRatio,m_NearPlane,m_FarPlane);
     UpdateProjectionView();
   }
     void UpdateOrientaionVector(){
 
-        right=INV::Vec3<float>(std::cos(m_yaw),std::sin(m_yaw),0.0);
-        up=INV::Vec3<float>(std::sin(m_pitch)*std::cos(m_yaw),std::sin(m_pitch)*std::sin(m_yaw),std::cos(m_pitch));
-        forward=INV::Vec3<float>(-std::sin(m_yaw),std::cos(m_yaw),0.0);
+        right=Vec3f(std::cos(m_yaw),std::sin(m_yaw),0.0);
+        up=Vec3f(std::sin(m_pitch)*std::cos(m_yaw),std::sin(m_pitch)*std::sin(m_yaw),std::cos(m_pitch));
+        forward=Vec3f(-std::sin(m_yaw),std::cos(m_yaw),0.0);
     }
     void UpdateViewMatrix(){
         m_ViewMatrix[0][0] =right.x ;
@@ -109,7 +110,7 @@ public:
     //default camera_type
     ECameraType camera_type=ECameraType::Orthographic;
 
-    INV::Vec3<float> Location_3d;
+    Vec3f Location_3d;
     INV::Quat<float> m_Rotation;
     // Projection parameters
     float m_fov=45.0f;
@@ -130,16 +131,16 @@ public:
 
     // matrices and satate
 
-     INV::Matrix4<float> m_ViewMatrix;
-     INV::Matrix4<float> m_ProjectionMatrix;
-     INV::Matrix4<float> m_ProjectionViewMatrix;
-     INV::Matrix4<float> m_Ortho;
+     Mat4f m_ViewMatrix;
+     Mat4f m_ProjectionMatrix;
+     Mat4f m_ProjectionViewMatrix;
+     Mat4f m_Ortho;
     bool bViewDirty=false;
     bool bProjectionFirty=false;
 
     // camera specific vector
-    INV::Vec3<float> right=INV::Vec3<float>(1.0,0.0,0.0);
-    INV::Vec3<float> forward=INV::Vec3<float>(0.0,0.0,1.0);
-    INV::Vec3<float> up=INV::Vec3<float>(0.0,1.0,0.0);
+    Vec3f right=Vec3f(1.0,0.0,0.0);
+    Vec3f forward=Vec3f(0.0,0.0,1.0);
+    Vec3f up=Vec3f(0.0,1.0,0.0);
 
 };
