@@ -31,20 +31,18 @@ class Vec2{
         return Vec2(x / other.x, y / other.y);
     }
 
-    Vec2 Cross(const Vec2& other) const {
-        return Vec2(y * other.x - x * other.y);
-    }
+
 
     T Dot(const Vec2& other) const {
         return x * other.x + y * other.y;
     }
-    float magnitude_squared(){
+    T magnitude_squared(){
         return x*x+y*y;
     }
 
     void iMul(int i){
        x = x*i;
-       y = y*1;
+       y = y*i;
     }
     T x, y;
 };
@@ -54,7 +52,9 @@ class Vec3{
     public:
     Vec3(T x, T y, T z) : x(x), y(y), z(z) {}
     Vec3(){
-
+    x=0;
+    y=0;
+    z=0;
     }
     Vec3(T a){
         x=a;
@@ -82,9 +82,7 @@ class Vec3{
         return Vec3(x / other.x, y / other.y, z / other.z);
     }
 
-    constexpr Vec3 operator%(const Vec3& other) const {
-        return Vec3(x % other.x, y % other.y, z % other.z);
-    }
+
 
    constexpr Vec3 Cross(const Vec3& other) const {
         return Vec3(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
@@ -97,8 +95,15 @@ class Vec3{
     Vec3 Hadamard(const Vec3& other) const {
         return Vec3(x * other.x, y * other.y, z * other.z);
     }
-
-    constexpr T magnitude_squared(){
+   void normalize(){
+    T mag=magnitude_squared();
+    if(mag==0)return;
+    T invMag=1/sqrt(mag);
+    x*=invMag;
+    y*=invMag;
+    z*=invMag;
+   }
+    constexpr T magnitude_squared() const{
         return x*x+y*y+z*z;
     }
     T x, y, z;
@@ -120,14 +125,10 @@ Vec4(Vec3<T>s,T sd){
     w=sd;
 }
 
-Vec4<T> Dot(Vec4<T> other){return x*other.x+y*other.y+z*other.z+w*other.w;}
+T Dot(Vec4<T> other){return x*other.x+y*other.y+z*other.z+w*other.w;}
 
-Vec4<T> Cross(Vec4<T> other){return Vec4<T>(y*other.z-z*other.y,z*other.x-x*other.z,x*other.y-y*other.x);}
-static Vec4<T> Cross_product(Vec4<T> v1, Vec4<T> v2){
-    return Vec4<T>(v1.y*v2.z-v1.z*v2.y,v1.z*v2.x-v1.x*v2.z,v1.x*v2.y-v1.y*v2.x);
-}
 
-float magnitude_squared(){
+T magnitude_squared() const{
     return x*x+y*y+z*z+w*w;
 }
   T x,y,z,w;
@@ -140,13 +141,13 @@ Matrix2(T a,T b,T c,T d):Mat{{a,b},{c,d}}{
 
 }
 
-Matrix2(){
+constexpr Matrix2(){
     Mat[0][0]=1;
     Mat[0][1]=0;
     Mat[1][0]=0;
     Mat[1][1]=1;
 }
-Matrix2 operator+(const Matrix2& other){
+constexpr Matrix2 operator+(const Matrix2& other)const{
     Matrix2 result;
     for(int i=0;i<2;i++){
         for(int j=0;j<2;j++){
@@ -156,7 +157,7 @@ Matrix2 operator+(const Matrix2& other){
     return result;
 }
 
-Vec2<T> operator*(const Vec2<T>& vec) const
+constexpr Vec2<T> operator*(const Vec2<T>& vec) const
 {
     return Vec2<T>(
         Mat[0][0] * vec.x + Mat[0][1] * vec.y,
@@ -173,10 +174,18 @@ class Matrix3{
     Matrix3(T a,T b,T c,T d,T e,T f,T g,T h,T i):Mat{{a,b,c},{d,e,f},{g,h,i}}{
 
     }
-    Matrix3(){
-
+   constexpr Matrix3(){
+    Mat[0][0]=0;
+    Mat[0][1]=0;
+    Mat[0][2]=0;
+    Mat[1][0]=0;
+    Mat[1][1]=0;
+    Mat[1][2]=0;
+    Mat[2][0]=0;
+    Mat[2][1]=0;
+    Mat[2][2]=0;
     }
-    Matrix3 operator+(Matrix3&other ){
+    Matrix3 operator+(const Matrix3&other ) const{
         Matrix3 result;
         for(int i=0;i<3;i++){
             for(int j=0;j<3;j++){
@@ -208,7 +217,24 @@ constexpr explicit Matrix4(T v) {
           for (int j = 0; j < 4; ++j)
               Mat[i][j] = v;
   }
-    constexpr Matrix4() = default;
+    constexpr Matrix4(){
+        Mat[0][0]=0;
+        Mat[0][1]=0;
+        Mat[0][2]=0;
+        Mat[0][3]=0;
+        Mat[1][0]=0;
+        Mat[1][1]=0;
+        Mat[1][2]=0;
+        Mat[1][3]=0;
+        Mat[2][0]=0;
+        Mat[2][1]=0;
+        Mat[2][2]=0;
+        Mat[2][3]=0;
+        Mat[3][0]=0;
+        Mat[3][1]=0;
+        Mat[3][2]=0;
+        Mat[3][3]=0;
+    }
 
 
     constexpr T* operator[](int r) { return Mat[r]; }
@@ -301,6 +327,7 @@ Quat(T x,T y,T z,T w):x(x),y(y),z(z),w(w){}
 Quat():x(0),y(0),z(0),w(1){}
 //
 Quat(T angle,Vec3<T> axis){
+    axis.normalize();
     T halfAngle=angle/2;
     T sinHalfAngle=sin(halfAngle);
     x=axis.x*sinHalfAngle;
@@ -313,7 +340,7 @@ T length_sq()const{
    return x*x+y*y+z*z+w*w;
 }
 
-Quat<T> conjugate(){
+Quat<T> conjugate()const{
     return Quat(-x,-y,-z,w);
 }
 void normalize() {
@@ -326,7 +353,7 @@ void normalize() {
     w *= invLen;
 }
 Quat inverse() const {
-    T len2 = this->length_sq()();
+    T len2 = this->length_sq();
     if (len2 == T(0)) return {};
     return this->conjugate() / len2;
 }
@@ -400,13 +427,24 @@ Quat& operator=(const Quat& q) = default;
 
 }
 
+// ALIAS FOR HELP
+using Mat4f= INV::Matrix4<float>;
+using Mat3f= INV::Matrix3<float>;
+using Mat2f= INV::Matrix2<float>;
+
+using Vec4f= INV::Vec4<float>;
+using Vec3f= INV::Vec3<float>;
+using Vec2f= INV::Vec2<float>;
+
+using quat= INV::Quat<float>;
+
 // will implement math function here
 class Math{
 public:
-static INV::Matrix2<float> ScaleMatrix2D(float scale){
+static Mat2f ScaleMatrix2D(float scale){
     return INV::Matrix2<float>(scale,0,0,scale);
 }
-static INV::Matrix3<float> TranslateMatrix2D(float x,float y){
+static Mat3f TranslateMatrix2D(float x,float y){
     return INV::Matrix3<float>(
            1, 0, x,
            0, 1, y,
@@ -414,7 +452,7 @@ static INV::Matrix3<float> TranslateMatrix2D(float x,float y){
        );
 }
 
-static INV::Matrix2<float> RotateMatrix2D(float angle){
+static Mat2f RotateMatrix2D(float angle){
     float c = std::cos(angle);
     float s = std::sin(angle);
     return INV::Matrix2<float>(c,-s,s,c);
@@ -446,7 +484,21 @@ static INV::Matrix3<float> ScaleRotateTranslateMatrix2D(
     );
 }
 
+static Mat3f Rotation3D(float t,Vec3f a){
+    float c = cos(t);
+    float s = sin(t);
+    float d = 1.0F - c;
+    float x = a.x * d;
+    float y = a.y * d;
+    float z = a.z * d;
+    float axay = x * a.y;
+    float axaz = x * a.z;
+    float ayaz = y * a.z;
+    return Mat3f(c + x * a.x, axay - s * a.z, axaz + s * a.y,
+    axay + s * a.z, c + y * a.y, ayaz - s * a.x,
+    axaz - s * a.y, ayaz + s * a.x, c + z * a.z);
 
+}
 static INV::Matrix4<float> ScaleRotateTranslateMatrix3D(
     float scale,
     INV::Quat<float> rot,
@@ -462,16 +514,14 @@ return INV::Matrix4<float>(
         0.0f,       0.0f,      0.0f,      1.0f
     );
 }
+template<typename T>
+bool IsFacingSameDirection(INV::Vec3<T> A,INV::Vec3<T> B){
+    return A.Dot(B) > 0;
+}
 
+static void MakeRoation(Vec3f&v,quat rotation){
+Vec3f x=Vec3f(rotation.x,rotation.y,rotation.z);
+    float b=rotation.x*rotation.x+rotation.y*rotation.y+rotation.z*rotation.z;
+v=v*(rotation.w*rotation.w-b)+x*(v.Dot(x)*2.0f)+x.Cross(v)*(rotation.w*2.0f);
+}
 };
-
-
-using Mat4f= INV::Matrix4<float>;
-using Mat3f= INV::Matrix3<float>;
-using Mat2f= INV::Matrix2<float>;
-
-using Vec4f= INV::Vec4<float>;
-using Vec3f= INV::Vec3<float>;
-using Vec2f= INV::Vec2<float>;
-
-using quat= INV::Quat<float>;

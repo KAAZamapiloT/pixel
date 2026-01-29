@@ -115,9 +115,9 @@ while (running) {
    //  A3=modelMatrix*A3;
    //  B3=modelMatrix*B3;
    //  C3=modelMatrix*C3;
-    Math::E_Rotation(A3,0.001f,INV::Vec3<float>(100,100,0));
-    Math::E_Rotation(B3,0.001f,INV::Vec3<float>(100,100,0));
-    Math::E_Rotation(C3,0.001f,INV::Vec3<float>(100,100,0));
+    Math::E_Rotation(A3,0.001f,INV::Vec3<float>(0,100,100));
+    Math::E_Rotation(B3,0.001f,INV::Vec3<float>(0,100,100));
+    Math::E_Rotation(C3,0.001f,INV::Vec3<float>(0,100,100));
     // r->DrawLine(A,B+B,col);
       //  r->Draw_Triangle_3d(camera,C3,A3,B3,col,nullptr);
       //  A.x=A.x+sin(time)*deltaTime*100;
