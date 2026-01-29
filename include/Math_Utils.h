@@ -458,6 +458,7 @@ static Mat2f RotateMatrix2D(float angle){
     return INV::Matrix2<float>(c,-s,s,c);
 }
 
+// point is stored in form of 3 vals so using vec3f is fine here
 static void E_Rotation(INV::Vec3<float>& A,float angle,INV::Vec3<float> pivot){
 
     INV::Vec3<float> direction = A - pivot;
@@ -524,4 +525,9 @@ Vec3f x=Vec3f(rotation.x,rotation.y,rotation.z);
     float b=rotation.x*rotation.x+rotation.y*rotation.y+rotation.z*rotation.z;
 v=v*(rotation.w*rotation.w-b)+x*(v.Dot(x)*2.0f)+x.Cross(v)*(rotation.w*2.0f);
 }
+
+static Vec3f GetReflection(Vec3f normal, Vec3f incident){
+    return normal * 2.0f * normal.Dot(incident) - incident;
+}
+
 };
