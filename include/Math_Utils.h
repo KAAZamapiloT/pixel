@@ -240,6 +240,7 @@ constexpr explicit Matrix4(T v) {
     constexpr T* operator[](int r) { return Mat[r]; }
     constexpr const T* operator[](int r) const { return Mat[r]; }
 
+
     // Addition
         friend constexpr Matrix4 operator+(const Matrix4& a, const Matrix4& b) {
             Matrix4 r;
@@ -384,6 +385,22 @@ static Quat<T> nlerp(const Quat<T>& A,const Quat<T>& B,T t){
     return result;
 }
 
+
+static Matrix3<T> GetRotationMatrix(Quat<T> q){
+
+    T xx=q.x*q.x;
+    T yy=q.y*q.y;
+    T zz=q.z*q.z;
+    T xy=q.x*q.y;
+    T xz=q.x*q.z;
+    T yz=q.y*q.z;
+    T wx=q.w*q.x;
+    T wy=q.w*q.y;
+    T wz=q.w*q.z;
+    return Matrix3<T>(1-2*(yy+zz),2*(xy-wz),2*(xz+wy),
+        2*(xy+wz),1-2*(xx+zz),2*(yz-wx),
+        2*(xz-wy),2*(yz+wx),1-2*(xx+yy));
+}
 static Quat<T> slerp(const Quat<T>& A,const Quat<T>& B,T t){
     T dot =Dot(A, B);
   Quat bCopy = B;
@@ -485,6 +502,16 @@ static INV::Matrix3<float> ScaleRotateTranslateMatrix2D(
     );
 }
 
+static Mat4f ScaleRoatateTranslateMatrix3d(float scale,quat q,Vec3f Translate){
+Mat3f Rot=q.GetRotationMatrix(q);
+return Mat4f(
+    scale * Rot.Mat[0][0], scale * Rot.Mat[0][1], scale * Rot.Mat[0][2], Translate.x,
+    scale * Rot.Mat[1][0], scale * Rot.Mat[1][1], scale * Rot.Mat[1][2], Translate.y,
+    scale * Rot.Mat[2][0], scale * Rot.Mat[2][1], scale * Rot.Mat[2][2], Translate.z,
+    0.0f,              0.0f,              0.0f,              1.0f
+);
+
+};
 static Mat3f Rotation3D(float t,Vec3f a){
     float c = cos(t);
     float s = sin(t);

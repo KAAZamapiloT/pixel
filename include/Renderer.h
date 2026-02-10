@@ -302,58 +302,69 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
      // Drawing a triangle in 3d space but then it can also accept a function pointer(can be passes as null)
     // but here main thing is to set color val
   // assuming world space cordinates-> otherwise local->world transformation
-  void Draw_Triangle_3d(camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec3<float> p3,
+  void DrawTriangle3D(camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec3<float> p3,
       INV::Vec3<uint8_t> color,INV::Vec3<uint8_t> (*f)(INV::Vec3<float>)
   ){
-      INV::Vec3<float> maxvals;
-      INV::Vec3<float> minvals;
-      minvals.x=std::min({p1.x,p2.x,p3.x});
-      minvals.y=std::min({p1.y,p2.y,p3.y});
-      minvals.z=std::min({p1.z,p2.z,p3.z});
-      maxvals.x=std::max({p1.x,p2.x,p3.x});
-      maxvals.y=std::max({p1.y,p2.y,p3.y});
-      maxvals.z=std::max({p1.z,p2.z,p3.z});
+
 
      INV::Matrix4<float> ProjectionView = cam.GetProjectionView();
+     Vec4f a(p1,1);
+     Vec4f b(p2,1);
+     Vec4f c(p3,1);
+
+     Vec4f a1 = ProjectionView.Matrix4_Vec4_mul(ProjectionView, a);
+     Vec4f b1 = ProjectionView.Matrix4_Vec4_mul(ProjectionView, b);
+     Vec4f c1 = ProjectionView.Matrix4_Vec4_mul(ProjectionView, c);
+
+     Vec3f ndc_a(a1.x/a1.w,a1.y/a1.w,a1.z/a1.w);
+     Vec3f ndc_b(b1.x/b1.w,b1.y/b1.w,b1.z/b1.w);
+     Vec3f ndc_c(c1.x/c1.w,c1.y/c1.w,c1.z/c1.w);
+
+     Vec2f screen_a(
+         static_cast<float>((ndc_a.x + 1.0f) * 0.5f * m_Window->m_width),
+         static_cast<float>((1.0f - ndc_a.y) * 0.5f * m_Window->m_height)
+     );
+
+     Vec2f screen_b(
+         static_cast<float>((ndc_b.x + 1.0f) * 0.5f * m_Window->m_width),
+         static_cast<float>((1.0f - ndc_b.y) * 0.5f * m_Window->m_height)
+     );
+
+     Vec2f screen_c(
+         static_cast<float>((ndc_c.x + 1.0f) * 0.5f * m_Window->m_width),
+         static_cast<float>((1.0f - ndc_c.y) * 0.5f * m_Window->m_height)
+     );
+
+     int32_t MAx=std::max({screen_a.x,screen_b.x,screen_c.x});
+     int32_t MAy=std::max({screen_a.y,screen_b.y,screen_c.y});
+      int32_t MIy=std::min({screen_a.y,screen_b.y,screen_c.y});
+        int32_t MIx=std::min({screen_a.x,screen_b.x,screen_c.x});
+
+     if(MAx<MIx){
+         std::swap(MAx,MIx);
+
+     }
+     if(MAy<MIy){
+         std::swap(MAy,MIy);
+
+     }
+
+     MAx=std::min(MAx,static_cast<int32_t>(m_Window->m_width));
+     MAy=std::min(MAy,static_cast<int32_t>(m_Window->m_height));
+     MIx=std::max(MIx,0);
+     MIy=std::max(MIy,0);
 
       if(f==nullptr){
-          for(int i=minvals.z;i<=maxvals.z;++i){
-              for(int j=minvals.y;j<=maxvals.y;++j){
-                  for(int k=minvals.x;k<=maxvals.x;++k){
-                    INV::Vec4<float>p=INV::Vec4<float>(k,j,i,1);
-                    INV::Vec4<float>clip=INV::Matrix4<float>::Matrix4_Vec4_mul(ProjectionView,p);
 
-                    INV::Vec3<float> ndc=INV::Vec3<float>(clip.x/clip.w,clip.y/clip.w,clip.z/clip.w);
-                    INV::Vec2<float> screen=INV::Vec2<float>((ndc.x+1)*0.5*m_Window->m_width,(1-ndc.y)*0.5*m_Window->m_height);
-                    if(screen.x>=0 && screen.x<m_Window->m_width && screen.y>=0 && screen.y<m_Window->m_height){
-                        INV::Vec3<uint8_t>C(color.x,color.y,color.z);
-                        uint16_t c=screen.y*m_Window->m_width+screen.x;
-                         if(InsideTriangle_3D(INV::Vec3<float>(INV::Vec3<float>(i,j,k)),p1, p2,p3)){
-                          SetPixelColor(c,C);
-                         }
-
-                    }
+          for(int i=MIx;i<=MAx;i++){
+              for(int j=MIy;j<=MAy;j++){
+                  if(InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c)){
+                      SetPixelColor(INV::Vec2<uint16_t>(i,j),color);
                   }
               }
           }
       }else{
-          for(int i=minvals.z;i<=maxvals.z;++i){
-              for(int j=minvals.y;j<=maxvals.y;++j){
-                  for(int k=minvals.x;k<=maxvals.x;++k){
-                    INV::Vec4<float>p=INV::Vec4<float>(k,j,i,1);
-                    INV::Vec4<float>clip=INV::Matrix4<float>::Matrix4_Vec4_mul(ProjectionView,p);
-                    INV::Vec3<float> ndc=INV::Vec3<float>(clip.x/clip.w,clip.y/clip.w,clip.z/clip.w);
-                    INV::Vec2<float> screen=INV::Vec2<float>((ndc.x+1)*0.5*m_Window->m_width,(1-ndc.y)*0.5*m_Window->m_height);
-                    if(screen.x>=0 && screen.x<m_Window->m_width && screen.y>=0 && screen.y<m_Window->m_height){
 
-                        if(InsideTriangle_3D(INV::Vec3<float>(INV::Vec3<float>(i,j,k)),p1, p2,p3)){
-                      m_Window->SetPixelColor(INV::Vec2<uint16_t>(screen.x,screen.y),f(INV::Vec3<float>(k,j,i)));
-
-                        }
-                    }
-                  }
-              }
-          }
       }
 
       }
