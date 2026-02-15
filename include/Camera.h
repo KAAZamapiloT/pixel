@@ -142,7 +142,7 @@ public:
 
     // camera specific vector
     Vec3f right=Vec3f(1.0,0.0,0.0);
-    Vec3f forward=Vec3f(0.0,0.0,1.0);
+    Vec3f forward=Vec3f(0.0,0.0,-1.0);
     Vec3f up=Vec3f(0.0,1.0,0.0);
 
 };

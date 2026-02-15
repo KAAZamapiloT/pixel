@@ -87,9 +87,9 @@ Mat4f modal=Math::ScaleRotateTranslateMatrix3D(1.0000001,quat(0,0,0,0),2,2,0);
 INV::Vec4<float> A3=INV::Vec4<float>(A.x,A.y,3,1);
 INV::Vec4<float> B3=INV::Vec4<float>(B.x,B.y,3,1);
 INV::Vec4<float> C3=INV::Vec4<float>(C.x,C.y,3,1);
-A3=modal.Matrix4_Vec4_mul(modal,A3);
-B3=modal.Matrix4_Vec4_mul(modal,B3);
-C3=modal.Matrix4_Vec4_mul(modal,C3);
+//A3=modal.Matrix4_Vec4_mul(modal,A3);
+//B3=modal.Matrix4_Vec4_mul(modal,B3);
+//C3=modal.Matrix4_Vec4_mul(modal,C3);
 while (running) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT)
@@ -111,8 +111,16 @@ while (running) {
         U_Color.y=abs(cos(time/2))*255;
         U_Color.z=abs(sin(time))*255;
 
-        r->DrawTriangle3D(camera,INV::Vec3<float>(A3.x,A3.y,-5),INV::Vec3<float>(B3.x,B3.y,-5),INV::Vec3<float>(C.x,C.y,-5),col,nullptr);
-
+     //  r->DrawTriangle3D(camera,INV::Vec3<float>(A3.x,A3.y,-5),INV::Vec3<float>(B3.x,B3.y,-5),INV::Vec3<float>(C.x,C.y,-5),col,nullptr);
+     //  r->DrawTriangle(A, B, C,col);
+     r->DrawTriangle3D(
+         camera,
+         INV::Vec3<float>(-1, -1, -1),
+         INV::Vec3<float>( 1, -1, -1),
+         INV::Vec3<float>( 1,  1, -1),
+         col,
+         nullptr
+     );
 
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);
         SDL_RenderClear(sdlRenderer);
