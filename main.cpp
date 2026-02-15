@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
      INV::Vec3<uint8_t> U_Color(123,234,13);
 
 
-camera camera(ECameraType::Perspective,INV::Vec3<float>(0,0,0),60.f,static_cast<float>(dims.x/dims.y),0.1f,1.f);
+camera camera(ECameraType::Perspective,INV::Vec3<float>(0,0,0),60.f,static_cast<float>(dims.x/dims.y),0.1f,100.f);
 INV::Matrix4<float> projectionViewMatrix = camera.GetProjectionView();
 INV::Matrix4<float> viewMatrix = camera.GetViewMatrix();
 
@@ -111,7 +111,7 @@ while (running) {
         U_Color.y=abs(cos(time/2))*255;
         U_Color.z=abs(sin(time))*255;
 
-        r->DrawTriangle3D(camera,INV::Vec3<float>(A3.x,A3.y,5),INV::Vec3<float>(B3.x,B3.y,5),INV::Vec3<float>(C.x,C.y,5),col,nullptr);
+        r->DrawTriangle3D(camera,INV::Vec3<float>(A3.x,A3.y,-5),INV::Vec3<float>(B3.x,B3.y,-5),INV::Vec3<float>(C.x,C.y,-5),col,nullptr);
 
 
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);

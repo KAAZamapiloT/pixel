@@ -1,4 +1,4 @@
-
+//camera
 #pragma once
 #include"Math_Utils.h"
 #include "iostream"
@@ -84,29 +84,31 @@ public:
         up=Vec3f(std::sin(m_pitch)*std::cos(m_yaw),std::sin(m_pitch)*std::sin(m_yaw),std::cos(m_pitch));
         forward=Vec3f(-std::sin(m_yaw),std::cos(m_yaw),0.0);
     }
-    void UpdateViewMatrix(){
-        m_ViewMatrix[0][0] =right.x ;
-           m_ViewMatrix[0][1] = up.x;
-           m_ViewMatrix[0][2] = forward.x;
-           m_ViewMatrix[0][3] = 0.0f;
+    void UpdateViewMatrix()
+    {
+        m_ViewMatrix[0][0] = right.x;
+        m_ViewMatrix[1][0] = right.y;
+        m_ViewMatrix[2][0] = right.z;
+        m_ViewMatrix[3][0] = 0.0f;
 
-           m_ViewMatrix[1][0] = right.y;
-           m_ViewMatrix[1][1] = up.y;
-           m_ViewMatrix[1][2] = forward.y;
-           m_ViewMatrix[1][3] = 0.0f;
+        m_ViewMatrix[0][1] = up.x;
+        m_ViewMatrix[1][1] = up.y;
+        m_ViewMatrix[2][1] = up.z;
+        m_ViewMatrix[3][1] = 0.0f;
 
-           m_ViewMatrix[2][0] = right.z;
-           m_ViewMatrix[2][1] = up.z;
-           m_ViewMatrix[2][2] = forward.z;
-           m_ViewMatrix[2][3] = 0.0f;
+        m_ViewMatrix[0][2] = forward.x;
+        m_ViewMatrix[1][2] = forward.y;
+        m_ViewMatrix[2][2] = forward.z;
+        m_ViewMatrix[3][2] = 0.0f;
 
-           m_ViewMatrix[3][0] = right.Dot(Location_3d);
-           m_ViewMatrix[3][1] = up.Dot(Location_3d);
-           m_ViewMatrix[3][2] = forward.Dot(Location_3d);
-           m_ViewMatrix[3][3] = 1.0f;
-           UpdateProjectionView();
+        m_ViewMatrix[0][3] = -right.Dot(Location_3d);
+        m_ViewMatrix[1][3] = -up.Dot(Location_3d);
+        m_ViewMatrix[2][3] = -forward.Dot(Location_3d);
+        m_ViewMatrix[3][3] = 1.0f;
 
+        UpdateProjectionView();
     }
+
     //default camera_type
     ECameraType camera_type=ECameraType::Orthographic;
 
