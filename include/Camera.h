@@ -2,6 +2,7 @@
 #pragma once
 #include"Math_Utils.h"
 #include "iostream"
+#include <cmath>
 
 
 /* A SIMPLE IMPLEMETAION OF CAMERA WHAT IT IS AND WHAT IT CAN DO
@@ -80,9 +81,21 @@ public:
   }
     void UpdateOrientaionVector(){
 
-        right=Vec3f(std::cos(m_yaw),std::sin(m_yaw),0.0);
-        up=Vec3f(std::sin(m_pitch)*std::cos(m_yaw),std::sin(m_pitch)*std::sin(m_yaw),std::cos(m_pitch));
-        forward=Vec3f(-std::sin(m_yaw),std::cos(m_yaw),0.0);
+        forward.x=std::cos(m_pitch)*std::sin(m_yaw);
+        forward.y=std::sin(m_pitch);
+        forward.z=-std::cos(m_pitch)*std::cos(m_yaw);
+
+        forward.normalize();
+
+        Vec3f WorldUp(0.0f,1.0f,0.0f);
+
+        right=forward.Cross(WorldUp);
+        right.normalize();
+
+        up=forward.Cross(right);
+        up.normalize();
+
+
     }
     void UpdateViewMatrix()
     {
