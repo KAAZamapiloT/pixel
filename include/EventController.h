@@ -29,6 +29,9 @@ class MovableCamera:public camera{
     void Rotation(quat q){
 
     }
+    void RotatingMov(quat axis,float speed){
+        //will roatate at a particluar speed
+    }
     private:
     std::unique_ptr<camera> CAM;
 }

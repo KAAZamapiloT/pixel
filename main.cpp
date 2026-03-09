@@ -113,7 +113,7 @@ while (running) {
 
      //  r->DrawTriangle3D(camera,INV::Vec3<float>(A3.x,A3.y,-5),INV::Vec3<float>(B3.x,B3.y,-5),INV::Vec3<float>(C.x,C.y,-5),col,nullptr);
      //  r->DrawTriangle(A, B, C,col);
-     r->DrawTriangle3D(
+    /*  r->DrawTriangle3D(
          camera,
          INV::Vec3<float>(-1, -1, -1),
          INV::Vec3<float>( 1, -1, -1),
@@ -121,6 +121,8 @@ while (running) {
          col,
          nullptr
      );
+*/
+
 
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);
         SDL_RenderClear(sdlRenderer);

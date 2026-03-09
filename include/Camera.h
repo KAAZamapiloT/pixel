@@ -31,7 +31,8 @@ public:
         Init();
     }
 
-    camera(ECameraType p,Vec3f location_3d,float left,float right,float bottom,float top,float NearPlane,float FarPlane){
+    camera(ECameraType p,Vec3f location_3d,float left,float right,float bottom,
+        float top,float NearPlane,float FarPlane){
         camera_type=p;
 
         Location_3d=location_3d;
