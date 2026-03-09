@@ -31,3 +31,13 @@ struct Transform{
 struct Triangle{
      std::array<Vec3f, 3> vertices;
 };
+/**
+ * @class TriangleArray
+ * @breif Define a Array of Traingles and Transforms
+ */
+class TriangleArray{
+public:
+    std::vector<Triangle> triangles;
+    std::vector<struct Transform> Transforms;
+};
+//triangles will store locations locally and Trabnsoforms will be a worlld scale varient of them
