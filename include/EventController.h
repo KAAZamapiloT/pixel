@@ -28,10 +28,12 @@ class MovableCamera:public camera{
 
     void Rotation(quat q){
         CAM->Rotation(q);
+        CAM->updateMatrix();
     }
     void RotatingMov(quat axis,float speed){
         //will roatate at a particluar speed
         CAM->Rotation(axis*speed);
+        CAM->updateMatrix();
     }
     private:
     std::unique_ptr<camera> CAM;

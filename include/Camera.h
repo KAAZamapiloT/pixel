@@ -64,6 +64,12 @@ public:
       }
     }
 
+    void Rotation(quat q){
+        m_Rotation = q * m_Rotation;
+        UpdateOrientaionVector();
+        bViewDirty = true;
+    }
+
 
   private:
 
