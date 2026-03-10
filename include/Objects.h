@@ -41,3 +41,14 @@ public:
     std::vector<struct Transform> Transforms;
 };
 //triangles will store locations locally and Trabnsoforms will be a worlld scale varient of them
+
+class Example{
+
+    void Draw(){
+    // r-> submit Data()
+    // r->Draw Data()
+
+    }
+  private:
+std::vector<TriangleArray> Tarray;
+};
