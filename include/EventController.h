@@ -1,40 +1,29 @@
 #pragma once
+#include"SDL3/SDL.h"
 
-#include<SDL.h>
-#include"Camera.h"
-#include<memory>
+// controlling camera movements using this class
+class EventController{
+  public:
 
-class MovableCamera:public camera{
-    MovableCamera(ECameraType p,Vec3f location_3d,  float fov, float AspectRatio,
-    float NearPlane,
-    float FarPlane){
-        CAM= new camera(p,location_3d,fov,AspectRatio,NearPlane,FarPlane);
-    }
-    MovableCamera(ECameraType p,Vec3f location_3d,float left,float right,float bottom,
-        float top,float NearPlane,float FarPlane){
-            CAM=new camera(p,location_3d,left,right,bottom,top,NearPlane,FarPlane);
-        }
 
-    void Teleport(Vec3f direction,float units){
-           // radial system
-    }
-    void Teleport(Vec3f position){
-          //
-    }
+  void ImpactCamera(class camera&camera,SDL_Event e,bool bActive=true){
+      if(!bActive) return;
 
-    void Movement(Vec3f direction,float speed){
+      switch(e.type){
+          case SDL_KEYDOWN:
+              camera.SpeedRotation(quat(1,0,0,1),1.0f);
+              break;
+          case SDL_KEYUP:
+              camera.SpeedRotation(quat(1,0,0,1),-1.0f);
+              break;
+          case SDL_KEYLEFT:
+              camera.SpeedRotation(quat(0,1,0,0),1.0f);
+              break;
+          case SDL_EVENT_KEYRIGHT:
+              camera.SpeedRotation(quat(0,1,0,0),-1.0f);
+              break;
 
-    }
+      }
+  }
 
-    void Rotation(quat q){
-        CAM->Rotation(q);
-        CAM->updateMatrix();
-    }
-    void RotatingMov(quat axis,float speed){
-        //will roatate at a particluar speed
-        CAM->Rotation(axis*speed);
-        CAM->updateMatrix();
-    }
-    private:
-    std::unique_ptr<camera> CAM;
-}
+};

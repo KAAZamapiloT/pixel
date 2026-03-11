@@ -49,6 +49,13 @@ public:
         UpdateProjectionView();
     }
 
+    void UpdateSpeed(float speed,float translate){
+        speed=speed;
+        translateSpeed=translate;
+    }
+
+
+    std::pair<float,float> GetSpeed(){ return std::pair<float,float>(speed,translateSpeed);}
     Mat4f GetProjectionView(){
          return m_ProjectionViewMatrix;
     }
@@ -66,10 +73,23 @@ public:
 
     void Rotation(quat q){
         m_Rotation = q * m_Rotation;
+        m_pitch=m_Rotation.x;
+        m_yaw=m_Rotation.y;
+        m_roll=m_Rotation.z;
         UpdateOrientaionVector();
         bViewDirty = true;
+        updateMatrix();
     }
 
+    void SpeedRoation(quat q,float speed){
+        m_Rotation = q* m_Rotation*speed;
+        m_pitch=m_Rotation.x;
+        m_yaw=m_Rotation.y;
+        m_roll=m_Rotation.z;
+        UpdateOrientaionVector();
+        bViewDirty = true;
+        updateMatrix();
+    }
 
   private:
 
@@ -165,4 +185,10 @@ public:
     Vec3f forward=Vec3f(0.0,0.0,-1.0);
     Vec3f up=Vec3f(0.0,1.0,0.0);
 
+
+
+    // motion realted values
+    //
+    float speed =1.0f;
+    float translateSpeed=1.0f;
 };

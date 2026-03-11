@@ -9,7 +9,7 @@
 #include<algorithm>
 #include "Renderer.h"
 #include "include/Math_Utils.h"
-
+#include "include/EventController.h"
 
 void UpdateColor(INV::Vec3<uint8_t>& color,INV::Vec3<uint8_t> u_color)
 {
@@ -66,8 +66,8 @@ int main(int argc, char* argv[])
 
 
 camera camera(ECameraType::Perspective,INV::Vec3<float>(0,0,0),60.f,static_cast<float>(dims.x/dims.y),0.1f,100.f);
-INV::Matrix4<float> projectionViewMatrix = camera.GetProjectionView();
-INV::Matrix4<float> viewMatrix = camera.GetViewMatrix();
+INV::Matrix4<float> projectionViewMatrix = camera->CAM.GetProjectionView();
+INV::Matrix4<float> viewMatrix = camera->CAM.GetViewMatrix();
 
 for(int i=0;i<4;++i){
     for(int j=0;j<4;++j){
@@ -113,7 +113,7 @@ while (running) {
 
      //  r->DrawTriangle3D(camera,INV::Vec3<float>(A3.x,A3.y,-5),INV::Vec3<float>(B3.x,B3.y,-5),INV::Vec3<float>(C.x,C.y,-5),col,nullptr);
      //  r->DrawTriangle(A, B, C,col);
-    /*  r->DrawTriangle3D(
+      r->DrawTriangle3D(
          camera,
          INV::Vec3<float>(-1, -1, -1),
          INV::Vec3<float>( 1, -1, -1),
