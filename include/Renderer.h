@@ -434,6 +434,34 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
    return(u>=0&&v>=0&&w>=0);
       return true;
     };
+
+    void DrawCircle(Vec2f center , float radius,INV::Vec3<uint8_t>col,bool filled){
+
+        int minx=std::max(0,center.x-radius);
+        int miy=std::min(0,center.y-raidus);
+        int maxx=std::min(m_Window->m_Width,center.x+radius);
+        int mayy=std::min(m_Window->m_Height,center.y+radius);
+
+
+        // A deterministick counting points approach could be made here
+        if(filled){
+        for(uint16_t x=minx;x<maxx;x++){
+            for(uint16_t y=miy;y<mayy;y++){
+                if(x*x+y*y<=radius*radius){
+                    m_Width[x][y]=col;
+                }
+            }
+        }
+        }else{
+            for(uint16_t x=minx;x<maxx;x++){
+                for(uint16_t y=miy;y<mayy;y++){
+                    if(x*x+y*y==radius*radius){
+                        m_Width[x][y]=col;
+                    }
+                }
+            }
+        }
+    }
    void linear_interpolation(INV::Vec2<uint16_t> p1,INV::Vec2<uint16_t>p2,INV::Vec3<uint8_t> color){
 
        //TODO: FIX THIS

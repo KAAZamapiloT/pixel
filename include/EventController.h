@@ -10,13 +10,13 @@ class EventController{
       if(!bActive) return;
 
       switch(e.type){
-          case SDL_KEYDOWN:
+          case SDL_EVENT_KEYDOWN:
               camera.SpeedRotation(quat(1,0,0,1),1.0f);
               break;
-          case SDL_KEYUP:
+          case SDL_EVENT_KEYUP:
               camera.SpeedRotation(quat(1,0,0,1),-1.0f);
               break;
-          case SDL_KEYLEFT:
+          case SDL_EVENT_KEYLEFT:
               camera.SpeedRotation(quat(0,1,0,0),1.0f);
               break;
           case SDL_EVENT_KEYRIGHT:
