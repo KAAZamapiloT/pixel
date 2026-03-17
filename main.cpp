@@ -66,8 +66,8 @@ int main(int argc, char* argv[])
 
 
 camera camera(ECameraType::Perspective,INV::Vec3<float>(0,0,0),60.f,static_cast<float>(dims.x/dims.y),0.1f,100.f);
-INV::Matrix4<float> projectionViewMatrix = camera->CAM.GetProjectionView();
-INV::Matrix4<float> viewMatrix = camera->CAM.GetViewMatrix();
+INV::Matrix4<float> projectionViewMatrix = camera.GetProjectionView();
+INV::Matrix4<float> viewMatrix = camera.GetViewMatrix();
 
 for(int i=0;i<4;++i){
     for(int j=0;j<4;++j){
@@ -90,6 +90,7 @@ INV::Vec4<float> C3=INV::Vec4<float>(C.x,C.y,3,1);
 //A3=modal.Matrix4_Vec4_mul(modal,A3);
 //B3=modal.Matrix4_Vec4_mul(modal,B3);
 //C3=modal.Matrix4_Vec4_mul(modal,C3);
+INV::Vec2<float>center(100,100);
 while (running) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT)
@@ -113,16 +114,19 @@ while (running) {
 
      //  r->DrawTriangle3D(camera,INV::Vec3<float>(A3.x,A3.y,-5),INV::Vec3<float>(B3.x,B3.y,-5),INV::Vec3<float>(C.x,C.y,-5),col,nullptr);
      //  r->DrawTriangle(A, B, C,col);
-      r->DrawTriangle3D(
+     /*  r->DrawTriangle3D(
          camera,
          INV::Vec3<float>(-1, -1, -1),
          INV::Vec3<float>( 1, -1, -1),
          INV::Vec3<float>( 1,  1, -1),
          col,
          nullptr
-     );
-*/
+         );*/
 
+     r->DrawCircle(center, 10.0f, col, true);
+
+     center.x=250+sin(time)*200;
+     center.y=250+cos(time)*200;
 
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);
         SDL_RenderClear(sdlRenderer);

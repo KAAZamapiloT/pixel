@@ -1,29 +1,15 @@
 #pragma once
 #include"SDL3/SDL.h"
-
+#include"camera.h"
 // controlling camera movements using this class
 class EventController{
   public:
 
 
-  void ImpactCamera(class camera&camera,SDL_Event e,bool bActive=true){
+  void ImpactCamera(bool bActive=true){
       if(!bActive) return;
 
-      switch(e.type){
-          case SDL_EVENT_KEYDOWN:
-              camera.SpeedRotation(quat(1,0,0,1),1.0f);
-              break;
-          case SDL_EVENT_KEYUP:
-              camera.SpeedRotation(quat(1,0,0,1),-1.0f);
-              break;
-          case SDL_EVENT_KEYLEFT:
-              camera.SpeedRotation(quat(0,1,0,0),1.0f);
-              break;
-          case SDL_EVENT_KEYRIGHT:
-              camera.SpeedRotation(quat(0,1,0,0),-1.0f);
-              break;
-
-      }
+      // EVNENT HANDLERS
   }
 
 };
