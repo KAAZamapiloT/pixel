@@ -441,6 +441,29 @@ Quat operator/(T scalar) const{
 }
 Quat& operator=(const Quat& q) = default;
 
+INV::Vec3<float> QuatToEuler(){
+    INV::Vec3<float> euler;
+
+        // Pitch (X-axis rotation)
+        float sinp = 2.0f * (q.w * q.x + q.y * q.z);
+        float cosp = 1.0f - 2.0f * (q.x * q.x + q.y * q.y);
+        euler.x = std::atan2(sinp, cosp);
+
+        // Yaw (Y-axis rotation)
+        float siny = 2.0f * (q.w * q.y - q.z * q.x);
+
+        if (std::abs(siny) >= 1.0f)
+            euler.y = std::copysign(M_PI / 2.0f, siny); // clamp (gimbal lock)
+        else
+            euler.y = std::asin(siny);
+
+        // Roll (Z-axis rotation)
+        float sinr = 2.0f * (q.w * q.z + q.x * q.y);
+        float cosr = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
+        euler.z = std::atan2(sinr, cosr);
+
+        return euler;
+}
 };
 
 }
