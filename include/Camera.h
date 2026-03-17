@@ -73,10 +73,10 @@ public:
 
     void Rotation(quat q){
         m_Rotation = m_Rotation*q;
-        INV::Vec3<float> euler = m_Rotation.QuatToEuler();
+        INV::Vec3<float> euler = m_Rotation.QuatToEuler(m_Rotation);
         m_pitch = euler.x;
         m_yaw=euler.y;
-        m_roll=euler.z
+        m_roll=euler.z;
         UpdateOrientaionVector();
         bViewDirty = true;
         updateMatrix();
@@ -85,7 +85,7 @@ public:
     void SpeedRoation(quat q,float speed){
      //   q.w*=speed;
         m_Rotation = q*m_Rotation;
-        INV::Vec3<float> euler = m_Rotation.QuatToEuler();
+        INV::Vec3<float> euler = m_Rotation.QuatToEuler(m_Rotation);
         m_pitch = euler.x;
         m_yaw = euler.y;
         m_roll = euler.z;
@@ -94,11 +94,11 @@ public:
         updateMatrix();
     }
 
-    void AxisRoation(Vec3f axis, float angle){
+    void AxisRotation(Vec3f axis, float angle){
         quat q = quat( std::cos(angle/2.0f),axis);
-        m_Rotation = q*m_Rotation;
-        m_Rotation = m_Rotation.normalize();
-        INV::Vec3<float> euler = m_Rotation.QuatToEuler();
+        m_Rotation = m_Rotation*q;
+        m_Rotation.normalize();
+        INV::Vec3<float> euler = m_Rotation.QuatToEuler(m_Rotation);
         m_pitch = euler.x;
         m_yaw = euler.y;
         m_roll = euler.z;

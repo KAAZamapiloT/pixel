@@ -3,6 +3,9 @@
 #include<vector>
 #include<cstdint>
 #include"string"
+#define _USE_MATH_DEFINES
+#include <cmath>
+constexpr float M_PI = 3.14159265358979323846f;
 namespace INV{
 
 template <typename T>
@@ -439,9 +442,15 @@ Quat operator*(T scalar) const{
 Quat operator/(T scalar) const{
     return Quat(x/scalar,y/scalar,z/scalar,w/scalar);
 }
-Quat& operator=(const Quat& q) = default;
+Quat& operator=(const Quat& q){
+    x=q.x;
+    y=q.y;
+    z=q.z;
+    w=q.w;
+    return *this;
+};
 
-INV::Vec3<float> QuatToEuler(){
+INV::Vec3<float> QuatToEuler(const Quat& q){
     INV::Vec3<float> euler;
 
         // Pitch (X-axis rotation)
