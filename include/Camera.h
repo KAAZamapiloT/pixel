@@ -118,6 +118,8 @@ public:
         bViewDirty = true;
         updateMatrix();
     }
+
+
   private:
 
   void Init(){
@@ -177,7 +179,6 @@ public:
     //default camera_type
     ECameraType camera_type=ECameraType::Orthographic;
 
-    Vec3f Location_3d;
     INV::Quat<float> m_Rotation=quat(0,0,0,1);
     // Projection parameters
     float m_fov=45.0f;
@@ -206,9 +207,7 @@ public:
     bool bProjectionFirty=false;
 
     // camera specific vector
-    Vec3f right=Vec3f(1.0,0.0,0.0);
-    Vec3f forward=Vec3f(0.0,0.0,-1.0);
-    Vec3f up=Vec3f(0.0,1.0,0.0);
+
 
 
 
@@ -216,4 +215,12 @@ public:
     //
     float speed =1.0f;
     float translateSpeed=1.0f;
+
+    public:
+    Vec3f right=Vec3f(1.0,0.0,0.0);
+    Vec3f forward=Vec3f(0.0,0.0,-1.0);
+    Vec3f up=Vec3f(0.0,1.0,0.0);
+
+
+    Vec3f Location_3d;
 };

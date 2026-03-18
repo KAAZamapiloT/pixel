@@ -34,6 +34,30 @@ float pitch=0;
           }
           cam.Rotate(pitch,yaw,0);
   }
+  void TranslateCamera(camera&e,float dt,bool isActive){
+   if(!isActive) return;
+   const bool* keys = SDL_GetKeyboardState(NULL);
+   if (keys[SDL_SCANCODE_W]){
+       e.Location_3d += e.forward * dt;
+   }
+   if (keys[SDL_SCANCODE_S]){
+       e.Location_3d -= e.forward * dt;
+   }
+   if (keys[SDL_SCANCODE_A]){
+       e.Location_3d -= e.right * dt;
+   }
+   if (keys[SDL_SCANCODE_D]){
+       e.Location_3d += e.right * dt;
+   }
+   if (keys[SDL_SCANCODE_SPACE]){
+       e.Location_3d += e.up * dt;
+   }
+   if (keys[SDL_SCANCODE_LSHIFT]){
+       e.Location_3d -= e.up * dt;
+   }
+
+
+  }
 private:
 float RotSpeed = 2.0f;
 
