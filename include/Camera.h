@@ -50,8 +50,8 @@ public:
     }
 
     void UpdateSpeed(float speed,float translate){
-        speed=speed;
-        translateSpeed=translate;
+        this->speed=speed;
+        this->translateSpeed=translate;
     }
 
 
@@ -73,10 +73,6 @@ public:
 
     void Rotation(quat q){
         m_Rotation = m_Rotation*q;
-        INV::Vec3<float> euler = m_Rotation.QuatToEuler(m_Rotation);
-        m_pitch = euler.x;
-        m_yaw=euler.y;
-        m_roll=euler.z;
         UpdateOrientaionVector();
         bViewDirty = true;
         updateMatrix();
@@ -84,27 +80,23 @@ public:
 
     void SpeedRoation(quat q,float speed){
      //   q.w*=speed;
-        m_Rotation = q*m_Rotation;
-        INV::Vec3<float> euler = m_Rotation.QuatToEuler(m_Rotation);
-        m_pitch = euler.x;
-        m_yaw = euler.y;
-        m_roll = euler.z;
+        m_Rotation = m_Rotation*q;
         UpdateOrientaionVector();
         bViewDirty = true;
         updateMatrix();
     }
 
     void AxisRotation(Vec3f axis, float angle){
-        quat q = quat( std::cos(angle/2.0f),axis);
+        quat q = quat(angle,axis);
         m_Rotation = m_Rotation*q;
         m_Rotation.normalize();
-        INV::Vec3<float> euler = m_Rotation.QuatToEuler(m_Rotation);
-        m_pitch = euler.x;
-        m_yaw = euler.y;
-        m_roll = euler.z;
         UpdateOrientaionVector();
         bViewDirty = true;
         updateMatrix();
+    }
+
+    void RotateAroundPoint() {
+
     }
   private:
 
@@ -123,22 +115,19 @@ public:
   }
     void UpdateOrientaionVector(){
 
-        forward.x=std::cos(m_pitch)*std::sin(m_yaw);
-        forward.y=std::sin(m_pitch);
-        forward.z=-std::cos(m_pitch)*std::cos(m_yaw);
+        Mat3f R = quat::GetRotationMatrix(m_Rotation);
 
-        forward.normalize();
+            right   = Vec3f(R.Mat[0][0], R.Mat[1][0], R.Mat[2][0]);
+            up      = Vec3f(R.Mat[0][1], R.Mat[1][1], R.Mat[2][1]);
+            forward = Vec3f(R.Mat[0][2], R.Mat[1][2], R.Mat[2][2]);
 
-        Vec3f WorldUp(0.0f,1.0f,0.0f);
-
-        right=forward.Cross(WorldUp);
-        right.normalize();
-
-        up=forward.Cross(right);
-        up.normalize();
+            right.normalize();
+            up.normalize();
+            forward.normalize();
 
 
     }
+
     void UpdateViewMatrix()
     {
         m_ViewMatrix[0][0] = right.x;
@@ -164,11 +153,12 @@ public:
         UpdateProjectionView();
     }
 
+
     //default camera_type
     ECameraType camera_type=ECameraType::Orthographic;
 
     Vec3f Location_3d;
-    INV::Quat<float> m_Rotation;
+    INV::Quat<float> m_Rotation=quat(0,0,0,1);
     // Projection parameters
     float m_fov=45.0f;
     float m_AspectRatio=16.0f/9.0f;

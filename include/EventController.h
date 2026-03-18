@@ -1,6 +1,7 @@
 #pragma once
 #include"SDL3/SDL.h"
 #include"camera.h"
+#include"logger.h"
 #include"Math_Utils.h"
 // controlling camera movements using this class
 class EventController{
@@ -12,17 +13,22 @@ class EventController{
 
           float speed = 0.0000001f; // radians/sec
 
-          if (keys[SDL_SCANCODE_LEFT])
+          if (keys[SDL_SCANCODE_LEFT]){
               cam.AxisRotation(y_axis, +speed * dt);
-
-          if (keys[SDL_SCANCODE_RIGHT])
+              PDEBUG("left Imapact Camera");
+          }
+          if (keys[SDL_SCANCODE_RIGHT]){
               cam.AxisRotation(y_axis, -speed * dt);
-
-          if (keys[SDL_SCANCODE_UP])
+              PDEBUG("right Imapact Camera");
+          }
+          if (keys[SDL_SCANCODE_UP]){
               cam.AxisRotation(x_axis, +speed * dt);
-
-          if (keys[SDL_SCANCODE_DOWN])
+              PDEBUG("up Imapact Camera");
+          }
+          if (keys[SDL_SCANCODE_DOWN]){
               cam.AxisRotation(x_axis, -speed * dt);
+              PDEBUG("down Imapact Camera");
+          }
   }
 private:
 float RotSpeed = 0.0001f;

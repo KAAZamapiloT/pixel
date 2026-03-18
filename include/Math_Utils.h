@@ -100,12 +100,27 @@ class Vec3{
         return Vec3(x * other.x, y * other.y, z * other.z);
     }
    void normalize(){
-    T mag=magnitude_squared();
-    if(mag==0)return;
-    T invMag=1/sqrt(mag);
+    T len2=magnitude_squared();
+    if(len2<(1e-8)){
+        x=y=z=T(0);
+        return;
+    }
+    T invMag=1/sqrt(len2);
     x*=invMag;
     y*=invMag;
     z*=invMag;
+   }
+   Vec3 normalized() const
+   {
+       T len2 = magnitude_squared();
+
+       if (len2 < T(1e-8)) {
+           return Vec3(0);
+       }
+
+       T invLen = T(1) / std::sqrt(len2);
+
+       return Vec3(x * invLen, y * invLen, z * invLen);
    }
     constexpr T magnitude_squared() const{
         return x*x+y*y+z*z;
