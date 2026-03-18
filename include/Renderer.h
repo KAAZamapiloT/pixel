@@ -329,7 +329,9 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
      Vec3f ndc_b(b1.x/b1.w,b1.y/b1.w,b1.z/b1.w);
      Vec3f ndc_c(c1.x/c1.w,c1.y/c1.w,c1.z/c1.w);
 
-
+     // preventing warap arounds
+     if (a1.w > 0 && b1.w > 0 && c1.w > 0)
+         return;
 
      Vec2f screen_a(
          static_cast<float>((ndc_a.x + 1.0f) * 0.5f * m_Window->m_width),
