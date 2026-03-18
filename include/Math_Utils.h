@@ -95,7 +95,9 @@ class Vec3{
    constexpr T Dot(const Vec3& other) const {
         return (x * other.x+ y * other.y+ z * other.z);
     }
-
+   constexpr Vec3 operator-() const {
+        return Vec3(-x, -y, -z);
+    }
     Vec3 Hadamard(const Vec3& other) const {
         return Vec3(x * other.x, y * other.y, z * other.z);
     }

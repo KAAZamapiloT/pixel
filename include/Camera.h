@@ -95,8 +95,28 @@ public:
         updateMatrix();
     }
 
-    void RotateAroundPoint() {
+    void Rotate(float pitch,float yaw,float roll) {
+        Vec3f WorldUp(0,1,0);
 
+        // -> Yaw Rotation
+        quat qYaw(yaw, WorldUp);
+        m_Rotation = qYaw*m_Rotation;
+
+
+        // -> Pitch Rotation
+        Vec3f LocalRight=m_Rotation.rotate(Vec3f(1,0,0));
+        quat qPitch(pitch,LocalRight);
+        m_Rotation = qPitch*m_Rotation;
+
+        // -> Roll Rotation
+        Vec3f LocalUp=m_Rotation.rotate(Vec3f(0,1,0));
+        quat qRoll(roll, LocalUp);
+        m_Rotation = qRoll*m_Rotation;
+
+        m_Rotation.normalize();
+        UpdateOrientaionVector();
+        bViewDirty = true;
+        updateMatrix();
     }
   private:
 
@@ -119,7 +139,7 @@ public:
 
             right   = Vec3f(R.Mat[0][0], R.Mat[1][0], R.Mat[2][0]);
             up      = Vec3f(R.Mat[0][1], R.Mat[1][1], R.Mat[2][1]);
-            forward = Vec3f(R.Mat[0][2], R.Mat[1][2], R.Mat[2][2]);
+            forward = -Vec3f(R.Mat[0][2], R.Mat[1][2], R.Mat[2][2]);
 
             right.normalize();
             up.normalize();

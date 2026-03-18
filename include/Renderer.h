@@ -28,12 +28,14 @@ namespace INV{
       inline uint16_t GetHeight(){return m_height;}
 
       void SetPixelColor(Vec2<uint16_t> cord,Vec3<uint8_t> Color){
-        frame_buffer[cord.x + cord.y * m_width].x=Color.x;
+
+   if(cord.x >= m_width || cord.y >= m_height) return;
+          frame_buffer[cord.x + cord.y * m_width].x=Color.x;
         frame_buffer[cord.x + cord.y * m_width].y=Color.y;
         frame_buffer[cord.x + cord.y * m_width].z=Color.z;
       }
       void SetPixelColor(Vec2<uint16_t> cord,Vec4<uint8_t> Color){
-
+if(cord.x >= m_width || cord.y >= m_height) return;
           int c = cord.x + cord.y * m_width;
               float srcA = Color.w / 255.0f;
               float srcR = Color.x / 255.0f;
@@ -54,12 +56,13 @@ namespace INV{
               frame_buffer[c].w = 255;
       }
       void SetPixelColor(uint32_t index,Vec3<uint8_t> Color){
-
+        if(index >=m_width * m_height) return;
         frame_buffer[index].x=Color.x;
          frame_buffer[index].y=Color.y;
           frame_buffer[index].z=Color.z;
       }
       void SetPixelColor(uint32_t index,Vec4<uint8_t> Color){
+              if(index >=m_width * m_height) return;
               int c = index;
               float srcA = Color.w / 255.0f;
               float srcR = Color.x / 255.0f;
@@ -80,6 +83,8 @@ namespace INV{
               frame_buffer[c].w = 255;
       }
       Vec3<uint8_t> GetColor(Vec2<uint16_t> cord){
+
+
           int c=cord.x + cord.y * m_width;
         return INV::Vec3<uint8_t>(frame_buffer[c].x,frame_buffer[c].y,frame_buffer[c].z);
       }
