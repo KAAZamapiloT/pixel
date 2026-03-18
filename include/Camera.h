@@ -44,9 +44,9 @@ public:
         m_NearPlane=NearPlane;
         m_FarPlane=FarPlane;
         m_Ortho=Mat4f::ortho(left,right,bottom,top,NearPlane,FarPlane);
-        UpdateViewMatrix();
         UpdateOrientaionVector();
-        UpdateProjectionView();
+           UpdateViewMatrix();
+           UpdateProjectionView();
     }
 
     void UpdateSpeed(float speed,float translate){
@@ -68,30 +68,27 @@ public:
     void updateMatrix(){
       if(bViewDirty){
         UpdateViewMatrix();
+        bViewDirty = false;
       }
     }
 
     void Rotation(quat q){
         m_Rotation = m_Rotation*q;
-        UpdateOrientaionVector();
         bViewDirty = true;
+        UpdateOrientaionVector();
+
         updateMatrix();
     }
 
-    void SpeedRoation(quat q,float speed){
-     //   q.w*=speed;
-        m_Rotation = m_Rotation*q;
-        UpdateOrientaionVector();
-        bViewDirty = true;
-        updateMatrix();
-    }
+
 
     void AxisRotation(Vec3f axis, float angle){
         quat q = quat(angle,axis);
         m_Rotation = m_Rotation*q;
         m_Rotation.normalize();
+         bViewDirty = true;
         UpdateOrientaionVector();
-        bViewDirty = true;
+
         updateMatrix();
     }
 
@@ -127,9 +124,9 @@ public:
   private:
 
   void Init(){
-      UpdateViewMatrix();
       UpdateOrientaionVector();
-      UpdateProjectionMatrix();
+         UpdateViewMatrix();
+         UpdateProjectionMatrix();
   }
   void UpdateProjectionView(){
     m_ProjectionViewMatrix = m_ProjectionMatrix*m_ViewMatrix;
@@ -142,42 +139,44 @@ public:
 
   void UpdateOrientaionVector(){
 
+      m_Rotation.normalize();
+
         Mat3f R = quat::GetRotationMatrix(m_Rotation);
 
-            right   = Vec3f(R.Mat[0][0], R.Mat[1][0], R.Mat[2][0]);
-            up      = Vec3f(R.Mat[0][1], R.Mat[1][1], R.Mat[2][1]);
-            forward = -Vec3f(R.Mat[0][2], R.Mat[1][2], R.Mat[2][2]);
-
-            right.normalize();
-            up.normalize();
-            forward.normalize();
+        right   = Vec3f(R.Mat[0][0], R.Mat[0][1], R.Mat[0][2]);
+        up      = Vec3f(R.Mat[1][0], R.Mat[1][1], R.Mat[1][2]);
+        forward = Vec3f(R.Mat[2][0], R.Mat[2][1], R.Mat[2][2]);
 
 
     }
 
     void UpdateViewMatrix()
     {
-        m_ViewMatrix[0][0] = right.x;
-        m_ViewMatrix[1][0] = right.y;
-        m_ViewMatrix[2][0] = right.z;
-        m_ViewMatrix[3][0] = 0.0f;
+        // ROW 0 → right axis
+            m_ViewMatrix[0][0] = right.x;
+            m_ViewMatrix[0][1] = right.y;
+            m_ViewMatrix[0][2] = right.z;
+            m_ViewMatrix[0][3] = -right.Dot(Location_3d);
 
-        m_ViewMatrix[0][1] = up.x;
-        m_ViewMatrix[1][1] = up.y;
-        m_ViewMatrix[2][1] = up.z;
-        m_ViewMatrix[3][1] = 0.0f;
+            // ROW 1 → up axis
+            m_ViewMatrix[1][0] = up.x;
+            m_ViewMatrix[1][1] = up.y;
+            m_ViewMatrix[1][2] = up.z;
+            m_ViewMatrix[1][3] = -up.Dot(Location_3d);
 
-        m_ViewMatrix[0][2] = forward.x;
-        m_ViewMatrix[1][2] = forward.y;
-        m_ViewMatrix[2][2] =  forward.z;
-        m_ViewMatrix[3][2] = 0.0f;
+            // ROW 2 → forward axis (NEGATED for camera)
+            m_ViewMatrix[2][0] = -forward.x;
+            m_ViewMatrix[2][1] = -forward.y;
+            m_ViewMatrix[2][2] = -forward.z;
+            m_ViewMatrix[2][3] = -forward.Dot(Location_3d);
 
-        m_ViewMatrix[0][3] = -right.Dot(Location_3d);
-        m_ViewMatrix[1][3] = -up.Dot(Location_3d);
-        m_ViewMatrix[2][3] = -forward.Dot(Location_3d);
-        m_ViewMatrix[3][3] = 1.0f;
+            // ROW 3
+            m_ViewMatrix[3][0] = 0.0f;
+            m_ViewMatrix[3][1] = 0.0f;
+            m_ViewMatrix[3][2] = 0.0f;
+            m_ViewMatrix[3][3] = 1.0f;
 
-        UpdateProjectionView();
+            UpdateProjectionView();
     }
 
 
