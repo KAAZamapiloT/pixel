@@ -119,7 +119,11 @@ public:
         updateMatrix();
     }
 
-
+    void Translate(const Vec3f& translation) {
+        Location_3d += translation;
+        bViewDirty = true;
+        updateMatrix();
+    }
   private:
 
   void Init(){
@@ -135,7 +139,8 @@ public:
     m_ProjectionMatrix=Mat4f::perspective(m_fov,m_AspectRatio,m_NearPlane,m_FarPlane);
     UpdateProjectionView();
   }
-    void UpdateOrientaionVector(){
+
+  void UpdateOrientaionVector(){
 
         Mat3f R = quat::GetRotationMatrix(m_Rotation);
 

@@ -38,29 +38,35 @@ float pitch=0;
    if(!isActive) return;
    const bool* keys = SDL_GetKeyboardState(NULL);
    if (keys[SDL_SCANCODE_W]){
-       e.Location_3d += e.forward * dt;
+       PDEBUG("w Translate Camera");
+       e.Translate(e.forward * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_S]){
-       e.Location_3d -= e.forward * dt;
+       PDEBUG("s Translate Camera");
+       e.Translate(-e.forward * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_A]){
-       e.Location_3d -= e.right * dt;
+       PDEBUG("a Translate Camera");
+       e.Translate(-e.right * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_D]){
-       e.Location_3d += e.right * dt;
+       PDEBUG("d Translate Camera");
+       e.Translate(e.right * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_SPACE]){
-       e.Location_3d += e.up * dt;
+       PDEBUG("space Translate Camera");
+       e.Translate(e.up * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_LSHIFT]){
-       e.Location_3d -= e.up * dt;
+       PDEBUG("lshift Translate Camera");
+       e.Translate(-e.up * dt*TranslateSpeed);
    }
 
 
   }
 private:
 float RotSpeed = 2.0f;
-
+float TranslateSpeed = 2.0f;
 Vec3f y_axis=INV::Vec3<float>(0,1,0);
 Vec3f x_axis=INV::Vec3<float>(1,0,0);
 Vec3f z_axis=INV::Vec3<float>(0,0,1);
