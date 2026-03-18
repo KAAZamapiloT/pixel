@@ -169,7 +169,7 @@ public:
 
         m_ViewMatrix[0][2] = forward.x;
         m_ViewMatrix[1][2] = forward.y;
-        m_ViewMatrix[2][2] = forward.z;
+        m_ViewMatrix[2][2] =  forward.z;
         m_ViewMatrix[3][2] = 0.0f;
 
         m_ViewMatrix[0][3] = -right.Dot(Location_3d);
