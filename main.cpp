@@ -1,7 +1,7 @@
 //#define SDL_MAIN_HANDLED
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-
+#include "include/Objects.h"
 #include <atomic>
 #include <cstdint>
 #include <iostream>
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
      INV::Vec3<uint8_t> col(178,72,123);
      INV::Vec3<uint8_t> U_Color(123,234,13);
 
-
+Example exp;
 camera camera(ECameraType::Perspective,INV::Vec3<float>(0,0,0),60.f,static_cast<float>(dims.x/dims.y),0.1f,100.f);
 EventController CC;
 INV::Matrix4<float> projectionViewMatrix = camera.GetProjectionView();
@@ -81,7 +81,7 @@ for(int i=0;i<4;++i){
     }
 }
 
-
+TriangleArray obj = exp.CreateTestTriangle();
 float scale_cnt=1.0000001f;
 //INV::Matrix3<float> modelMatrix = Math::ScaleRotateTranslateMatrix2D(1.0000001,0,0,0);
 Mat4f modal=Math::ScaleRotateTranslateMatrix3D(1.0000001,quat(0,0,0,0),2,2,0);
@@ -123,7 +123,7 @@ while (running) {
          col,
          nullptr
          );
-
+        r->DrawTraingles3D(obj,camera);
         CC.ImpactCamera(camera , e , true , deltaTime);
         CC.TranslateCamera(camera, deltaTime, true);
      //r->DrawCircle(center, 10.0f, col, true);

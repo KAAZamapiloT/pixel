@@ -199,7 +199,7 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
      // drawing with a color function
 void DrawTraingles3D(TriangleArray&Tri,camera&Cam){
     for(size_t i=0;i<Tri.triangles.size();++i){
-
+        DrawTriangle3D(Cam,Tri.triangles[i].vertices[0],Tri.triangles[i].vertices[1],Tri.triangles[i].vertices[2], Tri.colors[i], nullptr);
     }
 }
      void DrawTriangle(INV::Vec2<float> p1,INV::Vec2<float>p2,INV::Vec2<float>p3,INV::Vec3<uint8_t> basecolor
