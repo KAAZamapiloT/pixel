@@ -150,6 +150,9 @@ class Vec3{
 
        return Vec3(x * invLen, y * invLen, z * invLen);
    }
+   T magnitude(){
+       return std::sqrt(magnitude_squared());
+   }
     constexpr T magnitude_squared() const{
         return x*x+y*y+z*z;
     }

@@ -10,6 +10,7 @@ virtual void DrawMap(std::vector<std::vector<int>>& map){
     int map_width=map[0].size();
     int map_height=map.size();
 
+
 }
 
 };

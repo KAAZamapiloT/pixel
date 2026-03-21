@@ -8,6 +8,7 @@
 
 #include"Math_Utils.h"
 #include<array>
+#include <cstdint>
 
 
 /// Defines data for a object in a spcae///
@@ -38,6 +39,7 @@ struct Triangle{
 class TriangleArray{
 public:
     std::vector<Triangle> triangles;
+    std::vector<INV::Vec3<uint8_t>> colors;
     std::vector<struct Transform> Transforms;
 };
 //triangles will store locations locally and Trabnsoforms will be a worlld scale varient of them

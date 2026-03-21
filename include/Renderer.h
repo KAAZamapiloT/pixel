@@ -3,6 +3,7 @@
 #pragma once
 #include "Camera.h"
 #include"Math_Utils.h"
+#include "Objects.h"
 #include <cstdint>
 #include<algorithm>
 #include<vector>
@@ -20,7 +21,7 @@ namespace INV{
                     m_height=height;
                     m_name=name;
                     frame_buffer=std::vector<Vec4<uint8_t>>(width*height,{0,0,0,0});
-                    depth_buffer=std::vector<uint8_t>(width*height,{0});
+                    depth_buffer = std::vector<float>(width * height, std::numeric_limits<float>::infinity());
 
 
       }
@@ -82,6 +83,8 @@ if(cord.x >= m_width || cord.y >= m_height) return;
               frame_buffer[c].z = (uint8_t)(outB * 255.0f);
               frame_buffer[c].w = 255;
       }
+
+
       Vec3<uint8_t> GetColor(Vec2<uint16_t> cord){
 
 
@@ -109,7 +112,7 @@ if(cord.x >= m_width || cord.y >= m_height) return;
       std::vector<Vec4<uint8_t>> frame_buffer;
 
       // really useful for ovellaping images
-      std::vector<uint8_t> depth_buffer;
+      std::vector<float> depth_buffer;
 
     };
 }
@@ -194,7 +197,11 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
      }
 
      // drawing with a color function
+void DrawTraingles3D(TriangleArray&Tri,camera&Cam){
+    for(size_t i=0;i<Tri.triangles.size();++i){
 
+    }
+}
      void DrawTriangle(INV::Vec2<float> p1,INV::Vec2<float>p2,INV::Vec2<float>p3,INV::Vec3<uint8_t> basecolor
 
          ,INV::Vec3<uint8_t>(*X)(INV::Vec2<uint16_t>,float)){
@@ -329,6 +336,7 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
      Vec3f ndc_b(b1.x/b1.w,b1.y/b1.w,b1.z/b1.w);
      Vec3f ndc_c(c1.x/c1.w,c1.y/c1.w,c1.z/c1.w);
 
+
      // preventing warap arounds
      if (a1.w > 0 && b1.w > 0 && c1.w > 0)
          return;
@@ -367,12 +375,20 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
      MIx=std::max(MIx,0);
      MIy=std::max(MIy,0);
 
+     Vec3f v1=p1-p2;
+     Vec3f v2=p2-p1;
+     Vec3f PlaneNormal=v1.Cross(v2);
       if(f==nullptr){
 
           for(int i=MIx;i<=MAx;i++){
               for(int j=MIy;j<=MAy;j++){
                   if(InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c)){
+                      Vec3f w=BaryCentric(Vec2f(i,j),screen_a,screen_b,screen_c);
+                      float depth=w.x*ndc_a.z+w.y*ndc_b.z+w.z*ndc_c.z;
+                      if(SetDepthBuffer(INV::Vec2<uint16_t>(i,j),depth)){
                       SetPixelColor(INV::Vec2<uint16_t>(i,j),color);
+                      }
+
                   }
               }
           }
@@ -416,6 +432,21 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
           }
       }
 
+      bool SetDepthBuffer(INV::Vec2<uint16_t>cord,float depth){
+          if (cord.x >= m_Window->m_width || cord.y >= m_Window->m_height)
+                return false;
+          int c = cord.x + cord.y * m_Window->m_width;
+
+          if(c<0){
+              return false;
+          }
+          if(m_Window->depth_buffer[c]>depth){
+              m_Window->depth_buffer[c] = depth;
+              return true;
+          }
+
+          return false;
+      }
    void ClearColor(INV::Vec4<uint8_t> Color){
    //    printf("%d %d",m_Window->frame_buffer.begin(),m_Window->frame_buffer.end());
    std::fill(
@@ -423,6 +454,7 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
        m_Window->frame_buffer.end(),
        Color
    );
+   std::fill(m_Window->depth_buffer.begin(), m_Window->depth_buffer.end(), std::numeric_limits<float>::infinity());
    }
    const uint8_t* GetColorBufferBytes() const {
        return reinterpret_cast<const uint8_t*>(m_Window->frame_buffer.data());
@@ -488,6 +520,26 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
 
    }
 
+   INV::Vec3<float> BaryCentric(INV::Vec2<float>p1,INV::Vec2<float> p2,INV::Vec2<float> p3
+       ,INV::Vec2<float> p4){
+
+           INV::Vec2<float> v0=p3-p2;
+           INV::Vec2<float> v1=p4-p2;
+           INV::Vec2<float> v2=p1-p2;
+
+           float denom=v0.x*v1.y-v0.y*v1.x;
+           if (fabs(denom) < 1e-6f)
+                   return INV::Vec3<float>(-1, -1, -1);
+
+           float invDenom = 1.0f / denom;
+
+               float w1 = (v2.x * v1.y - v1.x * v2.y) * invDenom;
+               float w2 = (v0.x * v2.y - v2.x * v0.y) * invDenom;
+               float w0 = 1.0f - w1 - w2;
+               return INV::Vec3<float>(w0, w1, w2);
+
+
+   }
    bool InsideScreenSpace(INV::Vec2<int> Point,INV::Vec2<float> a,INV::Vec2<float> b,INV::Vec2<float> c){
 
      bool h=(Point.x>=0 && Point.x<m_Window->m_width && Point.y>=0 && Point.y<m_Window->m_height);
