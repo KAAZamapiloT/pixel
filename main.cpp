@@ -113,17 +113,12 @@ while (running) {
         U_Color.y=abs(cos(time/2))*255;
         U_Color.z=abs(sin(time))*255;
 
-     //  r->DrawTriangle3D(camera,INV::Vec3<float>(A3.x,A3.y,-5),INV::Vec3<float>(B3.x,B3.y,-5),INV::Vec3<float>(C.x,C.y,-5),col,nullptr);
+
      //  r->DrawTriangle(A, B, C,col);
-       r->DrawTriangle3D(
-         camera,
-         INV::Vec3<float>(-1, -1, -1),
-         INV::Vec3<float>( 1, -1, -1),
-         INV::Vec3<float>( 1,  1, -1),
-         col,
-         nullptr
-         );
-        r->DrawTraingles3D(obj,camera);
+    r->DrawTriangle3D(camera,INV::Vec3<float>(-1, -1, -2),INV::Vec3<float>( 1, -1, -2),INV::Vec3<float>( 1,  1, -2),col,nullptr);
+    //    exp.DepthTest1(r, camera);
+    //    exp.DepthTest2(r, camera);
+        //obj.DepthTest2(r, camera);
         CC.ImpactCamera(camera , e , true , deltaTime);
         CC.TranslateCamera(camera, deltaTime, true);
      //r->DrawCircle(center, 10.0f, col, true);

@@ -197,9 +197,12 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
      }
 
      // drawing with a color function
-void DrawTraingles3D(TriangleArray&Tri,camera&Cam){
+void DrawTraingles3D(class TriangleArray&Tri,camera&Cam){
     for(size_t i=0;i<Tri.triangles.size();++i){
-        DrawTriangle3D(Cam,Tri.triangles[i].vertices[0],Tri.triangles[i].vertices[1],Tri.triangles[i].vertices[2], Tri.colors[i], nullptr);
+        DrawTriangle3D(Cam,Tri.triangles[i].vertices[0],
+            Tri.triangles[i].vertices[1],
+            Tri.triangles[i].vertices[2],
+            Tri.colors[i], nullptr);
     }
 }
      void DrawTriangle(INV::Vec2<float> p1,INV::Vec2<float>p2,INV::Vec2<float>p3,INV::Vec3<uint8_t> basecolor
@@ -338,7 +341,7 @@ void DrawTraingles3D(TriangleArray&Tri,camera&Cam){
 
 
      // preventing warap arounds
-     if (a1.w > 0 && b1.w > 0 && c1.w > 0)
+     if (a1.w <=0 && b1.w <= 0 && c1.w<=0)
          return;
 
      Vec2f screen_a(
@@ -384,7 +387,7 @@ void DrawTraingles3D(TriangleArray&Tri,camera&Cam){
               for(int j=MIy;j<=MAy;j++){
                   if(InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c)){
                       Vec3f w=BaryCentric(Vec2f(i,j),screen_a,screen_b,screen_c);
-                      float depth=w.x*ndc_a.z+w.y*ndc_b.z+w.z*ndc_c.z;
+                      float depth=-w.x*ndc_a.z+w.y*ndc_b.z+w.z*ndc_c.z;
                       if(SetDepthBuffer(INV::Vec2<uint16_t>(i,j),depth)){
                       SetPixelColor(INV::Vec2<uint16_t>(i,j),color);
                       }
@@ -548,4 +551,73 @@ void DrawTraingles3D(TriangleArray&Tri,camera&Cam){
      bool l=(c.x>=0 && c.x<m_Window->m_width && c.y>=0 && c.y<m_Window->m_height);
      return(h&&j&&k&&l);
    }
+};
+class Example{
+public:
+    void Draw(){
+    // r-> submit Data()
+    // r->Draw Data()
+    }
+
+    void DepthTest1(std::unique_ptr<class renderer>&r,class camera& cam) {
+
+        // FAR triangle (should be hidden)
+        r->DrawTriangle3D(cam,
+            Vec3f(-0.5f, -0.5f, -3.0f),
+            Vec3f(0.5f, -0.5f, -3.0f),
+            Vec3f(0.0f,  0.5f, -3.0f),
+            INV::Vec3<uint8_t>(255, 0, 0), nullptr
+        );
+
+        // NEAR triangle (should always be visible)
+        r->DrawTriangle3D(cam,
+            Vec3f(-0.5f, -0.5f, -1.0f),
+            Vec3f(0.5f, -0.5f, -1.0f),
+            Vec3f(0.0f,  0.5f, -1.0f),
+            INV::Vec3<uint8_t>(0, 255, 0), nullptr
+        );
+    }
+    void DepthTest2(std::unique_ptr<class renderer>&r, class camera& cam) {
+
+        // Triangle A (slanted)
+        r->DrawTriangle3D(cam,
+            Vec3f(-0.8f, -0.5f, -1.0f),
+            Vec3f(0.8f, -0.5f, -2.0f),
+            Vec3f(0.0f,  0.8f, -1.5f),
+            INV::Vec3<uint8_t>(255, 0, 0), nullptr
+        );
+
+        // Triangle B crossing it
+        r->DrawTriangle3D(cam,
+            Vec3f(-0.8f,  0.5f, -2.0f),
+            Vec3f( 0.8f,  0.5f, -1.0f),
+            Vec3f( 0.0f, -0.8f, -1.5f),
+            INV::Vec3<uint8_t>(0, 255, 0), nullptr
+        );
+    }
+    TriangleArray CreateTestTriangle() {
+        TriangleArray obj;
+
+        Triangle t;
+        t.vertices = {
+            Vec3f(-0.5f, -0.5f, -2.0f),
+                Vec3f( 0.5f, -0.5f, -2.0f),
+                Vec3f( 0.0f,  0.5f, -2.0f)
+        };
+
+        obj.triangles.push_back(t);
+        obj.colors.push_back({255, 0, 0}); // red
+
+        Transform tr;
+        tr.position = {0,0,0};
+        tr.scale    = {1,1,1};
+        tr.rotation = {0,0,0};
+
+        obj.Transforms.push_back(tr);
+
+        return obj;
+    }
+
+  private:
+std::vector<TriangleArray> Tarray;
 };

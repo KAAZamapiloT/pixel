@@ -319,8 +319,8 @@ constexpr explicit Matrix4(T v) {
 // Fov must be in radians
 static Matrix4 perspective(float fov, float aspect, float near, float far){
 
-
-        float t=std::tan(fov*0.5f);
+        float rads=fov*3.141592653589793f/180.0f;
+        float t=std::tan(rads*0.5f);
         Matrix4 m{}; // zero-initialized
 
            m[0][0] = 1.0f / (aspect * t);
