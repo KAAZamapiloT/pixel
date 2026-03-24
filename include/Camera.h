@@ -169,7 +169,7 @@ public:
             m_ViewMatrix[2][0] = -forward.x;
             m_ViewMatrix[2][1] = -forward.y;
             m_ViewMatrix[2][2] = -forward.z;
-            m_ViewMatrix[2][3] = -forward.Dot(Location_3d);
+            m_ViewMatrix[2][3] = forward.Dot(Location_3d);
 
             // ROW 3
             m_ViewMatrix[3][0] = 0.0f;

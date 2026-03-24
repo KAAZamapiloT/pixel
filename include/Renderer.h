@@ -341,7 +341,7 @@ void DrawTraingles3D(class TriangleArray&Tri,camera&Cam){
 
 
      // preventing warap arounds
-     if (a1.w <=0 && b1.w <= 0 && c1.w<=0)
+     if (a1.w >0 && b1.w > 0 && c1.w>0)
          return;
 
      Vec2f screen_a(
