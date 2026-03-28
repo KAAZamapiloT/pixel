@@ -49,6 +49,10 @@ int main(int argc, char* argv[])
         SDL_TEXTUREACCESS_STREAMING,
         dims.x, dims.y
     );
+   // SDL_SetWindowRelativeMouseMode(window, true);
+   // SDL_SetWindowMouseGrab(window, true);
+
+
 
     const uint8_t* pixels = r->GetColorBufferBytes();
     int pitch = dims.x * 4;
@@ -92,11 +96,17 @@ INV::Vec4<float> C3=INV::Vec4<float>(C.x,C.y,3,1);
 //B3=modal.Matrix4_Vec4_mul(modal,B3);
 //C3=modal.Matrix4_Vec4_mul(modal,C3);
 INV::Vec2<float>center(100,100);
+
 while (running) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT)
                 running = false;
         }
+
+
+
+
+        printf("Event type: %d\n", e.type);
         static float lastTime = 0.0f;
         float time = SDL_GetTicks() / 1000.0f;
         float deltaTime = time - lastTime;
@@ -121,7 +131,7 @@ while (running) {
 
         CC.ImpactCamera(camera , e , true , deltaTime);
         CC.TranslateCamera(camera, deltaTime, true);
-        CC.MouseImpactCamera(camera, e, deltaTime);
+        CC.MouseImpactCamera(camera, deltaTime);
      //r->DrawCircle(center, 10.0f, col, true);
 
      //center.x=250+sin(time)*200;

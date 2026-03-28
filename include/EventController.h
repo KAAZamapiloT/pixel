@@ -4,22 +4,53 @@
 #include"logger.h"
 #include"Math_Utils.h"
 // controlling camera movements using this class
+struct MouseState {
+    float lastX = 0.0f;
+    float lastY = 0.0f;
+    bool first = true;
+};
+
+
 class EventController{
+    MouseState mouse;
   public:
+
   void UpdateSpeed(float f){
       this->RotSpeed = f;
   }
 
-  void MouseImpactCamera(camera& cam, SDL_Event& e, float dt) {
-      if (e.type == SDL_EVENT_MOUSE_MOTION) {
-          float dx = (float)e.motion.xrel;
-          float dy = (float)e.motion.yrel;
+  void MouseImpactCamera(camera& cam, float dt) {
 
-          float yaw   = dx * RotSpeed * dt;
-          float pitch = dy * RotSpeed * dt;
 
-          cam.Rotate(pitch, yaw, 0.0f);
+      float mx, my;
+
+      Uint32 state = SDL_GetMouseState(&mx, &my);
+
+        // 👉 check right mouse button
+        if (!(state & SDL_BUTTON_RMASK)) {
+            mouse.first = true; // reset to avoid jump when re-clicking
+            return;
+        }
+
+      SDL_GetMouseState(&mx, &my);
+
+      if (mouse.first) {
+          mouse.lastX = mx;
+          mouse.lastY = my;
+          mouse.first = false;
+          return;
       }
+
+      float dx = mx - mouse.lastX;
+      float dy = my - mouse.lastY;
+
+      mouse.lastX = mx;
+      mouse.lastY = my;
+
+      float yaw   = dx * RotSpeed;
+      float pitch = dy * RotSpeed;
+
+      cam.Rotate(-pitch/1000.f, yaw/1000.f, 0.0f);
   }
   void ImpactCamera(camera&cam,SDL_Event& e, bool bActive,float dt){
       if(!bActive) return;
