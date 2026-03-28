@@ -50,7 +50,7 @@ class EventController{
       float yaw   = dx * RotSpeed;
       float pitch = dy * RotSpeed;
 
-      cam.Rotate(-pitch/1000.f, yaw/1000.f, 0.0f);
+      cam.Rotate(-pitch/1000.f, -yaw/1000.f, 0.0f);
   }
   void ImpactCamera(camera&cam,SDL_Event& e, bool bActive,float dt){
       if(!bActive) return;
@@ -81,27 +81,27 @@ float pitch=0;
    const bool* keys = SDL_GetKeyboardState(NULL);
    if (keys[SDL_SCANCODE_W]){
        PDEBUG("w Translate Camera");
-       e.Translate(-e.forward * dt*TranslateSpeed);
+       e.Translate(e.forward * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_S]){
        PDEBUG("s Translate Camera");
-       e.Translate(e.forward * dt*TranslateSpeed);
+       e.Translate(-e.forward * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_A]){
        PDEBUG("a Translate Camera");
-       e.Translate(e.right * dt*TranslateSpeed);
+       e.Translate(-e.right * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_D]){
        PDEBUG("d Translate Camera");
-       e.Translate(-e.right * dt*TranslateSpeed);
+       e.Translate(e.right * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_SPACE]){
        PDEBUG("space Translate Camera");
-       e.Translate(-e.up * dt*TranslateSpeed);
+       e.Translate(e.up * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_LSHIFT]){
        PDEBUG("lshift Translate Camera");
-       e.Translate(e.up * dt*TranslateSpeed);
+       e.Translate(-e.up * dt*TranslateSpeed);
    }
 
   }

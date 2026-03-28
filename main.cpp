@@ -125,8 +125,8 @@ while (running) {
 
 
      //  r->DrawTriangle(A, B, C,col);
-    r->DrawTriangle3D(camera,INV::Vec3<float>(-1, -1, -2),INV::Vec3<float>( 1, -1, -2),INV::Vec3<float>( 1,  1, -2),col,nullptr);
-    //    exp.DepthTest1(r, camera);
+   r->DrawTriangle3D(camera,INV::Vec3<float>(-1, -1, 2),INV::Vec3<float>( 1, -1, 2),INV::Vec3<float>( 1,  1, 2),col,nullptr);
+     //   exp.DepthTest1(r, camera);
        exp.DepthTest2(r, camera);
 
         CC.ImpactCamera(camera , e , true , deltaTime);

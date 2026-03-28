@@ -22,7 +22,7 @@ namespace INV{
                     m_name=name;
                     frame_buffer=std::vector<Vec4<uint8_t>>(width*height,{0,0,0,0});
                     depth_buffer = std::vector<float>(width * height, std::numeric_limits<float>::infinity());
-
+                  //  depth_buffer=std::vector<float>(width * height,-1.f*std::numeric_limits<float>::infinity());
 
       }
       inline uint16_t GetWidth(){return m_width;}
@@ -341,9 +341,8 @@ void DrawTraingles3D(class TriangleArray&Tri,camera&Cam){
 
 
      // preventing warap arounds
-     if (a1.w >0 && b1.w > 0 && c1.w>0)
-         return;
-
+ //   if (a1.w >0 && b1.w > 0 && c1.w>0)return;
+  if (a1.w <=0 && b1.w <=0 && c1.w<=0) return;
      Vec2f screen_a(
          static_cast<float>((ndc_a.x + 1.0f) * 0.5f * m_Window->m_width),
          static_cast<float>((1.0f - ndc_a.y) * 0.5f * m_Window->m_height)
@@ -387,7 +386,7 @@ void DrawTraingles3D(class TriangleArray&Tri,camera&Cam){
               for(int j=MIy;j<=MAy;j++){
                   if(InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c)){
                       Vec3f w=BaryCentric(Vec2f(i,j),screen_a,screen_b,screen_c);
-                      float depth=-w.x*ndc_a.z+w.y*ndc_b.z+w.z*ndc_c.z;
+                      float depth=w.x*ndc_a.z+w.y*ndc_b.z+w.z*ndc_c.z;
                       if(SetDepthBuffer(INV::Vec2<uint16_t>(i,j),depth)){
                       SetPixelColor(INV::Vec2<uint16_t>(i,j),color);
                       }
@@ -563,17 +562,17 @@ public:
 
         // FAR triangle (should be hidden)
         r->DrawTriangle3D(cam,
-            Vec3f(-0.5f, -0.5f, -3.0f),
-            Vec3f(0.5f, -0.5f, -3.0f),
-            Vec3f(0.0f,  0.5f, -3.0f),
+            Vec3f(-0.5f, -0.5f, 3.0f),
+            Vec3f(0.5f, -0.5f, 3.0f),
+            Vec3f(0.0f,  0.5f, 3.0f),
             INV::Vec3<uint8_t>(255, 0, 0), nullptr
         );
 
         // NEAR triangle (should always be visible)
         r->DrawTriangle3D(cam,
-            Vec3f(-0.5f, -0.5f, -1.0f),
-            Vec3f(0.5f, -0.5f, -1.0f),
-            Vec3f(0.0f,  0.5f, -1.0f),
+            Vec3f(-0.5f, -0.5f, 1.0f),
+            Vec3f(0.5f, -0.5f, 1.0f),
+            Vec3f(0.0f,  0.5f, 1.0f),
             INV::Vec3<uint8_t>(0, 255, 0), nullptr
         );
     }
@@ -581,9 +580,9 @@ public:
 
         // Triangle A (slanted)
         r->DrawTriangle3D(cam,
-            Vec3f(-0.8f, -0.5f, -1.0f),
-            Vec3f(0.8f, -0.5f, -2.0f),
-            Vec3f(0.0f,  0.8f, -1.5f),
+            Vec3f(-0.8f, -0.5f, 1.0f),
+            Vec3f(0.8f, -0.5f, 2.0f),
+            Vec3f(0.0f,  0.8f, 1.5f),
             INV::Vec3<uint8_t>(255, 0, 0), nullptr
         );
 
@@ -600,9 +599,9 @@ public:
 
         Triangle t;
         t.vertices = {
-            Vec3f(-0.5f, -0.5f, -2.0f),
-                Vec3f( 0.5f, -0.5f, -2.0f),
-                Vec3f( 0.0f,  0.5f, -2.0f)
+            Vec3f(-0.5f, -0.5f, 2.0f),
+                Vec3f( 0.5f, -0.5f, 2.0f),
+                Vec3f( 0.0f,  0.5f, 2.0f)
         };
 
         obj.triangles.push_back(t);
