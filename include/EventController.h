@@ -9,13 +9,24 @@ class EventController{
   void UpdateSpeed(float f){
       this->RotSpeed = f;
   }
+
+  void MouseImpactCamera(camera& cam, SDL_Event& e, float dt) {
+      if (e.type == SDL_EVENT_MOUSE_MOTION) {
+          float dx = (float)e.motion.xrel;
+          float dy = (float)e.motion.yrel;
+
+          float yaw   = dx * RotSpeed * dt;
+          float pitch = dy * RotSpeed * dt;
+
+          cam.Rotate(pitch, yaw, 0.0f);
+      }
+  }
   void ImpactCamera(camera&cam,SDL_Event& e, bool bActive,float dt){
       if(!bActive) return;
 
       const bool* keys = SDL_GetKeyboardState(NULL);
 float yaw=0;
 float pitch=0;
-
           if (keys[SDL_SCANCODE_LEFT]){
               yaw+=RotSpeed * dt;
               PDEBUG("left Imapact Camera");
@@ -39,32 +50,32 @@ float pitch=0;
    const bool* keys = SDL_GetKeyboardState(NULL);
    if (keys[SDL_SCANCODE_W]){
        PDEBUG("w Translate Camera");
-       e.Translate(e.forward * dt*TranslateSpeed);
+       e.Translate(-e.forward * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_S]){
        PDEBUG("s Translate Camera");
-       e.Translate(-e.forward * dt*TranslateSpeed);
+       e.Translate(e.forward * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_A]){
        PDEBUG("a Translate Camera");
-       e.Translate(-e.right * dt*TranslateSpeed);
+       e.Translate(e.right * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_D]){
        PDEBUG("d Translate Camera");
-       e.Translate(e.right * dt*TranslateSpeed);
+       e.Translate(-e.right * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_SPACE]){
        PDEBUG("space Translate Camera");
-       e.Translate(e.up * dt*TranslateSpeed);
+       e.Translate(-e.up * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_LSHIFT]){
        PDEBUG("lshift Translate Camera");
-       e.Translate(-e.up * dt*TranslateSpeed);
+       e.Translate(e.up * dt*TranslateSpeed);
    }
-
 
   }
 private:
+bool bMouseActive = false;
 float RotSpeed = 2.0f;
 float TranslateSpeed = 2.0f;
 Vec3f y_axis=INV::Vec3<float>(0,1,0);

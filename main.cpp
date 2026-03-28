@@ -121,6 +121,7 @@ while (running) {
 
         CC.ImpactCamera(camera , e , true , deltaTime);
         CC.TranslateCamera(camera, deltaTime, true);
+        CC.MouseImpactCamera(camera, e, deltaTime);
      //r->DrawCircle(center, 10.0f, col, true);
 
      //center.x=250+sin(time)*200;

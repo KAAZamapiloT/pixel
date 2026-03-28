@@ -146,7 +146,7 @@ public:
         right   = Vec3f(R.Mat[0][0], R.Mat[0][1], R.Mat[0][2]);
         up      = Vec3f(R.Mat[1][0], R.Mat[1][1], R.Mat[1][2]);
         forward = Vec3f(R.Mat[2][0], R.Mat[2][1], R.Mat[2][2]);
-
+        printf("Row2: %f %f %f\n", R.Mat[2][0], R.Mat[2][1], R.Mat[2][2]);
 
     }
 
@@ -165,17 +165,18 @@ public:
             m_ViewMatrix[1][2] = up.z;
             m_ViewMatrix[1][3] = -up.Dot(Location_3d);
 
-            // ROW 2 → forward axis (NEGATED for camera)
+
             m_ViewMatrix[2][0] = -forward.x;
             m_ViewMatrix[2][1] = -forward.y;
             m_ViewMatrix[2][2] = -forward.z;
-            m_ViewMatrix[2][3] = forward.Dot(Location_3d);
+            m_ViewMatrix[2][3] =  forward.Dot(Location_3d);
 
             // ROW 3
             m_ViewMatrix[3][0] = 0.0f;
             m_ViewMatrix[3][1] = 0.0f;
             m_ViewMatrix[3][2] = 0.0f;
             m_ViewMatrix[3][3] = 1.0f;
+
 
             UpdateProjectionView();
     }
