@@ -588,9 +588,9 @@ public:
 
         // Triangle B crossing it
         r->DrawTriangle3D(cam,
-            Vec3f(-0.8f,  0.5f, -2.0f),
-            Vec3f( 0.8f,  0.5f, -1.0f),
-            Vec3f( 0.0f, -0.8f, -1.5f),
+            Vec3f(-0.8f,  0.5f, 2.0f),
+            Vec3f( 0.8f,  0.5f, 1.0f),
+            Vec3f( 0.0f, -0.8f, 1.5f),
             INV::Vec3<uint8_t>(0, 255, 0), nullptr
         );
     }
