@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
      INV::Vec2<float> B(500,120);
      INV::Vec2<float> C(20,300);
 
-     INV::Vec3<uint8_t> w_color(1,1,121);
+     INV::Vec3<uint8_t> w_color(1,1,12);
      INV::Vec3<uint8_t> col(178,72,123);
      INV::Vec3<uint8_t> U_Color(123,234,13);
 

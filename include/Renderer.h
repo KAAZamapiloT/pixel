@@ -377,9 +377,7 @@ void DrawTraingles3D(class TriangleArray&Tri,camera&Cam){
      MIx=std::max(MIx,0);
      MIy=std::max(MIy,0);
 
-     Vec3f v1=p1-p2;
-     Vec3f v2=p2-p1;
-     Vec3f PlaneNormal=v1.Cross(v2);
+
       if(f==nullptr){
 
           for(int i=MIx;i<=MAx;i++){
