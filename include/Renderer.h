@@ -659,6 +659,24 @@ Mat3f rotation = Math::Rotation3D(angle,axis);
    p7 = rotation * p7;
    p8 = rotation * p8;
 }
+void Rotate_Cube(std::vector<Vec3f>& cube,float angle,Vec3f axis){
+Mat3f rotation = Math::Rotation3D(angle,axis);
+   cube[0] = rotation * cube[0];
+   cube[1] = rotation * cube[1];
+   cube[2] = rotation * cube[2];
+   cube[3] = rotation * cube[3];
+   cube[4] = rotation * cube[4];
+   cube[5] = rotation * cube[5];
+   cube[6] = rotation * cube[6];
+   cube[7] = rotation * cube[7];
+}
+void CubeDepthTest(std::unique_ptr<class renderer>&r, class camera& cam,INV::Vec3<uint8_t>col,
+    std::vector<Vec3f>& cube1,std::vector<Vec3f>& cube2){
+   r->Draw_Cube(cam,cube1[0],cube1[1],cube1[2],cube1[3],cube1[4],cube1[5],cube1[6],cube1[7],col);
+   r->Draw_Cube(cam,cube2[0],cube2[1],cube2[2],cube2[3],cube2[4],cube2[5],cube2[6],cube2[7],col);
+
+}
+
   private:
 std::vector<TriangleArray> Tarray;
 Vec3f p1,p2,p3,p4,p5,p6,p7,p8; //cube points

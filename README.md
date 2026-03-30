@@ -9,6 +9,7 @@ A small software renderer built to understand how graphics actually work.
 
 - 🎥 Free camera movement + rotation  
 - 🔺 Renders triangles (2D + 3D)  
+- 🧊 Renders Cube
 - 🧠 Basic rendering pipeline (manual, no engine magic)
 
 ---

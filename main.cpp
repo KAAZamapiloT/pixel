@@ -73,6 +73,30 @@ camera camera(ECameraType::Perspective,INV::Vec3<float>(0,0,0),60.f,static_cast<
 EventController CC;
 INV::Matrix4<float> projectionViewMatrix = camera.GetProjectionView();
 INV::Matrix4<float> viewMatrix = camera.GetViewMatrix();
+//////////////////
+std::vector<Vec3f> cube1 = {
+    Vec3f(-0.5f, -0.5f, 1.5f), // 0
+    Vec3f( 0.5f, -0.5f, 1.5f), // 1
+    Vec3f( 0.5f,  0.5f, 1.5f), // 2
+    Vec3f(-0.5f,  0.5f, 1.5f), // 3
+
+    Vec3f(-0.5f, -0.5f, 2.5f), // 4
+    Vec3f( 0.5f, -0.5f, 2.5f), // 5
+    Vec3f( 0.5f,  0.5f, 2.5f), // 6
+    Vec3f(-0.5f,  0.5f, 2.5f)  // 7
+};
+
+std::vector<Vec3f> cube2 = {
+    Vec3f(-0.3f, -0.3f, 2.8f), // 0
+    Vec3f( 0.7f, -0.3f, 2.8f), // 1
+    Vec3f( 0.7f,  0.7f, 2.8f), // 2
+    Vec3f(-0.3f,  0.7f, 2.8f), // 3
+
+    Vec3f(-0.3f, -0.3f, 3.8f), // 4
+    Vec3f( 0.7f, -0.3f, 3.8f), // 5
+    Vec3f( 0.7f,  0.7f, 3.8f), // 6
+    Vec3f(-0.3f,  0.7f, 3.8f)  // 7
+};
 
 for(int i=0;i<4;++i){
     for(int j=0;j<4;++j){
@@ -133,7 +157,8 @@ while (running) {
         CC.ImpactCamera(camera , e , true , deltaTime);
         CC.TranslateCamera(camera, deltaTime, true);
         CC.MouseImpactCamera(camera, deltaTime);
-        exp.Rotate_Cube(1*deltaTime,INV::Vec3<float>(0,1,0));
+       exp.Rotate_Cube(1*deltaTime,INV::Vec3<float>(3,1,0));
+
      //r->DrawCircle(center, 10.0f, col, true);
 
      //center.x=250+sin(time)*200;
