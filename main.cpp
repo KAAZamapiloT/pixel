@@ -128,9 +128,6 @@ while (running) {
         }
 
 
-
-
-        printf("Event type: %d\n", e.type);
         static float lastTime = 0.0f;
         float time = SDL_GetTicks() / 1000.0f;
         float deltaTime = time - lastTime;
@@ -157,7 +154,7 @@ while (running) {
         CC.ImpactCamera(camera , e , true , deltaTime);
         CC.TranslateCamera(camera, deltaTime, true);
         CC.MouseImpactCamera(camera, deltaTime);
-       exp.Rotate_Cube(1*deltaTime,INV::Vec3<float>(3,1,0));
+       exp.Rotate_Cube(1*deltaTime,INV::Vec3<float>(0,1,0));
 
      //r->DrawCircle(center, 10.0f, col, true);
 

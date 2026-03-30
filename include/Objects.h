@@ -47,8 +47,15 @@ public:
 // creatng a triangle class giving power to traingle indvidualy
 class Trig{
 public:
-    void Rotate(float deltaTime, const Vec3f& axis);
-    void Translate(const Vec3f& translation);
+    void Rotate(float value, const Vec3f& axis){
+        Mat3f rotationMatrix = Math::Rotation3D( value,axis);
+        MultiplyEachPointWithMatrix3(rotationMatrix);
+    }
+    void Translate(const Vec3f& translation){
+        Mat4f translationMatrix = Math::ScaleRotateTranslateMatrix3D(0,INV::Quat<float>(1,0,0,0),
+            translation.x,translation.y,translation.z);
+        MultiplyEachPointWithMatrix4(translationMatrix);
+    }
     void MultiplyEachPointWithMatrix3(const Mat3f& matrix){
         for (auto& vertex : k.vertices) {
             vertex = matrix * vertex;
@@ -61,9 +68,9 @@ public:
        moodle = matrix * moodle;
        moodle1=matrix * moodle1;
        moodle2=matrix * moodle2;
-       k.vertices[0]=moodle.xyz();
-       k.vertices[1]=moodle1.xyz();
-       k.vertices[2]=moodle2.xyz();
+       k.vertices[0]=moodle.xyz()/moodle.w;
+       k.vertices[1]=moodle1.xyz()/moodle1.w;
+       k.vertices[2]=moodle2.xyz()/moodle2.w;
     }
 private:
 struct Triangle k;

@@ -175,7 +175,15 @@ Vec4(Vec3<T>s,T sd){
     w=sd;
 }
 
-Vec4& operator=(const Vec4&);
+Vec4& operator=(const Vec4& other) {
+    if (this != &other) {
+        x = other.x;
+        y = other.y;
+        z = other.z;
+        w = other.w;
+    }
+    return *this;
+}
 Vec3<T> xyz() const { return Vec3<T>(x, y, z); }
 
 T Dot(Vec4<T> other){return x*other.x+y*other.y+z*other.z+w*other.w;}
@@ -289,17 +297,18 @@ constexpr explicit Matrix4(T v) {
         Mat[3][3]=0;
     }
 
-
-    constexpr T* operator[](int r) { return Mat[r]; }
-    constexpr const T* operator[](int r) const { return Mat[r]; }
-    constexpr Matrix4<T> operator*(const Vec4<T>& v) const {
-        return Matrix4<T>(
+    constexpr Vec4<T> operator*(const Vec4<T>& v) const {
+        return Vec4<T>(
             v.x * Mat[0][0] + v.y * Mat[1][0] + v.z * Mat[2][0] + v.w * Mat[3][0],
             v.x * Mat[0][1] + v.y * Mat[1][1] + v.z * Mat[2][1] + v.w * Mat[3][1],
             v.x * Mat[0][2] + v.y * Mat[1][2] + v.z * Mat[2][2] + v.w * Mat[3][2],
             v.x * Mat[0][3] + v.y * Mat[1][3] + v.z * Mat[2][3] + v.w * Mat[3][3]
         );
     }
+
+    constexpr T* operator[](int r) { return Mat[r]; }
+    constexpr const T* operator[](int r) const { return Mat[r]; }
+
 
 
     // Addition

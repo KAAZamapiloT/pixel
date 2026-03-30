@@ -146,7 +146,6 @@ public:
         right   = Vec3f(R.Mat[0][0], R.Mat[0][1], R.Mat[0][2]);
         up      = Vec3f(R.Mat[1][0], R.Mat[1][1], R.Mat[1][2]);
         forward = Vec3f(R.Mat[2][0], R.Mat[2][1], R.Mat[2][2]);
-        printf("Row2: %f %f %f\n", R.Mat[2][0], R.Mat[2][1], R.Mat[2][2]);
 
     }
 
