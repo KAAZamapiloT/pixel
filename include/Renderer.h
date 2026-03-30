@@ -205,6 +205,30 @@ void DrawTraingles3D(class TriangleArray&Tri,camera&Cam){
             Tri.colors[i], nullptr);
     }
 }
+void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec3<float> p3,INV::Vec3<float> p4,
+    INV::Vec3<float> p5,INV::Vec3<float> p6,INV::Vec3<float> p7,INV::Vec3<float> p8,INV::Vec3<uint8_t> Color){
+    Vec3f t1=p1;
+    Vec3f t2=p2;
+    Vec3f t3=p3;
+    Vec3f t4=p4;
+    Vec3f t5=p5;
+    Vec3f t6=p6;
+    Vec3f t7=p7;
+    Vec3f t8=p8;
+    std::vector<Vec3f> v = {t1,t2,t3,t4,t5,t6,t7,t8};
+
+    std::vector<std::array<int,3>> tris = {
+        {0,1,2}, {0,2,3}, // front
+        {4,6,5}, {4,7,6}, // back
+        {0,3,7}, {0,7,4}, // left
+        {1,5,6}, {1,6,2}, // right
+        {3,2,6}, {3,6,7}, // top
+        {0,4,5}, {0,5,1}  // bottom
+    };
+    for (const auto& tri : tris) {
+        DrawTriangle3D(cam, v[tri[0]], v[tri[1]], v[tri[2]], Color, nullptr);
+    }
+}
      void DrawTriangle(INV::Vec2<float> p1,INV::Vec2<float>p2,INV::Vec2<float>p3,INV::Vec3<uint8_t> basecolor
 
          ,INV::Vec3<uint8_t>(*X)(INV::Vec2<uint16_t>,float)){
@@ -311,12 +335,7 @@ void DrawTraingles3D(class TriangleArray&Tri,camera&Cam){
      }
 
 //-----------------------------------
-     void Draw_Cube(INV::Vec3<uint16_t> p1,INV::Vec3<uint16_t>p2,INV::Vec3<uint16_t>p3,INV::Vec2<uint16_t>p4
-         ,INV::Vec3<uint16_t> p5,INV::Vec3<uint16_t>p6,INV::Vec3<uint16_t> p7,INV::Vec3<uint16_t> p8,INV::Vec3<uint16_t> Color){
 
-
-
-     }
 
      // Drawing a triangle in 3d space but then it can also accept a function pointer(can be passes as null)
     // but here main thing is to set color val
@@ -551,6 +570,17 @@ void DrawTraingles3D(class TriangleArray&Tri,camera&Cam){
 };
 class Example{
 public:
+Example() {
+    p1 = Vec3f(-0.5f, -0.5f, -0.5f);
+    p2 = Vec3f( 0.5f, -0.5f, -0.5f);
+    p3 = Vec3f( 0.5f,  0.5f, -0.5f);
+    p4 = Vec3f(-0.5f,  0.5f, -0.5f);
+
+    p5 = Vec3f(-0.5f, -0.5f,  0.5f);
+    p6 = Vec3f( 0.5f, -0.5f,  0.5f);
+    p7 = Vec3f( 0.5f,  0.5f,  0.5f);
+    p8 = Vec3f(-0.5f,  0.5f,  0.5f);
+}
     void Draw(){
     // r-> submit Data()
     // r->Draw Data()
@@ -614,7 +644,23 @@ public:
 
         return obj;
     }
+void CubeTest(std::unique_ptr<class renderer>&r, class camera& cam,INV::Vec3<uint8_t>col){
+    r->Draw_Cube(cam, p1, p2, p3, p4, p5, p6, p7, p8,col);
+}
 
+void Rotate_Cube(float angle,Vec3f axis){
+Mat3f rotation = Math::Rotation3D(angle,axis);
+   p1 = rotation * p1;
+   p2 = rotation * p2;
+   p3 = rotation * p3;
+   p4 = rotation * p4;
+   p5 = rotation * p5;
+   p6 = rotation * p6;
+   p7 = rotation * p7;
+   p8 = rotation * p8;
+}
   private:
 std::vector<TriangleArray> Tarray;
+Vec3f p1,p2,p3,p4,p5,p6,p7,p8; //cube points
+
 };
