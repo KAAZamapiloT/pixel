@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
 
 Example exp;
 
-Entity sphere(MeshFactory::CreateSphere(1,30,30));
+Entity sphere(MeshFactory::CreateSphere(3,30,5));
 sphere.transform.position = INV::Vec3<float>(1,1,1);
 Material Smat;
 Smat.color = INV::Vec3<uint8_t>(250,250,250);

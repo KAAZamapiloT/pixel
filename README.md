@@ -6,7 +6,7 @@ A small software renderer built to understand how graphics actually work.
 ## 🔲 Cube Rendering Demo
 
 <p align="center">
-  <img src="assets/temp.gif" width="250"/>
+  <img src="assets/temp.gif" width="40%"/>
 </p>
 
 ---
@@ -14,7 +14,7 @@ A small software renderer built to understand how graphics actually work.
 ## 🔵  sphere Rendering Demo
 
 <p align="center">
-  <img src="assets/sphere.gif" width="250"/>
+  <img src="assets/sphere.gif" width="40%"/>
 </p>
 
 ---
