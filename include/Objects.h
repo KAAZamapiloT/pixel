@@ -9,7 +9,10 @@
 #include"Math_Utils.h"
 #include<array>
 #include <cstdint>
-
+#include <initializer_list>
+#include <vector>
+#include <memory>
+#include<iostream>
 
 /// Defines data for a object in a spcae///
 /**
@@ -74,4 +77,34 @@ public:
     }
 private:
 struct Triangle k;
+struct Transform Cords;
+};
+
+
+class Cube{
+public:
+Cube(Vec3f p1 , Vec3f p2,Vec3f p3,Vec3f p4,Vec3f p5,Vec3f p6,Vec3f p7,Vec3f p8){
+    vertices[0] = p1;
+    vertices[1] = p2;
+    vertices[2] = p3;
+    vertices[3] = p4;
+    vertices[4] = p5;
+    vertices[5] = p6;
+    vertices[6] = p7;
+    vertices[7] = p8;
+}
+Cube(std::initializer_list<Vec3f> points) {
+    if(points.size()!=8){
+        std::cerr << "Cube must have exactly 8 vertices.\n";
+        return;
+    }
+    std::copy(points.begin(), points.end(), vertices.begin());
+}
+std::array<Vec3f,8> GetVertices(){
+    return vertices;
+}
+
+
+private:
+std::array<Vec3f,8> vertices;
 };

@@ -12,6 +12,7 @@ template <typename T>
 class Vec2{
     public:
     Vec2(T x, T y) : x(x), y(y) {}
+    Vec2(std::initializer_list<T> list) : x(*list.begin()), y(*(list.begin() + 1)) {}
 
    constexpr Vec2 operator+(const Vec2& other) const {
         return Vec2(x + other.x, y + other.y);
@@ -70,6 +71,8 @@ class Vec3{
      y=a.y;
      z=b;
     }
+    Vec3(std::initializer_list<T> list) : x(*list.begin()), y(*(list.begin() + 1)), z(*(list.begin() + 2)) {}
+
    constexpr Vec3 operator+(const Vec3& other) const {
         return Vec3(x + other.x, y + other.y, z + other.z);
     }
@@ -174,6 +177,7 @@ Vec4(Vec3<T>s,T sd){
     z=s.z;
     w=sd;
 }
+Vec4(std::initializer_list<T> list) : x(*list.begin()), y(*(list.begin() + 1)), z(*(list.begin() + 2)), w(*(list.begin() + 3)) {}
 
 Vec4& operator=(const Vec4& other) {
     if (this != &other) {
