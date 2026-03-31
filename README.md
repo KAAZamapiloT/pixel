@@ -8,6 +8,7 @@ A small software renderer built to understand how graphics actually work.
 <p align="center">
   <img src="assets/temp.gif" width="250"/>
 </p>
+
 ---
 
 ## ✨ What it does
