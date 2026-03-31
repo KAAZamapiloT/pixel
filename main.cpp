@@ -150,7 +150,7 @@ while (running) {
      //   exp.DepthTest1(r, camera);
      //  exp.DepthTest2(r, camera);
 
-         exp.CubeTest(r, camera, col);
+        exp.CubeTest(r, camera, col);
         CC.ImpactCamera(camera , e , true , deltaTime);
         CC.TranslateCamera(camera, deltaTime, true);
         CC.MouseImpactCamera(camera, deltaTime);
