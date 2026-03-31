@@ -15,7 +15,7 @@ A small software renderer built to understand how graphics actually work.
 
 <p align="center">
   <img src="assets/sphere.gif" width="40%"/>
-  <img src="assets/Sphere2.gif" width="40%"/>
+  <img src="assets/Sphere2.gif" width="45%"/>
 </p>
 
 <p align="center">
