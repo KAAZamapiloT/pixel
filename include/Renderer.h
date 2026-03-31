@@ -412,11 +412,26 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
               }
           }
       }else{
+          for(int i=MIx;i<=MAx;i++){
+              for(int j=MIy;j<=MAy;j++){
+                  if(InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c)){
+                      Vec3f w=BaryCentric(Vec2f(i,j),screen_a,screen_b,screen_c);
+                      float depth=w.x*ndc_a.z+w.y*ndc_b.z+w.z*ndc_c.z;
+                      if(SetDepthBuffer(INV::Vec2<uint16_t>(i,j),depth)){
+                      SetPixelColor(INV::Vec2<uint16_t>(i,j),f(Vec3f(ndc_a.x,ndc_a.y,ndc_a.z)));
+                      }
 
+                  }
+              }
+          }
       }
 
       }
-
+void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Material & Mat){
+    for (size_t i = 0; i < ObjectMesh.indices.size(); i += 3) {
+        DrawTriangle3D(cam,ObjectMesh.vertices[ObjectMesh.indices[i]], ObjectMesh.vertices[ObjectMesh.indices[i+1]], ObjectMesh.vertices[ObjectMesh.indices[i+2]],Mat.color,Mat.shader);
+    }
+}
       void DrawCircle(INV::Vec2<float> center , float radius,INV::Vec3<uint8_t>col,bool filled){
 
           int minx=std::max({0,(int)(center.x-radius)});
@@ -638,7 +653,7 @@ Example() {
         Transform tr;
         tr.position = {0,0,0};
         tr.scale    = {1,1,1};
-        tr.rotation = {0,0,0};
+        tr.rotation = quat(0,0,0,1);
 
         obj.Transforms.push_back(tr);
 

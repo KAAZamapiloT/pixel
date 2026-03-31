@@ -20,6 +20,13 @@ void UpdateLocation(INV::Vec2<float>& A, float x , float y,float deltatime){
     A.x+=x*deltatime;
     A.y+=y*deltatime;
 }
+INV::Vec3<uint8_t> Gradient(Vec3f pos)
+{
+    int x=pos.x;
+    int y=pos.y;
+    int z=pos.z;
+    return INV::Vec3<uint8_t>((12*(x+1))%255, 12*(y+1)%255, 12*(z+1)%255);
+}
 int main(int argc, char* argv[])
 {
    // SDL_SetMainReady();
@@ -69,6 +76,13 @@ int main(int argc, char* argv[])
      INV::Vec3<uint8_t> U_Color(123,234,13);
 
 Example exp;
+
+Entity sphere(MeshFactory::CreateSphere(1,30,30));
+sphere.transform.position = INV::Vec3<float>(1,1,1);
+Material Smat;
+Smat.color = INV::Vec3<uint8_t>(250,250,250);
+//Smat.shader = Gradient;
+
 camera camera(ECameraType::Perspective,INV::Vec3<float>(0,0,0),60.f,static_cast<float>(dims.x/dims.y),0.1f,100.f);
 EventController CC;
 INV::Matrix4<float> projectionViewMatrix = camera.GetProjectionView();
@@ -121,6 +135,7 @@ INV::Vec4<float> C3=INV::Vec4<float>(C.x,C.y,3,1);
 //C3=modal.Matrix4_Vec4_mul(modal,C3);
 INV::Vec2<float>center(100,100);
 
+
 while (running) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT)
@@ -150,12 +165,13 @@ while (running) {
      //   exp.DepthTest1(r, camera);
      //  exp.DepthTest2(r, camera);
 
-        exp.CubeTest(r, camera, col);
+     //   exp.CubeTest(r, camera, col);
         CC.ImpactCamera(camera , e , true , deltaTime);
         CC.TranslateCamera(camera, deltaTime, true);
         CC.MouseImpactCamera(camera, deltaTime);
-       exp.Rotate_Cube(1*deltaTime,INV::Vec3<float>(0,1,0));
-
+    //   exp.Rotate_Cube(1*deltaTime,INV::Vec3<float>(0,1,0));
+       r->RenderMesh(camera,sphere.mesh,Smat);
+       Smat.color=col;
      //r->DrawCircle(center, 10.0f, col, true);
 
      //center.x=250+sin(time)*200;

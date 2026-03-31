@@ -11,11 +11,19 @@ A small software renderer built to understand how graphics actually work.
 
 ---
 
+## 🔵  sphere Rendering Demo
+
+<p align="center">
+  <img src="assets/sphere.gif" width="250"/>
+</p>
+
+---
 ## ✨ What it does
 
 - 🎥 Free camera movement + rotation  
 - 🔺 Renders triangles (2D + 3D)  
 - 🧊 Renders Cube
+- 🔵 Sphere rendering  
 - 🧠 Basic rendering pipeline (manual, no engine magic)
 
 ---
