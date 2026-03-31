@@ -561,6 +561,15 @@ using quat= INV::Quat<float>;
 // will implement math function here
 class Math{
 public:
+static Mat3f QuaternionToMatrix(const quat& q) {
+    float x = q.x, y = q.y, z = q.z, w = q.w;
+
+    return Mat3f(
+        1 - 2*y*y - 2*z*z,  2*x*y - 2*z*w,      2*x*z + 2*y*w,
+        2*x*y + 2*z*w,      1 - 2*x*x - 2*z*z,  2*y*z - 2*x*w,
+        2*x*z - 2*y*w,      2*y*z + 2*x*w,      1 - 2*x*x - 2*y*y
+    );
+}
 static Mat2f ScaleMatrix2D(float scale){
     return INV::Matrix2<float>(scale,0,0,scale);
 }
@@ -643,6 +652,25 @@ return INV::Matrix4<float>(
         scale * rot.y,  scale * rot.x, -scale * rot.w, translateY,
         scale * rot.z,  scale * rot.w, -scale * rot.x, translateZ,
         0.0f,       0.0f,      0.0f,      1.0f
+    );
+}
+static Mat4f ScaleRotateTranslateMatrix3D(
+    Vec3f scale,
+    quat rot,
+    Vec3f translate
+){
+    // Normalize quaternion (critical)
+    rot.normalize();
+
+    // Get rotation matrix (3x3)
+    Mat3f R = quat::GetRotationMatrix(rot);
+
+    // Apply scale (column-wise)
+    return Mat4f(
+        R.Mat[0][0] * scale.x, R.Mat[0][1] * scale.y, R.Mat[0][2] * scale.z, translate.x,
+        R.Mat[1][0] * scale.x, R.Mat[1][1] * scale.y, R.Mat[1][2] * scale.z, translate.y,
+        R.Mat[2][0] * scale.x, R.Mat[2][1] * scale.y, R.Mat[2][2] * scale.z, translate.z,
+        0.0f,                  0.0f,                  0.0f,                  1.0f
     );
 }
 template<typename T>
