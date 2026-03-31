@@ -11,13 +11,16 @@ A small software renderer built to understand how graphics actually work.
 
 ---
 
-## 🔵  sphere Rendering Demo
+## 🔵 Sphere Rendering Demo
 
 <p align="center">
   <img src="assets/sphere.gif" width="40%"/>
+  <img src="assets/Sphere2.gif" width="40%"/>
 </p>
 
----
+<p align="center">
+  <sub>Left: Low resolution sphere | Right: Higher resolution / improved shading</sub>
+</p>
 ## ✨ What it does
 
 - 🎥 Free camera movement + rotation  

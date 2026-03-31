@@ -73,7 +73,10 @@ class Vec3{
     }
     Vec3(std::initializer_list<T> list) : x(*list.begin()), y(*(list.begin() + 1)), z(*(list.begin() + 2)) {}
 
-   constexpr Vec3 operator+(const Vec3& other) const {
+    constexpr Vec3 operator*(const T scalar) const {
+        return Vec3(x * scalar, y * scalar, z * scalar);  }
+
+    constexpr Vec3 operator+(const Vec3& other) const {
         return Vec3(x + other.x, y + other.y, z + other.z);
     }
 
@@ -95,7 +98,12 @@ class Vec3{
         z += other.z;
         return *this;
     }
-
+    constexpr Vec3 operator=(const Vec3& other) {
+        x = other.x;
+        y = other.y;
+        z = other.z;
+        return *this;
+    }
     constexpr Vec3& operator-=(const Vec3& other) {
         x -= other.x;
         y -= other.y;
@@ -680,7 +688,7 @@ bool IsFacingSameDirection(INV::Vec3<T> A,INV::Vec3<T> B){
 
 static void MakeRoation(Vec3f&v,quat rotation){
 Vec3f x=Vec3f(rotation.x,rotation.y,rotation.z);
-    float b=rotation.x*rotation.x+rotation.y*rotation.y+rotation.z*rotation.z;
+float b=rotation.x*rotation.x+rotation.y*rotation.y+rotation.z*rotation.z;
 v=v*(rotation.w*rotation.w-b)+x*(v.Dot(x)*2.0f)+x.Cross(v)*(rotation.w*2.0f);
 }
 

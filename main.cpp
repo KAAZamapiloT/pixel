@@ -27,6 +27,13 @@ INV::Vec3<uint8_t> Gradient(Vec3f pos)
     int z=pos.z;
     return INV::Vec3<uint8_t>((12*(x+1))%255, 12*(y+1)%255, 12*(z+1)%255);
 }
+INV::Vec3<uint8_t> DebugShader(Vec3f pos) {
+    return {
+        (uint8_t)((pos.x + 1.0f) * 121),
+        (uint8_t)((pos.y + 1.0f) * 121),
+        (uint8_t)((pos.z + 1.0f) * 121)
+    };
+}
 int main(int argc, char* argv[])
 {
    // SDL_SetMainReady();
@@ -77,11 +84,11 @@ int main(int argc, char* argv[])
 
 Example exp;
 
-Entity sphere(MeshFactory::CreateSphere(3,30,5));
+Entity sphere(MeshFactory::CreateSphere(1,60,60));
 sphere.transform.position = INV::Vec3<float>(1,1,1);
 Material Smat;
 Smat.color = INV::Vec3<uint8_t>(250,250,250);
-//Smat.shader = Gradient;
+Smat.shader = DebugShader;
 
 camera camera(ECameraType::Perspective,INV::Vec3<float>(0,0,0),60.f,static_cast<float>(dims.x/dims.y),0.1f,100.f);
 EventController CC;

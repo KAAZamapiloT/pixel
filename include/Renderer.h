@@ -395,7 +395,9 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
      MAy=std::min(MAy,static_cast<int32_t>(m_Window->m_height));
      MIx=std::max(MIx,0);
      MIy=std::max(MIy,0);
-
+     Vec3f world_a = p1;
+     Vec3f world_b = p2;
+     Vec3f world_c = p3;
 
       if(f==nullptr){
 
@@ -417,8 +419,12 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
                   if(InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c)){
                       Vec3f w=BaryCentric(Vec2f(i,j),screen_a,screen_b,screen_c);
                       float depth=w.x*ndc_a.z+w.y*ndc_b.z+w.z*ndc_c.z;
+                      Vec3f world_pos =
+                          (world_a*w.x) +
+                          (world_b*w.y) +
+                          (world_c*w.z);
                       if(SetDepthBuffer(INV::Vec2<uint16_t>(i,j),depth)){
-                      SetPixelColor(INV::Vec2<uint16_t>(i,j),f(Vec3f(ndc_a.x,ndc_a.y,ndc_a.z)));
+                      SetPixelColor(INV::Vec2<uint16_t>(i,j),f(world_pos));
                       }
 
                   }
