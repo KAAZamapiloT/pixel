@@ -3,6 +3,11 @@
 
 A small software renderer built to understand how graphics actually work.
 
+## 🔲 Cube Rendering Demo
+
+![Cube Demo](assets/cube.gif)
+
+
 ---
 
 ## ✨ What it does
