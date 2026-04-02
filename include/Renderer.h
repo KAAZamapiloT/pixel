@@ -439,17 +439,19 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
       }
 
       }
-void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Material & Mat){
+void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&transform,struct Material & Mat){
 
+    Mat4f ModelMatrix=Math::ScaleRotateTranslateMatrix3D(transform.scale,
+        transform.rotation,transform.position);
+    auto&VB=ObjectMesh.vertices;
+    auto&IB=ObjectMesh.indices;
     for (size_t i = 0; i < ObjectMesh.indices.size(); i += 3) {
-      /*   Vec3f a=ObjectMesh.vertices[ObjectMesh.indices[i+1]]-ObjectMesh.vertices[ObjectMesh.indices[i]];
-        Vec3f b=ObjectMesh.vertices[ObjectMesh.indices[i+2]]-ObjectMesh.vertices[ObjectMesh.indices[i]];
-        Vec3f co = a.Cross(b);
-        //Vec3f c=(ObjectMesh.vertices[ObjectMesh.indices[i]]+ObjectMesh.vertices[ObjectMesh.indices[i+1]]+ObjectMesh.vertices[ObjectMesh.indices[i+2]])/3;
-        Vec3f ViewDir=cam.GetLocation()-ObjectMesh.vertices[ObjectMesh.indices[i]];
-        if(!Math::IsFacingSameDirection(ViewDir,co)) continue;
-        */
-        DrawTriangle3D(cam,ObjectMesh.vertices[ObjectMesh.indices[i]], ObjectMesh.vertices[ObjectMesh.indices[i+1]], ObjectMesh.vertices[ObjectMesh.indices[i+2]],Mat.color,Mat.shader);
+        Vec3f v0 = (ModelMatrix * Vec4f(VB[IB[i]], 1.0f)).xyz();
+        Vec3f v1 = (ModelMatrix * Vec4f(VB[IB[i+1]], 1.0f)).xyz();
+        Vec3f v2 = (ModelMatrix * Vec4f(VB[IB[i+2]], 1.0f)).xyz();
+        DrawTriangle3D(cam,v0
+            ,v1, v2
+            ,Mat.color,Mat.shader);
     }
 }
       void DrawCircle(INV::Vec2<float> center , float radius,INV::Vec3<uint8_t>col,bool filled){

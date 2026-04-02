@@ -667,19 +667,35 @@ static Mat4f ScaleRotateTranslateMatrix3D(
     quat rot,
     Vec3f translate
 ){
-    // Normalize quaternion (critical)
     rot.normalize();
 
-    // Get rotation matrix (3x3)
     Mat3f R = quat::GetRotationMatrix(rot);
 
-    // Apply scale (column-wise)
-    return Mat4f(
-        R.Mat[0][0] * scale.x, R.Mat[0][1] * scale.y, R.Mat[0][2] * scale.z, translate.x,
-        R.Mat[1][0] * scale.x, R.Mat[1][1] * scale.y, R.Mat[1][2] * scale.z, translate.y,
-        R.Mat[2][0] * scale.x, R.Mat[2][1] * scale.y, R.Mat[2][2] * scale.z, translate.z,
-        0.0f,                  0.0f,                  0.0f,                  1.0f
-    );
+    Mat4f M;
+
+    // ROW-MAJOR VERSION (most likely your case)
+
+    M.Mat[0][0] = R.Mat[0][0] * scale.x;
+    M.Mat[0][1] = R.Mat[0][1] * scale.y;
+    M.Mat[0][2] = R.Mat[0][2] * scale.z;
+    M.Mat[0][3] = translate.x;
+
+    M.Mat[1][0] = R.Mat[1][0] * scale.x;
+    M.Mat[1][1] = R.Mat[1][1] * scale.y;
+    M.Mat[1][2] = R.Mat[1][2] * scale.z;
+    M.Mat[1][3] = translate.y;
+
+    M.Mat[2][0] = R.Mat[2][0] * scale.x;
+    M.Mat[2][1] = R.Mat[2][1] * scale.y;
+    M.Mat[2][2] = R.Mat[2][2] * scale.z;
+    M.Mat[2][3] = translate.z;
+
+    M.Mat[3][0] = 0;
+    M.Mat[3][1] = 0;
+    M.Mat[3][2] = 0;
+    M.Mat[3][3] = 1;
+
+    return M;
 }
 template<typename T>
 static bool IsFacingSameDirection(INV::Vec3<T> A,INV::Vec3<T> B){

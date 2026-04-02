@@ -99,7 +99,8 @@ int main(int argc, char* argv[])
 Example exp;
 
 Entity sphere(MeshFactory::CreateSphere(1,60,60));
-sphere.transform.position = INV::Vec3<float>(1,1,1);
+sphere.transform.position = INV::Vec3<float>(0,0,1);
+sphere.transform.scale=Vec3f(3.0f,1.0f,1.0f);
 Material Smat;
 Smat.color = INV::Vec3<uint8_t>(250,250,250);
 Smat.shader = ZDebugShader;
@@ -134,7 +135,9 @@ std::vector<Vec3f> cube2 = {
 };
 
 Entity CubeE(MeshFactory::CreateCube(0.5f));
-CubeE.transform.position={1,1,-1};
+CubeE.transform.position={0,0,5};
+CubeE.transform.scale=Vec3f(1.0f,1.0f,3.0f);
+CubeE.transform.rotation=quat(90,Vec3f(0,1,0));
 for(int i=0;i<4;++i){
     for(int j=0;j<4;++j){
         printf("ProjectionView Matrix Element %d %d: %f\n", i,j, projectionViewMatrix[i][j]);
@@ -193,8 +196,8 @@ while (running) {
         CC.TranslateCamera(camera, deltaTime, true);
         CC.MouseImpactCamera(camera, deltaTime);
     //   exp.Rotate_Cube(1*deltaTime,INV::Vec3<float>(0,1,0));
-       r->RenderMesh(camera,sphere.mesh,Smat);
-    r->RenderMesh(camera,CubeE.mesh,Smat);
+    //   r->RenderMesh(camera,sphere.mesh,sphere.transform,Smat);
+    r->RenderMesh(camera,CubeE.mesh,CubeE.transform,Smat);
        Smat.color=col;
      //r->DrawCircle(center, 10.0f, col, true);
 
