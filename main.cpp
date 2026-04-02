@@ -34,6 +34,20 @@ INV::Vec3<uint8_t> DebugShader(Vec3f pos) {
         (uint8_t)((pos.z + 1.0f) * 121)
     };
 }
+INV::Vec3<uint8_t> ZDebugShader(Vec3f pos) {
+    float z = pos.z;
+
+    // normalize assuming range ~[-r, r]
+    float t = (z + 1.0f) * 0.5f; // map [-1,1] → [0,1]
+
+    t = std::clamp(t, 0.0f, 1.0f);
+
+    return {
+        (uint8_t)(t * 255),        // red
+        0,
+        (uint8_t)((1.0f - t) * 255) // blue
+    };
+}
 int main(int argc, char* argv[])
 {
    // SDL_SetMainReady();
@@ -88,7 +102,7 @@ Entity sphere(MeshFactory::CreateSphere(1,60,60));
 sphere.transform.position = INV::Vec3<float>(1,1,1);
 Material Smat;
 Smat.color = INV::Vec3<uint8_t>(250,250,250);
-Smat.shader = DebugShader;
+Smat.shader = ZDebugShader;
 
 camera camera(ECameraType::Perspective,INV::Vec3<float>(0,0,0),60.f,static_cast<float>(dims.x/dims.y),0.1f,100.f);
 EventController CC;
@@ -119,6 +133,8 @@ std::vector<Vec3f> cube2 = {
     Vec3f(-0.3f,  0.7f, 3.8f)  // 7
 };
 
+Entity CubeE(MeshFactory::CreateCube(0.5f));
+CubeE.transform.position={1,1,-1};
 for(int i=0;i<4;++i){
     for(int j=0;j<4;++j){
         printf("ProjectionView Matrix Element %d %d: %f\n", i,j, projectionViewMatrix[i][j]);
@@ -172,12 +188,13 @@ while (running) {
      //   exp.DepthTest1(r, camera);
      //  exp.DepthTest2(r, camera);
 
-       exp.CubeTest(r, camera, col);
+    //   exp.CubeTest(r, camera, col);
         CC.ImpactCamera(camera , e , true , deltaTime);
         CC.TranslateCamera(camera, deltaTime, true);
         CC.MouseImpactCamera(camera, deltaTime);
-       exp.Rotate_Cube(1*deltaTime,INV::Vec3<float>(0,1,0));
-     //  r->RenderMesh(camera,sphere.mesh,Smat);
+    //   exp.Rotate_Cube(1*deltaTime,INV::Vec3<float>(0,1,0));
+       r->RenderMesh(camera,sphere.mesh,Smat);
+    r->RenderMesh(camera,CubeE.mesh,Smat);
        Smat.color=col;
      //r->DrawCircle(center, 10.0f, col, true);
 

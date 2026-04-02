@@ -377,6 +377,12 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
          static_cast<float>((1.0f - ndc_c.y) * 0.5f * m_Window->m_height)
      );
 
+     float area =
+         (screen_b.x - screen_a.x)*(screen_c.y - screen_a.y) -
+         (screen_b.y - screen_a.y)*(screen_c.x - screen_a.x);
+
+     if (area >= 0) return;
+
      int32_t MAx=std::max({screen_a.x,screen_b.x,screen_c.x});
      int32_t MAy=std::max({screen_a.y,screen_b.y,screen_c.y});
       int32_t MIy=std::min({screen_a.y,screen_b.y,screen_c.y});
@@ -436,12 +442,13 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
 void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Material & Mat){
 
     for (size_t i = 0; i < ObjectMesh.indices.size(); i += 3) {
-        Vec3f a=ObjectMesh.vertices[ObjectMesh.indices[i+1]]-ObjectMesh.vertices[ObjectMesh.indices[i]];
+      /*   Vec3f a=ObjectMesh.vertices[ObjectMesh.indices[i+1]]-ObjectMesh.vertices[ObjectMesh.indices[i]];
         Vec3f b=ObjectMesh.vertices[ObjectMesh.indices[i+2]]-ObjectMesh.vertices[ObjectMesh.indices[i]];
         Vec3f co = a.Cross(b);
         //Vec3f c=(ObjectMesh.vertices[ObjectMesh.indices[i]]+ObjectMesh.vertices[ObjectMesh.indices[i+1]]+ObjectMesh.vertices[ObjectMesh.indices[i+2]])/3;
         Vec3f ViewDir=cam.GetLocation()-ObjectMesh.vertices[ObjectMesh.indices[i]];
         if(!Math::IsFacingSameDirection(ViewDir,co)) continue;
+        */
         DrawTriangle3D(cam,ObjectMesh.vertices[ObjectMesh.indices[i]], ObjectMesh.vertices[ObjectMesh.indices[i+1]], ObjectMesh.vertices[ObjectMesh.indices[i+2]],Mat.color,Mat.shader);
     }
 }
