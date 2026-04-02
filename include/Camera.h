@@ -63,7 +63,7 @@ public:
          return m_ViewMatrix;
     }
     Vec3f GetLocation(){ return Location_3d;}
-
+    Vec3f GetForwardVector(){return forward;}
     Vec3f GetRoationEuler( ){return Vec3f(m_pitch,m_yaw,m_roll);}
     void updateMatrix(){
       if(bViewDirty){

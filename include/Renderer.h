@@ -434,7 +434,14 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
 
       }
 void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Material & Mat){
+
     for (size_t i = 0; i < ObjectMesh.indices.size(); i += 3) {
+        Vec3f a=ObjectMesh.vertices[ObjectMesh.indices[i+1]]-ObjectMesh.vertices[ObjectMesh.indices[i]];
+        Vec3f b=ObjectMesh.vertices[ObjectMesh.indices[i+2]]-ObjectMesh.vertices[ObjectMesh.indices[i]];
+        Vec3f co = a.Cross(b);
+        //Vec3f c=(ObjectMesh.vertices[ObjectMesh.indices[i]]+ObjectMesh.vertices[ObjectMesh.indices[i+1]]+ObjectMesh.vertices[ObjectMesh.indices[i+2]])/3;
+        Vec3f ViewDir=cam.GetLocation()-ObjectMesh.vertices[ObjectMesh.indices[i]];
+        if(!Math::IsFacingSameDirection(ViewDir,co)) continue;
         DrawTriangle3D(cam,ObjectMesh.vertices[ObjectMesh.indices[i]], ObjectMesh.vertices[ObjectMesh.indices[i+1]], ObjectMesh.vertices[ObjectMesh.indices[i+2]],Mat.color,Mat.shader);
     }
 }

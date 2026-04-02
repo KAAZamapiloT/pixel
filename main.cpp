@@ -168,16 +168,16 @@ while (running) {
 
 
      //  r->DrawTriangle(A, B, C,col);
-   //r->DrawTriangle3D(camera,INV::Vec3<float>(-1, -1, 2),INV::Vec3<float>( 1, -1, 2),INV::Vec3<float>( 1,  1, 2),col,nullptr);
+ //  r->DrawTriangle3D(camera,INV::Vec3<float>(-1, -1, 2),INV::Vec3<float>( 1, -1, 2),INV::Vec3<float>( 1,  1, 2),col,nullptr);
      //   exp.DepthTest1(r, camera);
      //  exp.DepthTest2(r, camera);
 
-     //   exp.CubeTest(r, camera, col);
+       exp.CubeTest(r, camera, col);
         CC.ImpactCamera(camera , e , true , deltaTime);
         CC.TranslateCamera(camera, deltaTime, true);
         CC.MouseImpactCamera(camera, deltaTime);
-    //   exp.Rotate_Cube(1*deltaTime,INV::Vec3<float>(0,1,0));
-       r->RenderMesh(camera,sphere.mesh,Smat);
+       exp.Rotate_Cube(1*deltaTime,INV::Vec3<float>(0,1,0));
+     //  r->RenderMesh(camera,sphere.mesh,Smat);
        Smat.color=col;
      //r->DrawCircle(center, 10.0f, col, true);
 

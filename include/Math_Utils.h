@@ -682,7 +682,7 @@ static Mat4f ScaleRotateTranslateMatrix3D(
     );
 }
 template<typename T>
-bool IsFacingSameDirection(INV::Vec3<T> A,INV::Vec3<T> B){
+static bool IsFacingSameDirection(INV::Vec3<T> A,INV::Vec3<T> B){
     return A.Dot(B) > 0;
 }
 
