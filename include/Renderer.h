@@ -28,6 +28,12 @@ namespace INV{
       inline uint16_t GetWidth(){return m_width;}
       inline uint16_t GetHeight(){return m_height;}
 
+void OnResize(int width,int height){
+    m_height  = height;
+    m_width = width;
+    frame_buffer=std::vector<Vec4<uint8_t>>(width*height,{0,0,0,0});
+    depth_buffer = std::vector<float>(width * height, std::numeric_limits<float>::infinity());
+}
       void SetPixelColor(Vec2<uint16_t> cord,Vec3<uint8_t> Color){
 
    if(cord.x >= m_width || cord.y >= m_height) return;
@@ -333,7 +339,9 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
      INV::Vec2<uint16_t> GetDimensions(){
          return {m_Window->GetWidth(),m_Window->GetHeight()};
      }
-
+     void OnResize(int width, int height) {
+         m_Window->OnResize(width, height);
+     }
 //-----------------------------------
 
 

@@ -135,7 +135,7 @@ std::vector<Vec3f> cube2 = {
 };
 
 Entity CubeE(MeshFactory::CreateCube(0.5f));
-CubeE.transform.position={0,0,5};
+CubeE.transform.position={0,0,0};
 CubeE.transform.scale=Vec3f(1.0f,1.0f,3.0f);
 CubeE.transform.rotation=quat(90,Vec3f(0,1,0));
 for(int i=0;i<4;++i){
