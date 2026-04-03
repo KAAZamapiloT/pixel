@@ -365,10 +365,10 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
      Vec3f ndc_a(a1.x/a1.w,a1.y/a1.w,a1.z/a1.w);
      Vec3f ndc_b(b1.x/b1.w,b1.y/b1.w,b1.z/b1.w);
      Vec3f ndc_c(c1.x/c1.w,c1.y/c1.w,c1.z/c1.w);
+  // if(a1.w == 0 || b1.w == 0 || c1.w == 0){ printf("divide by zero a1.w: %f, b1.w: %f, c1.w: %f\n", a1.w, b1.w, c1.w); }
 
 
      // preventing warap arounds
-   // if (a1.w >0 && b1.w > 0 && c1.w>0)return;
   if (a1.w <=0 && b1.w <=0 && c1.w<=0) return;
      Vec2f screen_a(
          static_cast<float>((ndc_a.x + 1.0f) * 0.5f * m_Window->m_width),
@@ -457,6 +457,8 @@ void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&trans
         Vec3f v0 = (ModelMatrix * Vec4f(VB[IB[i]], 1.0f)).xyz();
         Vec3f v1 = (ModelMatrix * Vec4f(VB[IB[i+1]], 1.0f)).xyz();
         Vec3f v2 = (ModelMatrix * Vec4f(VB[IB[i+2]], 1.0f)).xyz();
+
+
         DrawTriangle3D(cam,v0
             ,v1, v2
             ,Mat.color,Mat.shader);

@@ -81,8 +81,7 @@ int main(int argc, char* argv[])
         SDL_TEXTUREACCESS_STREAMING,
         dims.x, dims.y
     );
-   // SDL_SetWindowRelativeMouseMode(window, true);
-   // SDL_SetWindowMouseGrab(window, true);
+
 
 
 
@@ -140,8 +139,8 @@ std::vector<Vec3f> cube2 = {
 
 Entity CubeE(MeshFactory::CreateCube(0.5f));
 CubeE.transform.position={0,0,0};
-CubeE.transform.scale=Vec3f(1.0f,1.0f,3.0f);
-CubeE.transform.rotation=quat(90,Vec3f(0,1,0));
+CubeE.transform.scale=Vec3f(1.0f,1.0f,1.0f);
+CubeE.transform.rotation=quat(1.6,Vec3f(1,1,0));
 for(int i=0;i<4;++i){
     for(int j=0;j<4;++j){
         printf("ProjectionView Matrix Element %d %d: %f\n", i,j, projectionViewMatrix[i][j]);
@@ -155,14 +154,10 @@ for(int i=0;i<4;++i){
 
 TriangleArray obj = exp.CreateTestTriangle();
 float scale_cnt=1.0000001f;
-//INV::Matrix3<float> modelMatrix = Math::ScaleRotateTranslateMatrix2D(1.0000001,0,0,0);
 Mat4f modal=Math::ScaleRotateTranslateMatrix3D(1.0000001,quat(0,0,0,0),2,2,0);
 INV::Vec4<float> A3=INV::Vec4<float>(A.x,A.y,3,1);
 INV::Vec4<float> B3=INV::Vec4<float>(B.x,B.y,3,1);
 INV::Vec4<float> C3=INV::Vec4<float>(C.x,C.y,3,1);
-//A3=modal.Matrix4_Vec4_mul(modal,A3);
-//B3=modal.Matrix4_Vec4_mul(modal,B3);
-//C3=modal.Matrix4_Vec4_mul(modal,C3);
 INV::Vec2<float>center(100,100);
 
 
@@ -205,27 +200,12 @@ while (running) {
         U_Color.x=abs(sin(time/2))*255;
         U_Color.y=abs(cos(time/2))*255;
         U_Color.z=abs(sin(time))*255;
-
-
-     //  r->DrawTriangle(A, B, C,col);
- //  r->DrawTriangle3D(camera,INV::Vec3<float>(-1, -1, 2),INV::Vec3<float>( 1, -1, 2),INV::Vec3<float>( 1,  1, 2),col,nullptr);
-     //   exp.DepthTest1(r, camera);
-     //  exp.DepthTest2(r, camera);
-
-    //   exp.CubeTest(r, camera, col);
         CC.ImpactCamera(camera , e , true , deltaTime);
         CC.TranslateCamera(camera, deltaTime, true);
         CC.MouseImpactCamera(camera, deltaTime);
-    //   exp.Rotate_Cube(1*deltaTime,INV::Vec3<float>(0,1,0));
-    //   r->RenderMesh(camera,sphere.mesh,sphere.transform,Smat);
-    r->RenderMesh(camera,CubeE.mesh,CubeE.transform,Smat);
-     //  Smat.color=col;
-     //
 
-     //r->DrawCircle(center, 10.0f, col, true);
-
-     //center.x=250+sin(time)*200;
-     //center.y=250+cos(time)*200;
+       r->RenderMesh(camera,CubeE.mesh,CubeE.transform,Smat);
+        Smat.color=col;
 
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);
         SDL_RenderClear(sdlRenderer);

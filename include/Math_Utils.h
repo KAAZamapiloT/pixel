@@ -666,19 +666,19 @@ static Mat4f ScaleRotateTranslateMatrix3D(
 
     // ROW 0
     M[0][0] = R.Mat[0][0] * scale.x;
-    M[0][1] = R.Mat[0][1] * scale.x;
-    M[0][2] = R.Mat[0][2] * scale.x;
+    M[0][1] = R.Mat[0][1] * scale.y;
+    M[0][2] = R.Mat[0][2] * scale.z;
     M[0][3] = t.x;
 
     // ROW 1
-    M[1][0] = R.Mat[1][0] * scale.y;
+    M[1][0] = R.Mat[1][0] * scale.x;
     M[1][1] = R.Mat[1][1] * scale.y;
-    M[1][2] = R.Mat[1][2] * scale.y;
+    M[1][2] = R.Mat[1][2] * scale.z;
     M[1][3] = t.y;
 
     // ROW 2
-    M[2][0] = R.Mat[2][0] * scale.z;
-    M[2][1] = R.Mat[2][1] * scale.z;
+    M[2][0] = R.Mat[2][0] * scale.x;
+    M[2][1] = R.Mat[2][1] * scale.y;
     M[2][2] = R.Mat[2][2] * scale.z;
     M[2][3] = t.z;
 

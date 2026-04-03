@@ -21,7 +21,7 @@
  */
 struct Transform{
    Vec3f position;
-   Vec3f scale;
+   Vec3f scale=Vec3f(1.0f, 1.0f, 1.0f);;
    quat rotation;
 
     Vec3f pivot;
