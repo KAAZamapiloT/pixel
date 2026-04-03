@@ -72,6 +72,8 @@ int main(int argc, char* argv[])
 
     TEST test;
     test.P();
+    TEST test2;
+    test2.S();
     SDL_Window* window = SDL_CreateWindow(
         "SDL3 + MSVC",
         dims.x, dims.y,
@@ -111,7 +113,7 @@ sphere.transform.position = INV::Vec3<float>(0,0,1);
 sphere.transform.scale=Vec3f(1.0f,1.0f,1.0f);
 Material Smat;
 Smat.color = INV::Vec3<uint8_t>(250,250,250);
-Smat.shader = ZDebugShader;
+Smat.shader = DebugShader;
 
 camera camera(ECameraType::Perspective,INV::Vec3<float>(0,0,0),60.f,static_cast<float>(dims.x/dims.y),0.1f,100.f);
 EventController CC;
@@ -146,6 +148,8 @@ Entity CubeE(MeshFactory::CreateCube(0.5f));
 CubeE.transform.position={1,1,0};
 CubeE.transform.scale=Vec3f(1.0f,1.0f,1.0f);
 CubeE.transform.rotation=quat(1.6,Vec3f(1,1,0));
+
+
 for(int i=0;i<4;++i){
     for(int j=0;j<4;++j){
         printf("ProjectionView Matrix Element %d %d: %f\n", i,j, projectionViewMatrix[i][j]);
@@ -211,11 +215,11 @@ while (running) {
 
      //  r->RenderMesh(camera,CubeE.mesh,CubeE.transform,Smat);
         Smat.color=col;
-        for(int i=0;i<test.entities.size();i++){
-            r->RenderMesh(camera,test.entities[i].mesh,test.entities[i].transform,Smat);
+        for(int i=0;i<test2.entities.size();i++){
+            r->RenderMesh(camera,test2.entities[i].mesh,test2.entities[i].transform,Smat);
         }
         quat orbit = quat(deltaTime, Vec3f(0,1,0));
-        for(auto& entity : test.entities) {
+        for(auto& entity : test2.entities) {
             entity.transform.position = orbit.rotate(entity.transform.position);
             entity.transform.rotation = entity.transform.rotation * 0.1*deltaTime;
         }
