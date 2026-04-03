@@ -62,6 +62,13 @@ public:
     Mat4f GetViewMatrix(){
          return m_ViewMatrix;
     }
+    void SetAspectRatio(float x,float y) {
+        m_AspectRatio = x/y;
+        bViewDirty = true;
+        UpdateProjectionMatrix();
+        updateMatrix();
+        UpdateProjectionView();
+    }
     Vec3f GetLocation(){ return Location_3d;}
     Vec3f GetForwardVector(){return forward;}
     Vec3f GetRoationEuler( ){return Vec3f(m_pitch,m_yaw,m_roll);}

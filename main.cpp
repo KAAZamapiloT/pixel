@@ -100,7 +100,7 @@ Example exp;
 
 Entity sphere(MeshFactory::CreateSphere(1,60,60));
 sphere.transform.position = INV::Vec3<float>(0,0,1);
-sphere.transform.scale=Vec3f(3.0f,1.0f,1.0f);
+sphere.transform.scale=Vec3f(1.0f,1.0f,1.0f);
 Material Smat;
 Smat.color = INV::Vec3<uint8_t>(250,250,250);
 Smat.shader = ZDebugShader;
@@ -168,6 +168,23 @@ while (running) {
                 running = false;
         }
 
+        if (e.type == SDL_EVENT_WINDOW_RESIZED) {
+            center.x = e.window.data1;
+            center.y = e.window.data2;
+            r->OnResize(e.window.data1, e.window.data2);
+
+            SDL_DestroyTexture(texture);
+
+            texture = SDL_CreateTexture(
+                sdlRenderer,
+                SDL_PIXELFORMAT_RGBA32,
+                SDL_TEXTUREACCESS_STREAMING,
+                center.x, center.y
+            );
+
+            pitch = center.x * 4;
+            camera.SetAspectRatio(static_cast<float>(center.x), static_cast<float>(center.y));
+        }
 
         static float lastTime = 0.0f;
         float time = SDL_GetTicks() / 1000.0f;
@@ -197,7 +214,7 @@ while (running) {
         CC.MouseImpactCamera(camera, deltaTime);
     //   exp.Rotate_Cube(1*deltaTime,INV::Vec3<float>(0,1,0));
     //   r->RenderMesh(camera,sphere.mesh,sphere.transform,Smat);
-    r->RenderMesh(camera,CubeE.mesh,CubeE.transform,Smat);
+    r->RenderMesh(camera,CubeE.mesh,sphere.transform,Smat);
        Smat.color=col;
      //r->DrawCircle(center, 10.0f, col, true);
 
