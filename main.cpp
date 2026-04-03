@@ -37,17 +37,22 @@ INV::Vec3<uint8_t> DebugShader(Vec3f pos) {
     };
 }
 INV::Vec3<uint8_t> ZDebugShader(Vec3f pos) {
+    float near = 0.1f;
+    float far  = 10.0f;
+
     float z = pos.z;
 
-    // normalize assuming range ~[-r, r]
-    float t = (z + 1.0f) * 0.5f; // map [-1,1] → [0,1]
-
+    float t = (z - near) / (far - near);
     t = std::clamp(t, 0.0f, 1.0f);
 
+    float r = std::clamp(2.0f * t - 1.0f, 0.0f, 1.0f);
+    float g = 1.0f - std::abs(2.0f * t - 1.0f);
+    float b = std::clamp(1.0f - 2.0f * t, 0.0f, 1.0f);
+
     return {
-        (uint8_t)(t * 255),        // red
-        0,
-        (uint8_t)((1.0f - t) * 255) // blue
+        (uint8_t)(r+1 * 255),
+        (uint8_t)(g * 255),
+        (uint8_t)(b * 255)
     };
 }
 int main(int argc, char* argv[])

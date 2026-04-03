@@ -7,6 +7,7 @@ A small software renderer built to understand how graphics actually work.
 
 <p align="center">
   <img src="assets/temp.gif" width="40%"/>
+  <img src="assets/Cubes4.gif" width="40%"/>
 </p>
 
 ---
