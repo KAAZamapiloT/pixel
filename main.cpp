@@ -10,6 +10,8 @@
 #include "Renderer.h"
 #include "include/Math_Utils.h"
 #include "include/EventController.h"
+#include "include/logger.h"
+#include "include/TEST.h"
 
 void UpdateColor(INV::Vec3<uint8_t>& color,INV::Vec3<uint8_t> u_color)
 {
@@ -63,6 +65,8 @@ int main(int argc, char* argv[])
 
     INV::Vec2<uint16_t> dims = r->GetDimensions();
 
+    TEST test;
+    test.P();
     SDL_Window* window = SDL_CreateWindow(
         "SDL3 + MSVC",
         dims.x, dims.y,
@@ -214,8 +218,10 @@ while (running) {
         CC.MouseImpactCamera(camera, deltaTime);
     //   exp.Rotate_Cube(1*deltaTime,INV::Vec3<float>(0,1,0));
     //   r->RenderMesh(camera,sphere.mesh,sphere.transform,Smat);
-    r->RenderMesh(camera,CubeE.mesh,sphere.transform,Smat);
-       Smat.color=col;
+    r->RenderMesh(camera,CubeE.mesh,CubeE.transform,Smat);
+     //  Smat.color=col;
+     //
+
      //r->DrawCircle(center, 10.0f, col, true);
 
      //center.x=250+sin(time)*200;
@@ -225,6 +231,7 @@ while (running) {
         SDL_RenderClear(sdlRenderer);
         SDL_RenderTexture(sdlRenderer, texture, nullptr, nullptr);
         SDL_RenderPresent(sdlRenderer);
+        printf("Frame latency %f\n",deltaTime);
         }
 
 

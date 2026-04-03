@@ -358,9 +358,9 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
      Vec4f b(p2,1);
      Vec4f c(p3,1);
 
-     Vec4f a1 = ProjectionView.Matrix4_Vec4_mul(ProjectionView, a);
-     Vec4f b1 = ProjectionView.Matrix4_Vec4_mul(ProjectionView, b);
-     Vec4f c1 = ProjectionView.Matrix4_Vec4_mul(ProjectionView, c);
+     Vec4f a1 = (ProjectionView*a);
+     Vec4f b1 = (ProjectionView*b);
+     Vec4f c1 = (ProjectionView*c);
 
      Vec3f ndc_a(a1.x/a1.w,a1.y/a1.w,a1.z/a1.w);
      Vec3f ndc_b(b1.x/b1.w,b1.y/b1.w,b1.z/b1.w);
@@ -368,7 +368,7 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
 
 
      // preventing warap arounds
- //   if (a1.w >0 && b1.w > 0 && c1.w>0)return;
+   // if (a1.w >0 && b1.w > 0 && c1.w>0)return;
   if (a1.w <=0 && b1.w <=0 && c1.w<=0) return;
      Vec2f screen_a(
          static_cast<float>((ndc_a.x + 1.0f) * 0.5f * m_Window->m_width),

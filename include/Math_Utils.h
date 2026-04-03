@@ -311,10 +311,10 @@ constexpr explicit Matrix4(T v) {
 
     constexpr Vec4<T> operator*(const Vec4<T>& v) const {
         return Vec4<T>(
-            v.x * Mat[0][0] + v.y * Mat[1][0] + v.z * Mat[2][0] + v.w * Mat[3][0],
-            v.x * Mat[0][1] + v.y * Mat[1][1] + v.z * Mat[2][1] + v.w * Mat[3][1],
-            v.x * Mat[0][2] + v.y * Mat[1][2] + v.z * Mat[2][2] + v.w * Mat[3][2],
-            v.x * Mat[0][3] + v.y * Mat[1][3] + v.z * Mat[2][3] + v.w * Mat[3][3]
+            Mat[0][0]*v.x + Mat[0][1]*v.y + Mat[0][2]*v.z + Mat[0][3]*v.w,
+            Mat[1][0]*v.x + Mat[1][1]*v.y + Mat[1][2]*v.z + Mat[1][3]*v.w,
+            Mat[2][0]*v.x + Mat[2][1]*v.y + Mat[2][2]*v.z + Mat[2][3]*v.w,
+            Mat[3][0]*v.x + Mat[3][1]*v.y + Mat[3][2]*v.z + Mat[3][3]*v.w
         );
     }
 
@@ -385,14 +385,6 @@ static Matrix4 ortho(
     m[3][3] =  1.0f;
 
     return m;
-}
-
-static INV::Vec4<T> Matrix4_Vec4_mul(const Matrix4<T>&mat,const Vec4<T>&v){
-
-    return  INV::Vec4<T>(mat[0][0]*v.x+mat[0][1]*v.y+mat[0][2]*v.z+mat[0][3]*v.w,
-                         mat[1][0]*v.x+mat[1][1]*v.y+mat[1][2]*v.z+mat[1][3]*v.w,
-                         mat[2][0]*v.x+mat[2][1]*v.y+mat[2][2]*v.z+mat[2][3]*v.w,
-                         mat[3][0]*v.x+mat[3][1]*v.y+mat[3][2]*v.z+mat[3][3]*v.w);
 }
 
 
@@ -665,35 +657,36 @@ return INV::Matrix4<float>(
 static Mat4f ScaleRotateTranslateMatrix3D(
     Vec3f scale,
     quat rot,
-    Vec3f translate
+    Vec3f t
 ){
     rot.normalize();
-
     Mat3f R = quat::GetRotationMatrix(rot);
 
     Mat4f M;
 
-    // ROW-MAJOR VERSION (most likely your case)
+    // ROW 0
+    M[0][0] = R.Mat[0][0] * scale.x;
+    M[0][1] = R.Mat[0][1] * scale.x;
+    M[0][2] = R.Mat[0][2] * scale.x;
+    M[0][3] = t.x;
 
-    M.Mat[0][0] = R.Mat[0][0] * scale.x;
-    M.Mat[0][1] = R.Mat[0][1] * scale.y;
-    M.Mat[0][2] = R.Mat[0][2] * scale.z;
-    M.Mat[0][3] = translate.x;
+    // ROW 1
+    M[1][0] = R.Mat[1][0] * scale.y;
+    M[1][1] = R.Mat[1][1] * scale.y;
+    M[1][2] = R.Mat[1][2] * scale.y;
+    M[1][3] = t.y;
 
-    M.Mat[1][0] = R.Mat[1][0] * scale.x;
-    M.Mat[1][1] = R.Mat[1][1] * scale.y;
-    M.Mat[1][2] = R.Mat[1][2] * scale.z;
-    M.Mat[1][3] = translate.y;
+    // ROW 2
+    M[2][0] = R.Mat[2][0] * scale.z;
+    M[2][1] = R.Mat[2][1] * scale.z;
+    M[2][2] = R.Mat[2][2] * scale.z;
+    M[2][3] = t.z;
 
-    M.Mat[2][0] = R.Mat[2][0] * scale.x;
-    M.Mat[2][1] = R.Mat[2][1] * scale.y;
-    M.Mat[2][2] = R.Mat[2][2] * scale.z;
-    M.Mat[2][3] = translate.z;
-
-    M.Mat[3][0] = 0;
-    M.Mat[3][1] = 0;
-    M.Mat[3][2] = 0;
-    M.Mat[3][3] = 1;
+    // ROW 3
+    M[3][0] = 0;
+    M[3][1] = 0;
+    M[3][2] = 0;
+    M[3][3] = 1;
 
     return M;
 }
