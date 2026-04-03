@@ -4,7 +4,7 @@ public:
     std::vector<Entity> entities;
 
 const int SIZE = 3;
-const float spacing = 2.0f;
+const float spacing = 2.1f;
 void P(){
     Mesh cubeMesh = MeshFactory::CreateCube(1.0f);
 for (int x = 0; x < SIZE; x++) {
@@ -19,7 +19,7 @@ for (int x = 0; x < SIZE; x++) {
                 (z - SIZE/2) * spacing
             );
 
-            e.transform.scale = Vec3f(1.0f, 1.0f, 1.0f);
+            e.transform.scale = Vec3f(0.5f, 0.5f, 0.5f);
 
             entities.push_back(e);
         }

@@ -138,7 +138,7 @@ std::vector<Vec3f> cube2 = {
 };
 
 Entity CubeE(MeshFactory::CreateCube(0.5f));
-CubeE.transform.position={0,0,0};
+CubeE.transform.position={1,1,0};
 CubeE.transform.scale=Vec3f(1.0f,1.0f,1.0f);
 CubeE.transform.rotation=quat(1.6,Vec3f(1,1,0));
 for(int i=0;i<4;++i){
@@ -204,8 +204,16 @@ while (running) {
         CC.TranslateCamera(camera, deltaTime, true);
         CC.MouseImpactCamera(camera, deltaTime);
 
-       r->RenderMesh(camera,CubeE.mesh,CubeE.transform,Smat);
+     //  r->RenderMesh(camera,CubeE.mesh,CubeE.transform,Smat);
         Smat.color=col;
+        for(int i=0;i<test.entities.size();i++){
+            r->RenderMesh(camera,test.entities[i].mesh,test.entities[i].transform,Smat);
+        }
+        quat orbit = quat(deltaTime, Vec3f(0,1,0));
+        for(auto& entity : test.entities) {
+            entity.transform.position = orbit.rotate(entity.transform.position);
+            entity.transform.rotation = entity.transform.rotation * 0.1*deltaTime;
+        }
 
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);
         SDL_RenderClear(sdlRenderer);
