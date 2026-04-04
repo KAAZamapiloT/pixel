@@ -57,8 +57,6 @@ INV::Vec3<uint8_t> ZDebugShader(Vec3f pos) {
 }
 int main(int argc, char* argv[])
 {
-   // SDL_SetMainReady();
-
     if (!SDL_Init(SDL_INIT_VIDEO|SDL_INIT_EVENTS)) {
            SDL_Log("SDL_Init Error: %s", SDL_GetError());
            return -1;
@@ -98,7 +96,7 @@ int main(int argc, char* argv[])
     bool running = true;
     SDL_Event e;
 
-    INV::Vec2<float> A(145,145);
+    Vec2f A(145,145);
      INV::Vec2<float> B(500,120);
      INV::Vec2<float> C(20,300);
 

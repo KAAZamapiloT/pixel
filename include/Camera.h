@@ -159,13 +159,12 @@ public:
     // TODO: ERROR HERE
     void UpdateViewMatrix()
     {
-        // ROW 0 → right axis
             m_ViewMatrix[0][0] = right.x;
             m_ViewMatrix[0][1] = right.y;
             m_ViewMatrix[0][2] = right.z;
             m_ViewMatrix[0][3] = -right.Dot(Location_3d);
 
-            // ROW 1 → up axis
+
             m_ViewMatrix[1][0] = up.x;
             m_ViewMatrix[1][1] = up.y;
             m_ViewMatrix[1][2] = up.z;
@@ -177,7 +176,7 @@ public:
             m_ViewMatrix[2][2] = -forward.z;
             m_ViewMatrix[2][3] =  forward.Dot(Location_3d);
 
-            // ROW 3
+
             m_ViewMatrix[3][0] = 0.0f;
             m_ViewMatrix[3][1] = 0.0f;
             m_ViewMatrix[3][2] = 0.0f;

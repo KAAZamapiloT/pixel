@@ -549,12 +549,28 @@ INV::Vec3<float> QuatToEuler(const Quat& q){
 
 // ALIAS FOR HELP
 using Mat4f= INV::Matrix4<float>;
+using Mat4i= INV::Matrix4<int>;
+
 using Mat3f= INV::Matrix3<float>;
+using Mat3i= INV::Matrix3<int>;
+
 using Mat2f= INV::Matrix2<float>;
+using Mat2i= INV::Matrix2<int>;
 
 using Vec4f= INV::Vec4<float>;
+using Vec4i= INV::Vec4<int>;
+using Vec4ui16= INV::Vec4<uint16_t>;
+using Vec4ui8= INV::Vec4<uint8_t>;
+
 using Vec3f= INV::Vec3<float>;
+using Vec3ui16= INV::Vec3<uint16_t>;
+using Vec3i= INV::Vec3<int>;
+using Vec3ui8= INV::Vec3<uint8_t>;
+
 using Vec2f= INV::Vec2<float>;
+using Vec2i= INV::Vec2<int>;
+using Vec2ui16= INV::Vec2<uint16_t>;
+using Vec2ui8= INV::Vec2<uint8_t>;
 
 using quat= INV::Quat<float>;
 
