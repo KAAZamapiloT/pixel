@@ -577,6 +577,12 @@ using quat= INV::Quat<float>;
 // will implement math function here
 class Math{
 public:
+template<typename T>
+static INV::Matrix2<T> InverseMat2D(INV::Matrix2<T> matrix){
+    return INV::Matrix2<T>({matrix[1][1],-matrix[1][0]},{matrix[0][1],matrix[0][0]});
+}
+
+
 static Mat3f QuaternionToMatrix(const quat& q) {
     float x = q.x, y = q.y, z = q.z, w = q.w;
 

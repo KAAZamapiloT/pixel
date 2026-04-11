@@ -167,7 +167,7 @@ INV::Vec4<float> B3=INV::Vec4<float>(B.x,B.y,3,1);
 INV::Vec4<float> C3=INV::Vec4<float>(C.x,C.y,3,1);
 INV::Vec2<float>center(100,100);
 
-
+r->init();
 while (running) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT)
@@ -213,11 +213,11 @@ while (running) {
 
      //  r->RenderMesh(camera,CubeE.mesh,CubeE.transform,Smat);
         Smat.color=col;
-        for(int i=0;i<test2.entities.size();i++){
-            r->RenderMesh(camera,test2.entities[i].mesh,test2.entities[i].transform,Smat);
+        for(int i=0;i<test.entities.size();i++){
+            r->RenderMesh(camera,test.entities[i].mesh,test.entities[i].transform,Smat);
         }
         quat orbit = quat(deltaTime, Vec3f(0,1,0));
-        for(auto& entity : test2.entities) {
+        for(auto& entity : test.entities) {
             entity.transform.position = orbit.rotate(entity.transform.position);
             entity.transform.rotation = entity.transform.rotation * 0.1*deltaTime;
         }
@@ -234,6 +234,6 @@ while (running) {
     SDL_DestroyRenderer(sdlRenderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-
+    r->PrintResults();
     return 0;
 }

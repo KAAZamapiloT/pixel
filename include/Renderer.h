@@ -351,7 +351,7 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
   void DrawTriangle3D(camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec3<float> p3,
       INV::Vec3<uint8_t> color,INV::Vec3<uint8_t> (*f)(INV::Vec3<float>)
   ){
-
+      TotalTriangleCounts++;
 
      INV::Matrix4<float> ProjectionView = cam.GetProjectionView();
      Vec4f a(p1,1);
@@ -365,11 +365,19 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
      Vec3f ndc_a(a1.x/a1.w,a1.y/a1.w,a1.z/a1.w);
      Vec3f ndc_b(b1.x/b1.w,b1.y/b1.w,b1.z/b1.w);
      Vec3f ndc_c(c1.x/c1.w,c1.y/c1.w,c1.z/c1.w);
-  // if(a1.w == 0 || b1.w == 0 || c1.w == 0){ printf("divide by zero a1.w: %f, b1.w: %f, c1.w: %f\n", a1.w, b1.w, c1.w); }
+    // near plane culling
+    if (a1.w <=0 && b1.w <=0 && c1.w<=0) return;
+    bool outside=(ndc_a.x<-1&&ndc_b.x<-1&&ndc_c.x<-1)||(ndc_a.x>1&&ndc_b.x>1&&ndc_c.x>1)
+    ||
+    (ndc_a.y<-1&&ndc_b.y<-1&&ndc_c.y<-1)||(ndc_a.y>1&&ndc_b.y>1&&ndc_c.y>1)
+    ||
+    (ndc_a.z<-1&&ndc_b.z<-1&&ndc_c.z<-1)||(ndc_a.z>1&&ndc_b.z>1&&ndc_c.z>1)
+    ;
 
+    if(outside){
+        FrustumCulls++;
+        return;};
 
-     // preventing warap arounds
-  if (a1.w <=0 && b1.w <=0 && c1.w<=0) return;
      Vec2f screen_a(
          static_cast<float>((ndc_a.x + 1.0f) * 0.5f * m_Window->m_width),
          static_cast<float>((1.0f - ndc_a.y) * 0.5f * m_Window->m_height)
@@ -385,12 +393,14 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
          static_cast<float>((1.0f - ndc_c.y) * 0.5f * m_Window->m_height)
      );
 
-     float area =
-         (screen_b.x - screen_a.x)*(screen_c.y - screen_a.y) -
-         (screen_b.y - screen_a.y)*(screen_c.x - screen_a.x);
+     //back face culling
+     float area = (screen_b.x - screen_a.x)*(screen_c.y - screen_a.y) - (screen_b.y - screen_a.y)*(screen_c.x - screen_a.x);
+     if (area >= 0){
+         BackFaceCulls++;
+         return;
+     };
 
-     if (area >= 0) return;
-
+     // bouunding box cliping
      int32_t MAx=std::max({screen_a.x,screen_b.x,screen_c.x});
      int32_t MAy=std::max({screen_a.y,screen_b.y,screen_c.y});
       int32_t MIy=std::min({screen_a.y,screen_b.y,screen_c.y});
@@ -413,13 +423,26 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
      Vec3f world_b = p2;
      Vec3f world_c = p3;
 
-      if(f==nullptr){
+
+     float inv_w_a=1.0f/a1.w;
+     float inv_w_b=1.0f/b1.w;
+     float inv_w_c=1.0f/c1.w;
+
+     float z_a=a.z*inv_w_a;
+     float z_b=b.z*inv_w_b;
+     float z_c=c.z*inv_w_c;
+
+     DrawnTraingles++;
+     if(f==nullptr){
 
           for(int i=MIx;i<=MAx;i++){
               for(int j=MIy;j<=MAy;j++){
                   if(InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c)){
                       Vec3f w=BaryCentric(Vec2f(i,j),screen_a,screen_b,screen_c);
-                      float depth=w.x*ndc_a.z+w.y*ndc_b.z+w.z*ndc_c.z;
+
+                      float inv_w=w.x*inv_w_a+w.y*inv_w_b+w.z*inv_w_c;
+                      float z=w.x*z_a+w.y*z_b+w.z*z_c;
+                      float depth=z/inv_w;
                       if(SetDepthBuffer(INV::Vec2<uint16_t>(i,j),depth)){
                       SetPixelColor(INV::Vec2<uint16_t>(i,j),color);
                       }
@@ -458,7 +481,7 @@ void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&trans
         Vec3f v1 = (ModelMatrix * Vec4f(VB[IB[i+1]], 1.0f)).xyz();
         Vec3f v2 = (ModelMatrix * Vec4f(VB[IB[i+2]], 1.0f)).xyz();
 
-
+       
         DrawTriangle3D(cam,v0
             ,v1, v2
             ,Mat.color,Mat.shader);
@@ -525,10 +548,27 @@ void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&trans
    const uint8_t* GetColorBufferBytes() const {
        return reinterpret_cast<const uint8_t*>(m_Window->frame_buffer.data());
    }
+   void init(){
+      TotalTriangleCounts = 0;
+      DrawnTraingles = 0;
+      FrustumCulls = 0;
+      BackFaceCulls = 0;
+      m_id = 0;
+  }
+
+   void PrintResults() {
+      std::cout << "\nTotal Triangle Counts: " << TotalTriangleCounts;
+      std::cout << "\nDrawn Traingles: " << DrawnTraingles;
+      std::cout << "\nFrustum Culls: " << FrustumCulls ;
+      std::cout << "\nBack Face Culls: " << BackFaceCulls << std::endl;
+  }
   private:
     uint8_t m_id;
     std::unique_ptr<INV::Window> m_Window;
-
+    uint64_t TotalTriangleCounts;
+    uint64_t DrawnTraingles;
+    uint64_t FrustumCulls;
+    uint64_t BackFaceCulls;
     bool InsideTrig(INV::Vec2<float> Point,INV::Vec2<float> a,INV::Vec2<float> b,INV::Vec2<float> c){
 
 
@@ -724,7 +764,9 @@ void CubeDepthTest(std::unique_ptr<class renderer>&r, class camera& cam,INV::Vec
 
 }
 
+
   private:
+
 std::vector<TriangleArray> Tarray;
 Vec3f p1,p2,p3,p4,p5,p6,p7,p8; //cube points
 

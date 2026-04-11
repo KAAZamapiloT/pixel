@@ -3,7 +3,7 @@ class TEST {
 public:
     std::vector<Entity> entities;
 
-const int SIZE = 2;
+const int SIZE = 6;
 const float spacing = 2.1f;
 void S(){
     Mesh SphereMesh = MeshFactory::CreateSphere(2.f,30,30);
