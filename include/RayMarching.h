@@ -1,5 +1,5 @@
 #pragma once
-#include<vector>
+#include"Math_Utils.h"
 //i dont know why i created this class
 
 class marchrays{
@@ -13,4 +13,11 @@ virtual void DrawMap(std::vector<std::vector<int>>& map){
 
 }
 
+};
+
+class CastingData{
+  public:
+    struct DistanceValues{
+        std::vector<i32>
+    }  ;
 };
