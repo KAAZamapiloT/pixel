@@ -214,7 +214,7 @@ while (running) {
      //  r->RenderMesh(camera,CubeE.mesh,CubeE.transform,Smat);
         Smat.color=col;
         for(int i=0;i<test.entities.size();i++){
-            r->RenderMesh(camera,test.entities[i].mesh,test.entities[i].transform,Smat);
+            r->RenderWiroMesh(camera,test.entities[i].mesh,test.entities[i].transform,Smat);
         }
         quat orbit = quat(deltaTime, Vec3f(0,1,0));
         for(auto& entity : test.entities) {

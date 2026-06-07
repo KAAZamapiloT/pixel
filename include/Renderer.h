@@ -177,6 +177,8 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
 }
 
 
+
+
     void DrawTriangle(INV::Vec2<float> p1,INV::Vec2<float> p2,INV::Vec2<float> p3,INV::Vec3<uint8_t> colors ){
 
 
@@ -269,6 +271,7 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
        DrawTriangle(p1,p2,p3,color);
 
      }
+
 
      void DrawPolynomial(float(*px)(float) ,INV::Vec2<uint16_t>start,INV::Vec2<uint16_t>end,INV::Vec3<uint8_t> Color){
 
@@ -481,8 +484,66 @@ void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&trans
         Vec3f v1 = (ModelMatrix * Vec4f(VB[IB[i+1]], 1.0f)).xyz();
         Vec3f v2 = (ModelMatrix * Vec4f(VB[IB[i+2]], 1.0f)).xyz();
 
-       
+
         DrawTriangle3D(cam,v0
+            ,v1, v2
+            ,Mat.color,Mat.shader);
+    }
+}
+
+
+void DrawWiroTriangle3D(camera& cam,Vec3f v0 ,Vec3f v1,Vec3f v2,INV::Vec3<uint8_t> color,
+     INV::Vec3<uint8_t> (*f)(INV::Vec3<float>)){
+
+// steps to get point get 3d -> 2d points for line and call 3 drawlline calls
+
+auto x=cam.GetProjectionView();
+
+Vec4f p0 = x * Vec4f(v0, 1.0f);
+Vec4f p1 = x * Vec4f(v1, 1.0f);
+Vec4f p2 = x * Vec4f(v2, 1.0f);
+
+Vec3f ndc0 = p0.xyz() / p0.w;
+Vec3f ndc1 = p1.xyz() / p1.w;
+Vec3f ndc2 = p2.xyz() / p2.w;
+
+
+Vec2f screen_a(
+    static_cast<float>((ndc0.x + 1.0f) * 0.5f * m_Window->m_width),
+    static_cast<float>((1.0f - ndc0.y) * 0.5f * m_Window->m_height)
+);
+
+Vec2f screen_b(
+    static_cast<float>((ndc1.x + 1.0f) * 0.5f * m_Window->m_width),
+    static_cast<float>((1.0f - ndc1.y) * 0.5f * m_Window->m_height)
+);
+
+Vec2f screen_c(
+    static_cast<float>((ndc2.x + 1.0f) * 0.5f * m_Window->m_width),
+    static_cast<float>((1.0f - ndc2.y) * 0.5f * m_Window->m_height)
+);
+
+// TODO : CREATING A SHADER FOR A 3D LINE
+DrawLine(screen_a, screen_b, color, nullptr);
+DrawLine(screen_b, screen_c, color, nullptr);
+DrawLine(screen_c, screen_a, color, nullptr);
+
+}
+
+
+void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&transform,struct Material & Mat){
+
+    Mat4f ModelMatrix=Math::ScaleRotateTranslateMatrix3D(transform.scale,
+        transform.rotation,transform.position);
+    auto&VB=ObjectMesh.vertices;
+    auto&IB=ObjectMesh.indices;
+    for (size_t i = 0; i < ObjectMesh.indices.size(); i += 3) {
+        Vec3f v0 = (ModelMatrix * Vec4f(VB[IB[i]], 1.0f)).xyz();
+        Vec3f v1 = (ModelMatrix * Vec4f(VB[IB[i+1]], 1.0f)).xyz();
+        Vec3f v2 = (ModelMatrix * Vec4f(VB[IB[i+2]], 1.0f)).xyz();
+
+
+        DrawWiroTriangle3D(cam,v0
             ,v1, v2
             ,Mat.color,Mat.shader);
     }
@@ -655,6 +716,19 @@ void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&trans
      return(h&&j&&k&&l);
    }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
 class Example{
 public:
 Example() {
