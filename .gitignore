@@ -4,3 +4,4 @@ CmakeSettings.json
 .vs
 *.bat
 *.mp4
+cmake
