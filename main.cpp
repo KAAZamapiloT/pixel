@@ -10,6 +10,7 @@
 #include "Renderer.h"
 #include "include/Math_Utils.h"
 #include "include/EventController.h"
+#include "include/Renderer.h"
 #include "include/logger.h"
 #include "include/TEST.h"
 
@@ -88,7 +89,7 @@ int main(int argc, char* argv[])
     );
 
 
-
+     Example exp;
 
     const uint8_t* pixels = r->GetColorBufferBytes();
     int pitch = dims.x * 4;
@@ -104,7 +105,7 @@ int main(int argc, char* argv[])
      INV::Vec3<uint8_t> col(178,72,123);
      INV::Vec3<uint8_t> U_Color(123,234,13);
 
-Example exp;
+
 
 Entity sphere(MeshFactory::CreateSphere(1,60,60));
 sphere.transform.position = INV::Vec3<float>(0,0,1);
@@ -214,7 +215,7 @@ while (running) {
      //  r->RenderMesh(camera,CubeE.mesh,CubeE.transform,Smat);
         Smat.color=col;
         for(int i=0;i<test.entities.size();i++){
-            r->RenderWiroMesh(camera,test.entities[i].mesh,test.entities[i].transform,Smat);
+            r->RenderMesh(camera,test.entities[i].mesh,test.entities[i].transform,Smat);
         }
         quat orbit = quat(deltaTime, Vec3f(0,1,0));
         for(auto& entity : test.entities) {
