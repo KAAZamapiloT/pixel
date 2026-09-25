@@ -5,3 +5,4 @@ CmakeSettings.json
 *.bat
 *.mp4
 cmake
+bunny.obj
