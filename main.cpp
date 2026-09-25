@@ -17,31 +17,31 @@
 #include "include/logger.h"
 #include "include/TEST.h"
 #include "include/tools/benchmark.h"
-
-void UpdateColor(INV::Vec3<uint8_t>& color,INV::Vec3<uint8_t> u_color)
+#include <tracy/Tracy.hpp>
+void UpdateColor(Vec3ui8& color,Vec3ui8& u_color)
 {
   color=u_color;
 }
 
-void UpdateLocation(INV::Vec2<float>& A, float x , float y,float deltatime){
+void UpdateLocation(Vec2f& A, float x , float y,float deltatime){
     A.x+=x*deltatime;
     A.y+=y*deltatime;
 }
-INV::Vec3<uint8_t> Gradient(Vec3f pos)
+Vec3ui8 Gradient(Vec3f pos)
 {
     int x=pos.x;
     int y=pos.y;
     int z=pos.z;
-    return INV::Vec3<uint8_t>((12*(x+1))%255, 12*(y+1)%255, 12*(z+1)%255);
+    return Vec3ui8((12*(x+1))%255, 12*(y+1)%255, 12*(z+1)%255);
 }
-INV::Vec3<uint8_t> DebugShader(Vec3f pos) {
+Vec3ui8 DebugShader(Vec3f pos) {
     return {
         (uint8_t)((pos.x + 1.0f) * 121),
         (uint8_t)((pos.y + 1.0f) * 121),
         (uint8_t)((pos.z + 1.0f) * 121)
     };
 }
-INV::Vec3<uint8_t> ZDebugShader(Vec3f pos) {
+Vec3ui8 ZDebugShader(Vec3f pos) {
     float near = 0.1f;
     float far  = 10.0f;
 
@@ -62,6 +62,11 @@ INV::Vec3<uint8_t> ZDebugShader(Vec3f pos) {
 }
 int main(int argc, char* argv[])
 {
+
+  std::cout << "TracyIsConnected = " << TracyIsConnected << std::endl;
+  
+  std::cout.flush();
+
     if (!SDL_Init(SDL_INIT_VIDEO|SDL_INIT_EVENTS)) {
            SDL_Log("SDL_Init Error: %s", SDL_GetError());
            return -1;
@@ -71,7 +76,7 @@ int main(int argc, char* argv[])
         1, std::make_unique<INV::Window>(512, 512, "Main_Window")
     );
 
-    INV::Vec2<uint16_t> dims = r->GetDimensions();
+    Vec2ui16 dims = r->GetDimensions();
 
     TEST test;
     test.P();
@@ -101,27 +106,27 @@ int main(int argc, char* argv[])
     bool running = true;
     SDL_Event e;
 
-    Vec2f A(145,145);
-     INV::Vec2<float> B(500,120);
-     INV::Vec2<float> C(20,300);
+     Vec2f  A(145,145);
+     Vec2f B(500,120);
+     Vec2f C(20,300);
 
-     INV::Vec3<uint8_t> w_color(1,1,12);
-     INV::Vec3<uint8_t> col(178,72,123);
-     INV::Vec3<uint8_t> U_Color(123,234,13);
+     Vec3ui8 w_color(1,1,12);
+     Vec3ui8 col(178,72,123);
+     Vec3ui8 U_Color(123,234,13);
 
 
 
 Entity sphere(MeshFactory::CreateSphere(1,60,60));
-sphere.transform.position = INV::Vec3<float>(0,0,1);
+sphere.transform.position = Vec3f(0,0,1);
 sphere.transform.scale=Vec3f(1.0f,1.0f,1.0f);
 Material Smat;
-Smat.color = INV::Vec3<uint8_t>(250,250,250);
+Smat.color = Vec3ui8(250,250,250);
 Smat.shader = DebugShader;
 
-camera camera(ECameraType::Perspective,INV::Vec3<float>(0,0,0),60.f,static_cast<float>(dims.x/dims.y),0.1f,100.f);
+camera camera(ECameraType::Perspective,Vec3f(0,0,0),60.f,static_cast<float>(dims.x/dims.y),0.1f,100.f);
 EventController CC;
-INV::Matrix4<float> projectionViewMatrix = camera.GetProjectionView();
-INV::Matrix4<float> viewMatrix = camera.GetViewMatrix();
+Mat4f projectionViewMatrix = camera.GetProjectionView();
+Mat4f viewMatrix = camera.GetViewMatrix();
 //////////////////
 std::vector<Vec3f> cube1 = {
     Vec3f(-0.5f, -0.5f, 1.5f), // 0
@@ -167,16 +172,21 @@ for(int i=0;i<4;++i){
 TriangleArray obj = exp.CreateTestTriangle();
 float scale_cnt=1.0000001f;
 Mat4f modal=Math::ScaleRotateTranslateMatrix3D(1.0000001,quat(0,0,0,0),2,2,0);
-INV::Vec4<float> A3=INV::Vec4<float>(A.x,A.y,3,1);
-INV::Vec4<float> B3=INV::Vec4<float>(B.x,B.y,3,1);
-INV::Vec4<float> C3=INV::Vec4<float>(C.x,C.y,3,1);
-INV::Vec2<float>center(100,100);
+Vec4f A3=Vec4f(A.x,A.y,3,1);
+Vec4f B3=Vec4f(B.x,B.y,3,1);
+Vec4f C3=Vec4f(C.x,C.y,3,1);
+Vec2f center(100,100);
+
+
 
 r->init();
 
 
-Benchmark BCC;
+
 while (running) {
+
+     FrameMark;
+
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT)
                 running = false;
@@ -205,7 +215,7 @@ while (running) {
         float deltaTime = time - lastTime;
         lastTime = time;
 
-        r->ClearColor(INV::Vec4<uint8_t>(w_color, 255));
+        r->ClearColor(Vec4ui8(w_color, 255));
 
         UpdateColor(col,U_Color);
 
@@ -218,15 +228,12 @@ while (running) {
         CC.ImpactCamera(camera , e , true , deltaTime);
         CC.TranslateCamera(camera, deltaTime, true);
         CC.MouseImpactCamera(camera, deltaTime);
-
-     //  r->RenderMesh(camera,CubeE.mesh,CubeE.transform,Smat);
-
-      BCC.Begin();
+        
         Smat.color=col;
         for(int i=0;i<test.entities.size();i++){
             r->RenderMesh(camera,test.entities[i].mesh,test.entities[i].transform,Smat);
         }
-       BCC.End();
+       
         quat orbit = quat(deltaTime, Vec3f(0,1,0));
         for(auto& entity : test.entities) {
             entity.transform.position = orbit.rotate(entity.transform.position);
@@ -241,8 +248,7 @@ while (running) {
 
         }
 
-        BCC.Print();
-
+     
 
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(sdlRenderer);

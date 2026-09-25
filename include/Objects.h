@@ -83,10 +83,10 @@ Mesh CreateCube(float h) {
 Mesh CreateSphere(float radius, int slices, int stacks) {
     Mesh sphere;
     for (int i = 0; i <= stacks; i++) {
-           float phi = M_PI * i / stacks;
+           float phi = PI * i / stacks;
 
            for (int j = 0; j <= slices; j++) {
-               float theta = 2 * M_PI * j / slices;
+               float theta = 2 * PI * j / slices;
 
                float x = radius * sin(phi) * cos(theta);
                float y = radius * cos(phi);

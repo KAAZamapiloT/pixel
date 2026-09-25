@@ -18,6 +18,6 @@ virtual void DrawMap(std::vector<std::vector<int>>& map){
 class CastingData{
   public:
     struct DistanceValues{
-        std::vector<i32>
+        std::vector<int>d;
     }  ;
 };

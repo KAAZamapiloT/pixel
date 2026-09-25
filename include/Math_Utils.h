@@ -3,14 +3,15 @@
 #include<vector>
 #include<cstdint>
 #include"string"
-#define _USE_MATH_DEFINES
 #include <cmath>
-constexpr float M_PI = 3.14159265358979323846f;
+
+constexpr float PI = 3.14159265358979323846f;
 namespace INV{
 
 template <typename T>
 class Vec2{
     public:
+    Vec2(){}
     Vec2(T x, T y) : x(x), y(y) {}
     Vec2(std::initializer_list<T> list) : x(*list.begin()), y(*(list.begin() + 1)) {}
 
@@ -178,7 +179,9 @@ public:
 Vec4(T x,T y,T z,T w):x(x),y(y),z(z),w(w){
 
 }
+Vec4(){
 
+}
 Vec4(Vec3<T>s,T sd){
     x=s.x;
     y=s.y;
@@ -532,7 +535,7 @@ INV::Vec3<float> QuatToEuler(const Quat& q){
         float siny = 2.0f * (q.w * q.y - q.z * q.x);
 
         if (std::abs(siny) >= 1.0f)
-            euler.y = std::copysign(M_PI / 2.0f, siny); // clamp (gimbal lock)
+            euler.y = std::copysign(PI / 2.0f, siny); // clamp (gimbal lock)
         else
             euler.y = std::asin(siny);
 

@@ -11,7 +11,7 @@
 #include <iostream>
 #include<string>
 #include<fstream>
-
+#include <tracy/Tracy.hpp>
 
 namespace INV{
     class Window{
@@ -213,8 +213,8 @@ void DrawTraingles3D(class TriangleArray&Tri,camera&Cam){
             Tri.colors[i], nullptr);
     }
 }
-void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec3<float> p3,INV::Vec3<float> p4,
-    INV::Vec3<float> p5,INV::Vec3<float> p6,INV::Vec3<float> p7,INV::Vec3<float> p8,INV::Vec3<uint8_t> Color){
+void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
+    Vec3f p5,Vec3f p6,Vec3f p7,Vec3f p8,INV::Vec3<uint8_t> Color){
     Vec3f t1=p1;
     Vec3f t2=p2;
     Vec3f t3=p3;
@@ -351,23 +351,41 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
      // Drawing a triangle in 3d space but then it can also accept a function pointer(can be passes as null)
     // but here main thing is to set color val
   // assuming world space cordinates-> otherwise local->world transformation
-  void DrawTriangle3D(camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec3<float> p3,
-      INV::Vec3<uint8_t> color,INV::Vec3<uint8_t> (*f)(INV::Vec3<float>)
+  void DrawTriangle3D(camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,
+      INV::Vec3<uint8_t> color,INV::Vec3<uint8_t> (*f)(Vec3f)
   ){
       TotalTriangleCounts++;
 
-     INV::Matrix4<float> ProjectionView = cam.GetProjectionView();
-     Vec4f a(p1,1);
+      Vec4f a(p1,1);
      Vec4f b(p2,1);
      Vec4f c(p3,1);
 
-     Vec4f a1 = (ProjectionView*a);
-     Vec4f b1 = (ProjectionView*b);
-     Vec4f c1 = (ProjectionView*c);
+     
+     Vec4f a1;
+     Vec4f b1;
+     Vec4f c1;
+     
+     Vec3f ndc_a;
+     Vec3f ndc_b;
+     Vec3f ndc_c;
 
-     Vec3f ndc_a(a1.x/a1.w,a1.y/a1.w,a1.z/a1.w);
-     Vec3f ndc_b(b1.x/b1.w,b1.y/b1.w,b1.z/b1.w);
-     Vec3f ndc_c(c1.x/c1.w,c1.y/c1.w,c1.z/c1.w);
+    {
+        ZoneScopedN("Transform");
+    Mat4f ProjectionView = cam.GetProjectionView();
+     
+
+       a1 = (ProjectionView*a);
+       b1 = (ProjectionView*b);
+       c1 = (ProjectionView*c);
+
+      ndc_a=Vec3f(a1.x/a1.w,a1.y/a1.w,a1.z/a1.w);
+      ndc_b=Vec3f(b1.x/b1.w,b1.y/b1.w,b1.z/b1.w);
+      ndc_c=Vec3f(c1.x/c1.w,c1.y/c1.w,c1.z/c1.w);
+    } 
+
+
+    {
+    ZoneScopedN("Frustum Culling");
     // near plane culling
     if (a1.w <=0 && b1.w <=0 && c1.w<=0) return;
     bool outside=(ndc_a.x<-1&&ndc_b.x<-1&&ndc_c.x<-1)||(ndc_a.x>1&&ndc_b.x>1&&ndc_c.x>1)
@@ -380,34 +398,49 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
     if(outside){
         FrustumCulls++;
         return;};
+    }
+    
+    Vec2f screen_a,screen_b,screen_c;
 
-     Vec2f screen_a(
+    {
+        ZoneScopedN("Screen Transform");
+
+     screen_a=Vec2f(
          static_cast<float>((ndc_a.x + 1.0f) * 0.5f * m_Window->m_width),
          static_cast<float>((1.0f - ndc_a.y) * 0.5f * m_Window->m_height)
      );
 
-     Vec2f screen_b(
+     screen_b=Vec2f(
          static_cast<float>((ndc_b.x + 1.0f) * 0.5f * m_Window->m_width),
          static_cast<float>((1.0f - ndc_b.y) * 0.5f * m_Window->m_height)
      );
 
-     Vec2f screen_c(
+     screen_c=Vec2f(
          static_cast<float>((ndc_c.x + 1.0f) * 0.5f * m_Window->m_width),
          static_cast<float>((1.0f - ndc_c.y) * 0.5f * m_Window->m_height)
      );
 
+    }
+
+
+     {
+        
+    ZoneScopedN("Backface Culling");
      //back face culling
      float area = (screen_b.x - screen_a.x)*(screen_c.y - screen_a.y) - (screen_b.y - screen_a.y)*(screen_c.x - screen_a.x);
      if (area >= 0){
          BackFaceCulls++;
          return;
      };
+    }
 
+      int32_t MAx,MAy,MIy,MIx;
+     {
      // bouunding box cliping
-     int32_t MAx=std::max({screen_a.x,screen_b.x,screen_c.x});
-     int32_t MAy=std::max({screen_a.y,screen_b.y,screen_c.y});
-      int32_t MIy=std::min({screen_a.y,screen_b.y,screen_c.y});
-        int32_t MIx=std::min({screen_a.x,screen_b.x,screen_c.x});
+     MAx=std::max({screen_a.x,screen_b.x,screen_c.x});
+      MAy=std::max({screen_a.y,screen_b.y,screen_c.y});
+       MIy=std::min({screen_a.y,screen_b.y,screen_c.y});
+         MIx=std::min({screen_a.x,screen_b.x,screen_c.x});
 
      if(MAx<MIx){
          std::swap(MAx,MIx);
@@ -422,6 +455,8 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
      MAy=std::min(MAy,static_cast<int32_t>(m_Window->m_height));
      MIx=std::max(MIx,0);
      MIy=std::max(MIy,0);
+
+    }
      Vec3f world_a = p1;
      Vec3f world_b = p2;
      Vec3f world_c = p3;
@@ -436,8 +471,12 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
      float z_c=c.z*inv_w_c;
 
      DrawnTraingles++;
-     if(f==nullptr){
 
+
+     {
+        ZoneScopedN("Rasterization");
+     if(f==nullptr){
+       ZoneScopedN("Flat Rasterization");
           for(int i=MIx;i<=MAx;i++){
               for(int j=MIy;j<=MAy;j++){
                   if(InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c)){
@@ -454,6 +493,7 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
               }
           }
       }else{
+        ZoneScopedN("Shader Rasterization");
           for(int i=MIx;i<=MAx;i++){
               for(int j=MIy;j<=MAy;j++){
                   if(InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c)){
@@ -471,14 +511,28 @@ void Draw_Cube(class camera&cam,INV::Vec3<float> p1,INV::Vec3<float> p2,INV::Vec
               }
           }
       }
+    }
 
       }
+
 void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&transform,struct Material & Mat){
 
-    Mat4f ModelMatrix=Math::ScaleRotateTranslateMatrix3D(transform.scale,
+     ZoneScopedN("RenderMesh");
+
+   
+       Mat4f ModelMatrix;
+    {
+        ZoneScopedN("Build Model Matrix");
+         ModelMatrix=Math::ScaleRotateTranslateMatrix3D(transform.scale,
         transform.rotation,transform.position);
+       }
+
     auto&VB=ObjectMesh.vertices;
     auto&IB=ObjectMesh.indices;
+
+    {
+    ZoneScopedN("Triangle Loop");
+
     for (size_t i = 0; i < ObjectMesh.indices.size(); i += 3) {
         Vec3f v0 = (ModelMatrix * Vec4f(VB[IB[i]], 1.0f)).xyz();
         Vec3f v1 = (ModelMatrix * Vec4f(VB[IB[i+1]], 1.0f)).xyz();
@@ -490,10 +544,11 @@ void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&trans
             ,Mat.color,Mat.shader);
     }
 }
+}
 
 
 void DrawWiroTriangle3D(camera& cam,Vec3f v0 ,Vec3f v1,Vec3f v2,INV::Vec3<uint8_t> color,
-     INV::Vec3<uint8_t> (*f)(INV::Vec3<float>)){
+     INV::Vec3<uint8_t> (*f)(Vec3f)){
 
 // steps to get point get 3d -> 2d points for line and call 3 drawlline calls
 
@@ -655,14 +710,14 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
 
     return(u>=0&&v>=0&&w>=0);
     }
-    bool InsideTriangle_3D(INV::Vec3<float> Point,INV::Vec3<float> a,INV::Vec3<float> b,INV::Vec3<float> c){
-   INV::Vec3<float> ab=b-a;
-   INV::Vec3<float> ac=c-a;
-   INV::Vec3<float> ap=c-Point;
+    bool InsideTriangle_3D(Vec3f Point,Vec3f a,Vec3f b,Vec3f c){
+   Vec3f ab=b-a;
+   Vec3f ac=c-a;
+   Vec3f ap=c-Point;
 
-   INV::Vec3<float> v0=ab;
-   INV::Vec3<float> v1=ac;
-   INV::Vec3<float> v2=ap;
+   Vec3f v0=ab;
+   Vec3f v1=ac;
+   Vec3f v2=ap;
 
    float d00=v0.Dot(v0);
    float d01=v0.Dot(v1);
@@ -687,7 +742,7 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
 
    }
 
-   INV::Vec3<float> BaryCentric(INV::Vec2<float>p1,INV::Vec2<float> p2,INV::Vec2<float> p3
+   Vec3f BaryCentric(INV::Vec2<float>p1,INV::Vec2<float> p2,INV::Vec2<float> p3
        ,INV::Vec2<float> p4){
 
            INV::Vec2<float> v0=p3-p2;
@@ -696,14 +751,14 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
 
            float denom=v0.x*v1.y-v0.y*v1.x;
            if (fabs(denom) < 1e-6f)
-                   return INV::Vec3<float>(-1, -1, -1);
+                   return Vec3f(-1, -1, -1);
 
            float invDenom = 1.0f / denom;
 
                float w1 = (v2.x * v1.y - v1.x * v2.y) * invDenom;
                float w2 = (v0.x * v2.y - v2.x * v0.y) * invDenom;
                float w0 = 1.0f - w1 - w2;
-               return INV::Vec3<float>(w0, w1, w2);
+               return Vec3f(w0, w1, w2);
 
 
    }
@@ -716,14 +771,6 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
      return(h&&j&&k&&l);
    }
 };
-
-
-
-
-
-
-
-
 
 
 

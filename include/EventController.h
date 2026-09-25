@@ -1,6 +1,6 @@
 #pragma once
 #include"SDL3/SDL.h"
-#include"camera.h"
+#include"Camera.h"
 #include"logger.h"
 #include"Math_Utils.h"
 // controlling camera movements using this class
