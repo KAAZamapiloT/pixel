@@ -49,6 +49,31 @@ To learn:
 - CPU only  
 
 ---
+## Renderer Benchmark
+
+### Scene
+- Entities: 216
+- Resolution: 512 × 512
+- Camera: Perspective, 60° FOV
+- Culling: Frustum + Back-face
+- Animation: Continuous orbital rotation
+
+### Current Baseline
+
+| Metric | Result |
+|---|---:|
+| Frames | 779 |
+| Average Frame Latency | **73.415 ms** |
+| Minimum Latency | **0.384 ms** |
+| Maximum Latency | **2712.139 ms** |
+| Total Triangles | **2,019,168** |
+| Drawn Triangles | **222,757** |
+| Frustum Culls | **84,220** |
+| Back-face Culls | **245,890** |
+
+> Benchmark measures the `RenderMesh()` calls only. SDL texture upload and presentation are outside the measured region.
+
+---
 
 ## ⚙️ Build
 

@@ -4,8 +4,11 @@
 #include "include/Objects.h"
 #include <atomic>
 #include <cstdint>
+#include <exception>
 #include <iostream>
+#include <locale>
 #include <memory>
+#include<chrono>
 #include<algorithm>
 #include "Renderer.h"
 #include "include/Math_Utils.h"
@@ -13,6 +16,7 @@
 #include "include/Renderer.h"
 #include "include/logger.h"
 #include "include/TEST.h"
+#include "include/tools/benchmark.h"
 
 void UpdateColor(INV::Vec3<uint8_t>& color,INV::Vec3<uint8_t> u_color)
 {
@@ -169,6 +173,9 @@ INV::Vec4<float> C3=INV::Vec4<float>(C.x,C.y,3,1);
 INV::Vec2<float>center(100,100);
 
 r->init();
+
+
+Benchmark BCC;
 while (running) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT)
@@ -213,22 +220,28 @@ while (running) {
         CC.MouseImpactCamera(camera, deltaTime);
 
      //  r->RenderMesh(camera,CubeE.mesh,CubeE.transform,Smat);
+
+      BCC.Begin();
         Smat.color=col;
         for(int i=0;i<test.entities.size();i++){
             r->RenderMesh(camera,test.entities[i].mesh,test.entities[i].transform,Smat);
         }
+       BCC.End();
         quat orbit = quat(deltaTime, Vec3f(0,1,0));
         for(auto& entity : test.entities) {
             entity.transform.position = orbit.rotate(entity.transform.position);
             entity.transform.rotation = entity.transform.rotation * 0.1*deltaTime;
         }
 
+
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);
         SDL_RenderClear(sdlRenderer);
         SDL_RenderTexture(sdlRenderer, texture, nullptr, nullptr);
         SDL_RenderPresent(sdlRenderer);
-        printf("Frame latency %f\n",deltaTime);
+
         }
+
+        BCC.Print();
 
 
     SDL_DestroyTexture(texture);

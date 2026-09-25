@@ -132,6 +132,4 @@ public:
     Transform transform;
 
     Entity(const Mesh& m) : mesh(m) {}
-
-
 };
