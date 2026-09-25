@@ -356,6 +356,7 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
   ){
       TotalTriangleCounts++;
 
+
       Vec4f a(p1,1);
      Vec4f b(p2,1);
      Vec4f c(p3,1);
@@ -456,6 +457,9 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
      MIx=std::max(MIx,0);
      MIy=std::max(MIy,0);
 
+     BBoxPixels +=
+    static_cast<uint64_t>(MAx - MIx + 1) *
+    static_cast<uint64_t>(MAy - MIy + 1);
     }
      Vec3f world_a = p1;
      Vec3f world_b = p2;
@@ -479,13 +483,18 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
        ZoneScopedN("Flat Rasterization");
           for(int i=MIx;i<=MAx;i++){
               for(int j=MIy;j<=MAy;j++){
+
+                PixelsTested++;
+
                   if(InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c)){
                       Vec3f w=BaryCentric(Vec2f(i,j),screen_a,screen_b,screen_c);
-
+                    
+                      PixelsInside++;
                       float inv_w=w.x*inv_w_a+w.y*inv_w_b+w.z*inv_w_c;
                       float z=w.x*z_a+w.y*z_b+w.z*z_c;
                       float depth=z/inv_w;
                       if(SetDepthBuffer(INV::Vec2<uint16_t>(i,j),depth)){
+                        PixelsDepthPassed++;
                       SetPixelColor(INV::Vec2<uint16_t>(i,j),color);
                       }
 
@@ -493,10 +502,18 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
               }
           }
       }else{
+
+      
         ZoneScopedN("Shader Rasterization");
           for(int i=MIx;i<=MAx;i++){
               for(int j=MIy;j<=MAy;j++){
+
+
+                    PixelsTested++;
+
                   if(InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c)){
+
+                       PixelsInside++;
                       Vec3f w=BaryCentric(Vec2f(i,j),screen_a,screen_b,screen_c);
                       float depth=w.x*ndc_a.z+w.y*ndc_b.z+w.z*ndc_c.z;
                       Vec3f world_pos =
@@ -504,6 +521,8 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
                           (world_b*w.y) +
                           (world_c*w.z);
                       if(SetDepthBuffer(INV::Vec2<uint16_t>(i,j),depth)){
+
+                         PixelsDepthPassed++;
                       SetPixelColor(INV::Vec2<uint16_t>(i,j),f(world_pos));
                       }
 
@@ -512,6 +531,7 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
           }
       }
     }
+
 
       }
 
@@ -670,6 +690,10 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
       FrustumCulls = 0;
       BackFaceCulls = 0;
       m_id = 0;
+      PixelsTested=0;
+      PixelsDepthPassed=0;
+      PixelsInside=0;
+      BBoxPixels=0;
   }
 
    void PrintResults() {
@@ -677,6 +701,7 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
       std::cout << "\nDrawn Traingles: " << DrawnTraingles;
       std::cout << "\nFrustum Culls: " << FrustumCulls ;
       std::cout << "\nBack Face Culls: " << BackFaceCulls << std::endl;
+
   }
   private:
     uint8_t m_id;
@@ -685,6 +710,17 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
     uint64_t DrawnTraingles;
     uint64_t FrustumCulls;
     uint64_t BackFaceCulls;
+
+
+   public:
+    uint64_t PixelsTested = 0;
+    uint64_t PixelsInside = 0;
+    uint64_t PixelsDepthPassed = 0;
+    uint64_t BBoxPixels = 0;
+
+    private:
+
+
     bool InsideTrig(INV::Vec2<float> Point,INV::Vec2<float> a,INV::Vec2<float> b,INV::Vec2<float> c){
 
 

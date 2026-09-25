@@ -60,19 +60,19 @@ float yaw=0;
 float pitch=0;
           if (keys[SDL_SCANCODE_LEFT]){
               yaw+=RotSpeed * dt;
-              PDEBUG("left Imapact Camera");
+            //  PDEBUG("left Imapact Camera");
           }
           if (keys[SDL_SCANCODE_RIGHT]){
               yaw+=-RotSpeed * dt;
-              PDEBUG("right Imapact Camera");
+            //  PDEBUG("right Imapact Camera");
           }
           if (keys[SDL_SCANCODE_UP]){
               pitch+=RotSpeed * dt;
-              PDEBUG("up Imapact Camera");
+            //  PDEBUG("up Imapact Camera");
           }
           if (keys[SDL_SCANCODE_DOWN]){
               pitch+=-RotSpeed * dt;
-              PDEBUG("down Imapact Camera");
+             // PDEBUG("down Imapact Camera");
           }
           cam.Rotate(pitch,yaw,0);
   }
@@ -80,27 +80,27 @@ float pitch=0;
    if(!isActive) return;
    const bool* keys = SDL_GetKeyboardState(NULL);
    if (keys[SDL_SCANCODE_W]){
-       PDEBUG("w Translate Camera");
+     //  PDEBUG("w Translate Camera");
        e.Translate(e.forward * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_S]){
-       PDEBUG("s Translate Camera");
+    //   PDEBUG("s Translate Camera");
        e.Translate(-e.forward * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_A]){
-       PDEBUG("a Translate Camera");
+    //   PDEBUG("a Translate Camera");
        e.Translate(-e.right * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_D]){
-       PDEBUG("d Translate Camera");
+      // PDEBUG("d Translate Camera");
        e.Translate(e.right * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_SPACE]){
-       PDEBUG("space Translate Camera");
+      // PDEBUG("space Translate Camera");
        e.Translate(e.up * dt*TranslateSpeed);
    }
    if (keys[SDL_SCANCODE_LSHIFT]){
-       PDEBUG("lshift Translate Camera");
+       //PDEBUG("lshift Translate Camera");
        e.Translate(-e.up * dt*TranslateSpeed);
    }
 

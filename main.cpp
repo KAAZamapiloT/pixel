@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 {
 
   std::cout << "TracyIsConnected = " << TracyIsConnected << std::endl;
-  
+
   std::cout.flush();
 
     if (!SDL_Init(SDL_INIT_VIDEO|SDL_INIT_EVENTS)) {
@@ -185,7 +185,9 @@ r->init();
 
 while (running) {
 
-     FrameMark;
+  
+
+     
 
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT)
@@ -241,6 +243,26 @@ while (running) {
         }
 
 
+            TracyPlot("Pixels Tested",
+              static_cast<int64_t>(r->PixelsTested));
+
+    TracyPlot("Pixels Inside",
+              static_cast<int64_t>(r->PixelsInside));
+
+    TracyPlot("Depth Passed",
+              static_cast<int64_t>(r->PixelsDepthPassed));
+
+    TracyPlot("BBox Pixels",
+              static_cast<int64_t>(r->BBoxPixels));
+
+          
+     
+     FrameMark;
+
+         r->PixelsTested = 0;
+        r->PixelsInside = 0;
+    r->PixelsDepthPassed = 0;
+    r->BBoxPixels = 0;
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);
         SDL_RenderClear(sdlRenderer);
         SDL_RenderTexture(sdlRenderer, texture, nullptr, nullptr);
