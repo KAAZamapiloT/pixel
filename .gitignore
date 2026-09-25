@@ -6,3 +6,5 @@ CmakeSettings.json
 *.mp4
 cmake
 bunny.obj
+tracy
+.gitignore
