@@ -234,6 +234,9 @@ while (running) {
         Smat.color=col;
         for(int i=0;i<test.entities.size();i++){
             r->RenderMesh(camera,test.entities[i].mesh,test.entities[i].transform,Smat);
+
+            // recomputing bounds
+            test.entities[i].mesh.compute_bounds();
         }
        
         quat orbit = quat(deltaTime, Vec3f(0,1,0));
@@ -241,7 +244,7 @@ while (running) {
             entity.transform.position = orbit.rotate(entity.transform.position);
             entity.transform.rotation = entity.transform.rotation * 0.1*deltaTime;
         }
-
+        
 
             TracyPlot("Pixels Tested",
               static_cast<int64_t>(r->PixelsTested));
@@ -254,15 +257,23 @@ while (running) {
 
     TracyPlot("BBox Pixels",
               static_cast<int64_t>(r->BBoxPixels));
+    TracyPlot(
+    "Near Plane Crossings",
+    static_cast<int64_t>(r->NearPlaneCrossings));
 
+TracyPlot(
+    "Full Screen BBoxes",
+    static_cast<int64_t>(r->FullScreenBBoxes));
           
      
      FrameMark;
 
          r->PixelsTested = 0;
-        r->PixelsInside = 0;
-    r->PixelsDepthPassed = 0;
-    r->BBoxPixels = 0;
+         r->PixelsInside = 0;
+         r->PixelsDepthPassed = 0;
+         r->BBoxPixels = 0;
+         r->NearPlaneCrossings = 0;
+         r->FullScreenBBoxes = 0;
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);
         SDL_RenderClear(sdlRenderer);
         SDL_RenderTexture(sdlRenderer, texture, nullptr, nullptr);

@@ -12,11 +12,12 @@
 #include<string>
 #include<fstream>
 #include <tracy/Tracy.hpp>
+#include<HelpDefinations.h>
 
 namespace INV{
     class Window{
     public:
-      Window(uint16_t width,uint16_t height,std::string name){
+      Window(u16 width,u16 height,std::string name){
                     m_width=width;
                     m_height=height;
                     m_name=name;
@@ -25,8 +26,8 @@ namespace INV{
                   //  depth_buffer=std::vector<float>(width * height,-1.f*std::numeric_limits<float>::infinity());
 
       }
-      inline uint16_t GetWidth(){return m_width;}
-      inline uint16_t GetHeight(){return m_height;}
+      inline u16 GetWidth(){return m_width;}
+      inline u16 GetHeight(){return m_height;}
 
 void OnResize(int width,int height){
     m_height  = height;
@@ -95,11 +96,11 @@ if(cord.x >= m_width || cord.y >= m_height) return;
 
 
           int c=cord.x + cord.y * m_width;
-        return INV::Vec3<uint8_t>(frame_buffer[c].x,frame_buffer[c].y,frame_buffer[c].z);
+        return Vec3ui8(frame_buffer[c].x,frame_buffer[c].y,frame_buffer[c].z);
       }
 
       Vec3<uint8_t> GetColor(uint32_t dex){
-          return INV::Vec3<uint8_t>(frame_buffer[dex].x,frame_buffer[dex].y,
+          return Vec3ui8(frame_buffer[dex].x,frame_buffer[dex].y,
               frame_buffer[dex].z);
       }
 
@@ -135,9 +136,11 @@ class renderer{
     }
 
    //---------------------Mods-----------------------------//
-void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Color){
+void DrawLine(Vec2f start,Vec2f end,Vec3ui8 Color){
 
-     INV::Vec2<uint16_t> dim=GetDimensions();
+     Vec2ui16  dim=GetDimensions();
+
+
      if (start.x > end.x)
         std::swap(start, end);
      float dx=end.x-start.x;
@@ -152,7 +155,7 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
     float y=start.y;
 
      for(uint16_t i=start.x;i<=end.x;++i){
-         SetPixelColor(INV::Vec2<uint16_t>(i,y),Color);
+         SetPixelColor(Vec2ui16(i,y),Color);
 
          // FCG impl
          if(-dy*i+dx*y+(start.x*end.y-start.x*end.y)<0){
@@ -161,8 +164,8 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
      }
 
 }
-void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Color,
-    INV::Vec3<uint8_t>(*F)(INV::Vec2<uint16_t>,float) )
+void DrawLine(Vec2f start,Vec2f end,Vec3ui8 Color,
+    Vec3ui8(*F)(Vec2ui16,float) )
 {
  float p=256.0/static_cast<float>(end.x-start.x);
  float slope=(float)(end.y-start.y)/(end.x-start.x);
@@ -171,7 +174,7 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
        for(int i=start.x;i<=end.x;++i){
            int y=round(slope*i+constant);
           if(y<0) continue;
-           SetPixelColor(INV::Vec2<uint16_t>(i,y),F(INV::Vec2<uint16_t>(i,y),1));
+           SetPixelColor(Vec2ui16(i,y),F(Vec2ui16(i,y),1));
        }
 
 }
@@ -179,7 +182,7 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
 
 
 
-    void DrawTriangle(INV::Vec2<float> p1,INV::Vec2<float> p2,INV::Vec2<float> p3,INV::Vec3<uint8_t> colors ){
+    void DrawTriangle(Vec2f p1,Vec2f p2,Vec2f p3,Vec3ui8 colors ){
 
 
        int mix=std::min({p1.x,p2.x,p3.x});
@@ -196,8 +199,8 @@ void DrawLine(INV::Vec2<float> start,INV::Vec2<float> end,INV::Vec3<uint8_t> Col
        for(int i=miy;i<=may;++i){
          for(int j=mix;j<=max;++j){
 
-           if(InsideTrig(INV::Vec2<float>(j,i),p1,p2,p3)){
-             SetPixelColor(INV::Vec2<uint16_t>(j,i),colors);
+           if(InsideTrig(Vec2f(j,i),p1,p2,p3)){
+             SetPixelColor(Vec2ui16(j,i),colors);
            }
 
          }
@@ -214,7 +217,7 @@ void DrawTraingles3D(class TriangleArray&Tri,camera&Cam){
     }
 }
 void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
-    Vec3f p5,Vec3f p6,Vec3f p7,Vec3f p8,INV::Vec3<uint8_t> Color){
+    Vec3f p5,Vec3f p6,Vec3f p7,Vec3f p8,Vec3ui8 Color){
     Vec3f t1=p1;
     Vec3f t2=p2;
     Vec3f t3=p3;
@@ -237,9 +240,9 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
         DrawTriangle3D(cam, v[tri[0]], v[tri[1]], v[tri[2]], Color, nullptr);
     }
 }
-     void DrawTriangle(INV::Vec2<float> p1,INV::Vec2<float>p2,INV::Vec2<float>p3,INV::Vec3<uint8_t> basecolor
+     void DrawTriangle(Vec2f p1,Vec2f p2,Vec2f p3,Vec3ui8 basecolor
 
-         ,INV::Vec3<uint8_t>(*X)(INV::Vec2<uint16_t>,float)){
+         ,Vec3ui8(*X)(Vec2ui16,float)){
 
 
              int mix=std::min({p1.x,p2.x,p3.x});
@@ -257,15 +260,15 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
              float p=256.0/static_cast<float>(may-miy);
              for(int i=miy;i<may;++i){
                for(int j=mix;j<=max;++j){
-                  if(InsideTrig(INV::Vec2<float>(j,i),p1,p2,p3)){
-                    SetPixelColor(INV::Vec2<uint16_t>(j,i),X(INV::Vec2<uint16_t>(j,i),p));
+                  if(InsideTrig(Vec2f(j,i),p1,p2,p3)){
+                    SetPixelColor(Vec2ui16(j,i),X(Vec2ui16(j,i),p));
 
                   }
                 }
               }
 
      }
-     void DrawPlane(INV::Vec2<float> p1,INV::Vec2<float>p2,INV::Vec2<float>p3,INV::Vec2<float> p4,INV::Vec3<uint8_t> color){
+     void DrawPlane(Vec2f p1,Vec2f p2,Vec2f p3,Vec2f p4,Vec3ui8 color){
 
        DrawTriangle(p1,p2,p4,color);
        DrawTriangle(p1,p2,p3,color);
@@ -273,7 +276,7 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
      }
 
 
-     void DrawPolynomial(float(*px)(float) ,INV::Vec2<uint16_t>start,INV::Vec2<uint16_t>end,INV::Vec3<uint8_t> Color){
+     void DrawPolynomial(float(*px)(float) ,Vec2ui16 start,Vec2ui16 end,Vec3ui8 Color){
 
        int xs=start.x;
        int xe=end.x;
@@ -281,26 +284,26 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
          std::cerr<<"INVALID FORMAT END SHOULD BE GREATER THAN START\n"<<std::endl;
          return;
        }
-       INV::Vec2<uint16_t> dims=GetDimensions();
+       Vec2ui16  dims=GetDimensions();
        for(int i=start.x;i<end.x;++i){
           int y=static_cast<int>(px(i));
           if(y>=dims.y||y<0) continue;
-           SetPixelColor(INV::Vec2<uint16_t>(i,y),Color);
+           SetPixelColor(Vec2ui16 (i,y),Color);
            if(i==0) continue;
-           linear_interpolation(INV::Vec2<uint16_t>(i-1,px(i)),INV::Vec2<uint16_t>(i,y),Color);
+           linear_interpolation(Vec2ui16 (i-1,px(i)),Vec2ui16 (i,y),Color);
            printf("inter");
        }
 
      }
-     void SetPixelColor(INV::Vec2<uint16_t> cord,INV::Vec3<uint8_t> Color){
+     void SetPixelColor(Vec2ui16  cord,Vec3ui8 Color){
          m_Window->SetPixelColor(cord,Color);
      }
-     void SetPixelColor(uint32_t index,INV::Vec3<uint8_t> Color){
+     void SetPixelColor(uint32_t index,Vec3ui8 Color){
          m_Window->SetPixelColor(index,Color);
      }
         //---------------------Result-----------------------------//
     /*  void Create_PPM_File(std::string filename){
-         INV::Vec2<uint16_t> dim=GetDimensions();
+         Vec2ui16  dim=GetDimensions();
          std::ofstream outFile(filename);
          if(!outFile){
            std::cerr<<"Failed In Creating a File"<<std::endl;
@@ -318,8 +321,8 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
          for(uint16_t i=0;i<dim.y;++i){
            for(uint16_t j=0;j<dim.x;++j){
 
-            // INV::Vec3<uint8_t> Col={i,j,128};
-            INV::Vec3<uint8_t> Color=m_Window->GetColor(INV::Vec2<uint16_t>{j,i});
+            // Vec3ui8 Col={i,j,128};
+            Vec3ui8 Color=m_Window->GetColor(Vec2ui16 {j,i});
             outFile << static_cast<int>((Color.x)) << " "
                                 << static_cast<int>((Color.y)) << " "
                                 << static_cast<int>((Color.z)) << " ";
@@ -335,11 +338,11 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
 */
 
      //---------------------Getters-----------------------------//
-     INV::Vec3<uint8_t> GetColor(INV::Vec2<uint16_t> cord){
+     Vec3ui8 GetColor(Vec2ui16  cord){
          return m_Window->GetColor(cord);
      }
 
-     INV::Vec2<uint16_t> GetDimensions(){
+     Vec2ui16  GetDimensions(){
          return {m_Window->GetWidth(),m_Window->GetHeight()};
      }
      void OnResize(int width, int height) {
@@ -352,7 +355,7 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
     // but here main thing is to set color val
   // assuming world space cordinates-> otherwise local->world transformation
   void DrawTriangle3D(camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,
-      INV::Vec3<uint8_t> color,INV::Vec3<uint8_t> (*f)(Vec3f)
+      Vec3ui8 color,Vec3ui8 (*f)(Vec3f)
   ){
       TotalTriangleCounts++;
 
@@ -395,6 +398,19 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
     ||
     (ndc_a.z<-1&&ndc_b.z<-1&&ndc_c.z<-1)||(ndc_a.z>1&&ndc_b.z>1&&ndc_c.z>1)
     ;
+
+    bool allBehind =
+    a1.w <= 0 &&
+    b1.w <= 0 &&
+    c1.w <= 0;
+
+    bool crossesNearPlane = (a1.w <= 0 || b1.w <= 0 || c1.w <= 0) &&!allBehind;
+
+    if (crossesNearPlane)  
+        NearPlaneCrossings++;
+
+     if (allBehind)
+        return;
 
     if(outside){
         FrustumCulls++;
@@ -464,8 +480,7 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
      Vec3f world_a = p1;
      Vec3f world_b = p2;
      Vec3f world_c = p3;
-
-
+     
      float inv_w_a=1.0f/a1.w;
      float inv_w_b=1.0f/b1.w;
      float inv_w_c=1.0f/c1.w;
@@ -481,8 +496,8 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
         ZoneScopedN("Rasterization");
      if(f==nullptr){
        ZoneScopedN("Flat Rasterization");
-          for(int i=MIx;i<=MAx;i++){
-              for(int j=MIy;j<=MAy;j++){
+          for(int i=MIx;i<MAx;i++){
+              for(int j=MIy;j<MAy;j++){
 
                 PixelsTested++;
 
@@ -493,9 +508,9 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
                       float inv_w=w.x*inv_w_a+w.y*inv_w_b+w.z*inv_w_c;
                       float z=w.x*z_a+w.y*z_b+w.z*z_c;
                       float depth=z/inv_w;
-                      if(SetDepthBuffer(INV::Vec2<uint16_t>(i,j),depth)){
+                      if(SetDepthBuffer(Vec2ui16(i,j),depth)){
                         PixelsDepthPassed++;
-                      SetPixelColor(INV::Vec2<uint16_t>(i,j),color);
+                      SetPixelColor(Vec2ui16(i,j),color);
                       }
 
                   }
@@ -505,8 +520,8 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
 
       
         ZoneScopedN("Shader Rasterization");
-          for(int i=MIx;i<=MAx;i++){
-              for(int j=MIy;j<=MAy;j++){
+          for(int i=MIx;i<MAx;i++){
+              for(int j=MIy;j<MAy;j++){
 
 
                     PixelsTested++;
@@ -520,10 +535,10 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
                           (world_a*w.x) +
                           (world_b*w.y) +
                           (world_c*w.z);
-                      if(SetDepthBuffer(INV::Vec2<uint16_t>(i,j),depth)){
+                      if(SetDepthBuffer(Vec2ui16(i,j),depth)){
 
                          PixelsDepthPassed++;
-                      SetPixelColor(INV::Vec2<uint16_t>(i,j),f(world_pos));
+                      SetPixelColor(Vec2ui16(i,j),f(world_pos));
                       }
 
                   }
@@ -551,6 +566,14 @@ void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&trans
     auto&IB=ObjectMesh.indices;
 
     {
+        ZoneScopedN("Mesh Frustum Culling");
+    if (!FrustumIntersects(ObjectMesh.bbox, transform, cam)){
+        FrustumMeshCulls++;
+             return;
+    }
+   }
+
+    {
     ZoneScopedN("Triangle Loop");
 
     for (size_t i = 0; i < ObjectMesh.indices.size(); i += 3) {
@@ -567,8 +590,8 @@ void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&trans
 }
 
 
-void DrawWiroTriangle3D(camera& cam,Vec3f v0 ,Vec3f v1,Vec3f v2,INV::Vec3<uint8_t> color,
-     INV::Vec3<uint8_t> (*f)(Vec3f)){
+void DrawWiroTriangle3D(camera& cam,Vec3f v0 ,Vec3f v1,Vec3f v2,Vec3ui8 color,
+     Vec3ui8 (*f)(Vec3f)){
 
 // steps to get point get 3d -> 2d points for line and call 3 drawlline calls
 
@@ -623,7 +646,7 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
             ,Mat.color,Mat.shader);
     }
 }
-      void DrawCircle(INV::Vec2<float> center , float radius,INV::Vec3<uint8_t>col,bool filled){
+      void DrawCircle(Vec2f center , float radius,Vec3ui8 col,bool filled){
 
           int minx=std::max({0,(int)(center.x-radius)});
           int miy=std::max({0,(int)(center.y-radius)});
@@ -640,7 +663,7 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
                   float dx=x-center.x;
                   float dy=y-center.y;
                   if(dx*dx+dy*dy<=radius*radius){
-                      SetPixelColor(INV::Vec2<uint16_t>(x,y), col);
+                      SetPixelColor(Vec2ui16 (x,y), col);
                   }
               }
           }
@@ -650,14 +673,14 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
                       float dx=x-center.x;
                       float dy=y-center.y;
                       if(dx*dx+dy*dy==radius*radius){
-                          SetPixelColor(INV::Vec2<uint16_t>(x,y), col);
+                          SetPixelColor(Vec2ui16 (x,y), col);
                       }
                   }
               }
           }
       }
 
-      bool SetDepthBuffer(INV::Vec2<uint16_t>cord,float depth){
+    inline  bool SetDepthBuffer(Vec2ui16 cord,float depth){
           if (cord.x >= m_Window->m_width || cord.y >= m_Window->m_height)
                 return false;
           int c = cord.x + cord.y * m_Window->m_width;
@@ -672,7 +695,7 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
 
           return false;
       }
-   void ClearColor(INV::Vec4<uint8_t> Color){
+   void ClearColor(Vec4ui8 Color){
    //    printf("%d %d",m_Window->frame_buffer.begin(),m_Window->frame_buffer.end());
    std::fill(
        m_Window->frame_buffer.begin(),
@@ -701,6 +724,7 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
       std::cout << "\nDrawn Traingles: " << DrawnTraingles;
       std::cout << "\nFrustum Culls: " << FrustumCulls ;
       std::cout << "\nBack Face Culls: " << BackFaceCulls << std::endl;
+      std::cout<<"\nFrustum Culls"<<FrustumCulls<<std::endl;
 
   }
   private:
@@ -717,21 +741,24 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
     uint64_t PixelsInside = 0;
     uint64_t PixelsDepthPassed = 0;
     uint64_t BBoxPixels = 0;
+    uint64_t NearPlaneCrossings=0;
+    uint64_t FullScreenBBoxes=0;
+    uint64_t  FrustumMeshCulls=0;
 
     private:
 
 
-    bool InsideTrig(INV::Vec2<float> Point,INV::Vec2<float> a,INV::Vec2<float> b,INV::Vec2<float> c){
+    bool InsideTrig(Vec2f Point,Vec2f a,Vec2f b,Vec2f c){
 
 
-      INV::Vec2<float> ab=INV::Vec2<float>(b.x,b.y)-INV::Vec2<float>(a.x,a.y);
-      INV::Vec2<float> ac=INV::Vec2<float>(c.x,c.y)-INV::Vec2<float>(a.x,a.y);
+      Vec2f ab=Vec2f(b.x,b.y)-Vec2f(a.x,a.y);
+      Vec2f ac=Vec2f(c.x,c.y)-Vec2f(a.x,a.y);
 
-      INV::Vec2<float> ap=INV::Vec2<float>(Point.x,Point.y)-INV::Vec2<float>(a.x,a.y);
+      Vec2f ap=Vec2f(Point.x,Point.y)-Vec2f(a.x,a.y);
 
-    INV::Vec2<float> v0=ab;
-    INV::Vec2<float> v1=ac;
-    INV::Vec2<float> v2=ap;
+    Vec2f v0=ab;
+    Vec2f v1=ac;
+    Vec2f v2=ap;
 
     float d00=v0.Dot(v0);
     float d01=v0.Dot(v1);
@@ -770,20 +797,101 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
       return true;
     };
 
+bool FrustumIntersects(
+    const AABB& box,
+    const Transform& transform,
+    camera& cam){
+ Mat4f Model =
+        Math::ScaleRotateTranslateMatrix3D(
+            transform.scale,
+            transform.rotation,
+            transform.position
+        );
 
-   void linear_interpolation(INV::Vec2<uint16_t> p1,INV::Vec2<uint16_t>p2,INV::Vec3<uint8_t> color){
+    Mat4f PV =  cam.GetProjectionView();
+
+    Vec3f corners[8] = {
+        {box.min.x, box.min.y, box.min.z},
+        {box.max.x, box.min.y, box.min.z},
+        {box.min.x, box.max.y, box.min.z},
+        {box.max.x, box.max.y, box.min.z},
+        {box.min.x, box.min.y, box.max.z},
+        {box.max.x, box.min.y, box.max.z},
+        {box.min.x, box.max.y, box.max.z},
+        {box.max.x, box.max.y, box.max.z}
+    };
+
+    Vec4f clip[8];
+
+    for (int i = 0; i < 8; ++i)
+    {
+        clip[i] = PV * (Model * Vec4f(corners[i], 1.0f));
+    }
+
+    // Completely left
+    bool left = true;
+    for (int i = 0; i < 8; ++i)
+        left &= clip[i].x < -clip[i].w;
+
+    if (left)
+        return false;
+
+    // Completely right
+    bool right = true;
+    for (int i = 0; i < 8; ++i)
+        right &= clip[i].x > clip[i].w;
+
+    if (right)
+        return false;
+
+    // Completely below
+    bool bottom = true;
+    for (int i = 0; i < 8; ++i)
+        bottom &= clip[i].y < -clip[i].w;
+
+    if (bottom)
+        return false;
+
+    // Completely above
+    bool top = true;
+    for (int i = 0; i < 8; ++i)
+        top &= clip[i].y > clip[i].w;
+
+    if (top)
+        return false;
+
+    // Completely behind near plane
+    bool nearPlane = true;
+    for (int i = 0; i < 8; ++i)
+        nearPlane &= clip[i].z < -clip[i].w;
+
+    if (nearPlane)
+        return false;
+
+    // Completely beyond far plane
+    bool farPlane = true;
+    for (int i = 0; i < 8; ++i)
+        farPlane &= clip[i].z > clip[i].w;
+
+    if (farPlane)
+        return false;
+
+    return true;
+
+}
+   void linear_interpolation(Vec2ui16  p1,Vec2ui16 p2,Vec3ui8 color){
 
        //TODO: FIX THIS
    //  DrawLine(p1,p2,color);
 
    }
 
-   Vec3f BaryCentric(INV::Vec2<float>p1,INV::Vec2<float> p2,INV::Vec2<float> p3
-       ,INV::Vec2<float> p4){
+   Vec3f BaryCentric(Vec2f p1,Vec2f p2,Vec2f p3
+       ,Vec2f p4){
 
-           INV::Vec2<float> v0=p3-p2;
-           INV::Vec2<float> v1=p4-p2;
-           INV::Vec2<float> v2=p1-p2;
+           Vec2f v0=p3-p2;
+           Vec2f v1=p4-p2;
+           Vec2f v2=p1-p2;
 
            float denom=v0.x*v1.y-v0.y*v1.x;
            if (fabs(denom) < 1e-6f)
@@ -798,7 +906,7 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
 
 
    }
-   bool InsideScreenSpace(INV::Vec2<int> Point,INV::Vec2<float> a,INV::Vec2<float> b,INV::Vec2<float> c){
+   bool InsideScreenSpace(Vec2i Point,Vec2f a,Vec2f b,Vec2f c){
 
      bool h=(Point.x>=0 && Point.x<m_Window->m_width && Point.y>=0 && Point.y<m_Window->m_height);
      bool j=(a.x>=0 && a.x<m_Window->m_width && a.y>=0 && a.y<m_Window->m_height);
@@ -837,7 +945,7 @@ Example() {
             Vec3f(-0.5f, -0.5f, 3.0f),
             Vec3f(0.5f, -0.5f, 3.0f),
             Vec3f(0.0f,  0.5f, 3.0f),
-            INV::Vec3<uint8_t>(255, 0, 0), nullptr
+            Vec3ui8(255, 0, 0), nullptr
         );
 
         // NEAR triangle (should always be visible)
@@ -845,7 +953,7 @@ Example() {
             Vec3f(-0.5f, -0.5f, 1.0f),
             Vec3f(0.5f, -0.5f, 1.0f),
             Vec3f(0.0f,  0.5f, 1.0f),
-            INV::Vec3<uint8_t>(0, 255, 0), nullptr
+            Vec3ui8(0, 255, 0), nullptr
         );
     }
     void DepthTest2(std::unique_ptr<class renderer>&r, class camera& cam) {
@@ -855,7 +963,7 @@ Example() {
             Vec3f(-0.8f, -0.5f, 1.0f),
             Vec3f(0.8f, -0.5f, 2.0f),
             Vec3f(0.0f,  0.8f, 1.5f),
-            INV::Vec3<uint8_t>(255, 0, 0), nullptr
+            Vec3ui8(255, 0, 0), nullptr
         );
 
         // Triangle B crossing it
@@ -863,7 +971,7 @@ Example() {
             Vec3f(-0.8f,  0.5f, 2.0f),
             Vec3f( 0.8f,  0.5f, 1.0f),
             Vec3f( 0.0f, -0.8f, 1.5f),
-            INV::Vec3<uint8_t>(0, 255, 0), nullptr
+            Vec3ui8(0, 255, 0), nullptr
         );
     }
     TriangleArray CreateTestTriangle() {
@@ -888,7 +996,7 @@ Example() {
 
         return obj;
     }
-void CubeTest(std::unique_ptr<class renderer>&r, class camera& cam,INV::Vec3<uint8_t>col){
+void CubeTest(std::unique_ptr<class renderer>&r, class camera& cam,Vec3ui8 col){
     r->Draw_Cube(cam, p1, p2, p3, p4, p5, p6, p7, p8,col);
 }
 
@@ -914,7 +1022,7 @@ Mat3f rotation = Math::Rotation3D(angle,axis);
    cube[6] = rotation * cube[6];
    cube[7] = rotation * cube[7];
 }
-void CubeDepthTest(std::unique_ptr<class renderer>&r, class camera& cam,INV::Vec3<uint8_t>col,
+void CubeDepthTest(std::unique_ptr<class renderer>&r, class camera& cam,Vec3ui8 col,
     std::vector<Vec3f>& cube1,std::vector<Vec3f>& cube2){
    r->Draw_Cube(cam,cube1[0],cube1[1],cube1[2],cube1[3],cube1[4],cube1[5],cube1[6],cube1[7],col);
    r->Draw_Cube(cam,cube2[0],cube2[1],cube2[2],cube2[3],cube2[4],cube2[5],cube2[6],cube2[7],col);

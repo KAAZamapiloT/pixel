@@ -36,9 +36,30 @@ struct Transform{
  * @struct Mesh
  * @brief Defines how a object is stored
  */
+
+
+ struct AABB{
+   Vec3f min;
+   Vec3f max; 
+ };
 struct Mesh {
     std::vector<Vec3f> vertices;
     std::vector<uint32_t> indices;
+    AABB bbox;
+    void compute_bounds(){
+        bbox.min=Vec3f(std::numeric_limits<float>::infinity());
+        bbox.max=Vec3f(-1*std::numeric_limits<float>::infinity());
+        for(auto&[x,y,z]:vertices){
+            bbox.min.x=std::min(x,bbox.min.x);
+            bbox.min.y=std::min(y,bbox.min.y);
+            bbox.min.z=std::min(z,bbox.min.z);
+           
+            bbox.max.x=std::max(x,bbox.max.x);
+            bbox.max.y=std::max(y,bbox.max.y);
+            bbox.max.z=std::max(z,bbox.max.z);
+        }
+
+    }
 };
 
 
@@ -77,6 +98,8 @@ Mesh CreateCube(float h) {
         3,2,6,3,6,7,
         0,4,5,0,5,1
     };
+
+    Kube.compute_bounds();
     return Kube;
 }
 
@@ -115,6 +138,7 @@ Mesh CreateSphere(float radius, int slices, int stacks) {
            }
        }
 
+       sphere.compute_bounds();
        return sphere;
 }
 

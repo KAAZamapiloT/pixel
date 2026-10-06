@@ -8,3 +8,5 @@ cmake
 bunny.obj
 tracy
 .gitignore
+
+build-clang-cl
