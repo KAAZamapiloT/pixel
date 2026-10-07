@@ -63,6 +63,9 @@ Vec3ui8 ZDebugShader(Vec3f pos) {
 int main(int argc, char* argv[])
 {
 
+
+    
+
   std::cout << "TracyIsConnected = " << TracyIsConnected << std::endl;
 
   std::cout.flush();
@@ -181,11 +184,31 @@ Vec2f center(100,100);
 
 r->init();
 
+Benchmark bm;
 
+
+// ---------------- FPS / Frame Timing ----------------
+
+const Uint64 performanceFrequency = SDL_GetPerformanceFrequency();
+
+constexpr size_t FPS_WINDOW = 60;
+
+std::array<double, FPS_WINDOW> frameTimes{};
+size_t frameTimeIndex = 0;
+size_t frameSamples = 0;
+
+double frameTimeSum = 0.0;
+
+double averageFPS = 0.0;
+double instantFPS = 0.0;
+
+// Only update the window title every 250 ms
+double titleTimer = 0.0;
 
 while (running) {
 
-  
+   
+      Uint64 frameStart = SDL_GetPerformanceCounter();
 
      
 
@@ -232,17 +255,23 @@ while (running) {
         CC.MouseImpactCamera(camera, deltaTime);
         
         Smat.color=col;
+
+ bm.Begin();
+
         for(int i=0;i<test.entities.size();i++){
             r->RenderMesh(camera,test.entities[i].mesh,test.entities[i].transform,Smat);
 
             // recomputing bounds
-            test.entities[i].mesh.compute_bounds();
+           
         }
        
+ bm.End();       
         quat orbit = quat(deltaTime, Vec3f(0,1,0));
         for(auto& entity : test.entities) {
             entity.transform.position = orbit.rotate(entity.transform.position);
             entity.transform.rotation = entity.transform.rotation * 0.1*deltaTime;
+
+             entity.mesh.compute_bounds();
         }
         
 
@@ -265,8 +294,23 @@ TracyPlot(
     "Full Screen BBoxes",
     static_cast<int64_t>(r->FullScreenBBoxes));
           
+
+    TracyPlot(
+    "Objects Submitted",
+    static_cast<int64_t>(r->ObjectsSubmitted)
+);
+
+TracyPlot(
+    "Objects Culled",
+    static_cast<int64_t>(r->ObjectsCulled)
+);
+
+TracyPlot(
+    "Objects Visible",
+    static_cast<int64_t>(r->ObjectsVisible)
+);
      
-     FrameMark;
+
 
          r->PixelsTested = 0;
          r->PixelsInside = 0;
@@ -274,11 +318,82 @@ TracyPlot(
          r->BBoxPixels = 0;
          r->NearPlaneCrossings = 0;
          r->FullScreenBBoxes = 0;
+         r->ObjectsSubmitted = 0;
+r->ObjectsCulled = 0;
+r->ObjectsVisible = 0;
         SDL_UpdateTexture(texture, nullptr, pixels, pitch);
         SDL_RenderClear(sdlRenderer);
         SDL_RenderTexture(sdlRenderer, texture, nullptr, nullptr);
         SDL_RenderPresent(sdlRenderer);
 
+        Uint64 frameEnd = SDL_GetPerformanceCounter();
+
+double frameTimeMs =
+    static_cast<double>(frameEnd - frameStart)
+    / static_cast<double>(performanceFrequency)
+    * 1000.0;
+
+instantFPS = 1000.0 / frameTimeMs;
+
+// Remove the old frame from the rolling sum
+if (frameSamples == FPS_WINDOW)
+{
+    frameTimeSum -= frameTimes[frameTimeIndex];
+}
+else
+{
+    ++frameSamples;
+}
+
+// Add current frame
+frameTimes[frameTimeIndex] = frameTimeMs;
+frameTimeSum += frameTimeMs;
+
+// Advance circular buffer
+frameTimeIndex =
+    (frameTimeIndex + 1) % FPS_WINDOW;
+
+// Calculate rolling average
+double averageFrameTimeMs =
+    frameTimeSum / static_cast<double>(frameSamples);
+
+averageFPS =
+    1000.0 / averageFrameTimeMs;
+
+    titleTimer += frameTimeMs / 1000.0;
+
+if (titleTimer >= 0.25)
+{
+    char title[128];
+
+    std::snprintf(
+        title,
+        sizeof(title),
+        "Pixel | FPS: %.1f | Avg: %.1f | Frame: %.2f ms",
+        instantFPS,
+        averageFPS,
+        averageFrameTimeMs
+    );
+
+    SDL_SetWindowTitle(window, title);
+
+    titleTimer = 0.0;
+}
+TracyPlot(
+    "Frame Time (ms)",
+    averageFrameTimeMs
+);
+
+TracyPlot(
+    "Average FPS",
+    averageFPS
+);
+
+TracyPlot(
+    "Instant FPS",
+    instantFPS
+);
+     FrameMark;
         }
 
      
@@ -288,5 +403,6 @@ TracyPlot(
     SDL_DestroyWindow(window);
     SDL_Quit();
     r->PrintResults();
+    bm.Print();
     return 0;
 }

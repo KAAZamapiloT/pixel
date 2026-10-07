@@ -199,7 +199,7 @@ void DrawLine(Vec2f start,Vec2f end,Vec3ui8 Color,
        for(int i=miy;i<=may;++i){
          for(int j=mix;j<=max;++j){
 
-           if(InsideTrig(Vec2f(j,i),p1,p2,p3)){
+           if(InsideTrig(Vec2f(j,i),p1,p2,p3).first){
              SetPixelColor(Vec2ui16(j,i),colors);
            }
 
@@ -260,7 +260,7 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
              float p=256.0/static_cast<float>(may-miy);
              for(int i=miy;i<may;++i){
                for(int j=mix;j<=max;++j){
-                  if(InsideTrig(Vec2f(j,i),p1,p2,p3)){
+                  if(InsideTrig(Vec2f(j,i),p1,p2,p3).first){
                     SetPixelColor(Vec2ui16(j,i),X(Vec2ui16(j,i),p));
 
                   }
@@ -501,8 +501,9 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
 
                 PixelsTested++;
 
-                  if(InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c)){
-                      Vec3f w=BaryCentric(Vec2f(i,j),screen_a,screen_b,screen_c);
+                std::pair<bool,Vec3f> inside=InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c);
+                  if(inside.first){
+                      Vec3f w=inside.second;
                     
                       PixelsInside++;
                       float inv_w=w.x*inv_w_a+w.y*inv_w_b+w.z*inv_w_c;
@@ -525,11 +526,10 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
 
 
                     PixelsTested++;
-
-                  if(InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c)){
-
+                 std::pair<bool,Vec3f> inside=InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c);
+                  if(inside.first){
                        PixelsInside++;
-                      Vec3f w=BaryCentric(Vec2f(i,j),screen_a,screen_b,screen_c);
+                      Vec3f w=inside.second;
                       float depth=w.x*ndc_a.z+w.y*ndc_b.z+w.z*ndc_c.z;
                       Vec3f world_pos =
                           (world_a*w.x) +
@@ -554,21 +554,22 @@ void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&trans
 
      ZoneScopedN("RenderMesh");
 
-   
+    ObjectsSubmitted++;
        Mat4f ModelMatrix;
     {
         ZoneScopedN("Build Model Matrix");
-         ModelMatrix=Math::ScaleRotateTranslateMatrix3D(transform.scale,
+        ModelMatrix=Math::ScaleRotateTranslateMatrix3D(transform.scale,
         transform.rotation,transform.position);
-       }
+    }
 
     auto&VB=ObjectMesh.vertices;
     auto&IB=ObjectMesh.indices;
 
     {
         ZoneScopedN("Mesh Frustum Culling");
-    if (!FrustumIntersects(ObjectMesh.bbox, transform, cam)){
+    if (!FrustumIntersects(ObjectMesh.bbox,ModelMatrix, cam)){
         FrustumMeshCulls++;
+         ObjectsCulled++;
              return;
     }
    }
@@ -576,6 +577,7 @@ void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&trans
     {
     ZoneScopedN("Triangle Loop");
 
+     ObjectsVisible++;
     for (size_t i = 0; i < ObjectMesh.indices.size(); i += 3) {
         Vec3f v0 = (ModelMatrix * Vec4f(VB[IB[i]], 1.0f)).xyz();
         Vec3f v1 = (ModelMatrix * Vec4f(VB[IB[i+1]], 1.0f)).xyz();
@@ -745,10 +747,14 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
     uint64_t FullScreenBBoxes=0;
     uint64_t  FrustumMeshCulls=0;
 
+    uint64_t  ObjectsVisible=0;
+    uint64_t ObjectsCulled=0;
+    uint64_t  ObjectsSubmitted=0;
+
     private:
 
 
-    bool InsideTrig(Vec2f Point,Vec2f a,Vec2f b,Vec2f c){
+    std::pair<bool,Vec3f> InsideTrig(Vec2f Point,Vec2f a,Vec2f b,Vec2f c){
 
 
       Vec2f ab=Vec2f(b.x,b.y)-Vec2f(a.x,a.y);
@@ -771,8 +777,9 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
     float v=(d00*d21-d01*d20)/denominator;
     float w=1-u-v;
 
-    return(u>=0&&v>=0&&w>=0);
+    return std::make_pair<bool,Vec3f>((u>=0&&v>=0&&w>=0), Vec3f(w, u, v));
     }
+
     bool InsideTriangle_3D(Vec3f Point,Vec3f a,Vec3f b,Vec3f c){
    Vec3f ab=b-a;
    Vec3f ac=c-a;
@@ -799,14 +806,10 @@ void RenderWiroMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&t
 
 bool FrustumIntersects(
     const AABB& box,
-    const Transform& transform,
+    const Mat4f& Model,
     camera& cam){
- Mat4f Model =
-        Math::ScaleRotateTranslateMatrix3D(
-            transform.scale,
-            transform.rotation,
-            transform.position
-        );
+
+         ZoneScopedN("FrustumIntersects");
 
     Mat4f PV =  cam.GetProjectionView();
 

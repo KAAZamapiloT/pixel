@@ -72,6 +72,20 @@ To learn:
 | Back-face Culls | **245,890** |
 
 > Benchmark measures the `RenderMesh()` calls only. SDL texture upload and presentation are outside the measured region.
+### Milestone 1 — Object-Level Frustum Culling
+
+| Metric | Result |
+|---|---:|
+| Frames | 1885 |
+| Average Frame Latency | **32.611 ms** |
+| Minimum Latency | **0.090 ms** |
+| Maximum Latency | **143.987 ms** |
+| Total Triangles | **996,768** |
+| Drawn Triangles | **430,821** |
+| Frustum Culls | **74,494** |
+| Back-face Culls | **491,115** |
+
+> Milestone 1 adds object-level frustum culling before triangle processing. Benchmark measures the `RenderMesh()` calls only. SDL texture upload and presentation are outside the measured region.
 
 ---
 
