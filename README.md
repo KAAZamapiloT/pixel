@@ -24,11 +24,14 @@ A small software renderer built to understand how graphics actually work.
 </p>
 ## ✨ What it does
 
-- 🎥 Free camera movement + rotation  
-- 🔺 Renders triangles (2D + 3D)  
-- 🧊 Renders Cube
-- 🔵 Sphere rendering  
-- 🧠 Basic rendering pipeline (manual, no engine magic)
+- 🎥 Free 6-DOF camera movement + rotation (Perspective & Orthographic)  
+- 🔺 2D & 3D triangle rasterization using barycentric coordinates  
+- 🧊 Indexed mesh rendering (`Mesh`, `MeshFactory::CreateCube`, `MeshFactory::CreateSphere`)  
+- 🛡️ Perspective-correct depth buffering (Z-buffer) with 1/w interpolation  
+- ✂️ Object-level AABB frustum culling and screen-space back-face culling  
+- 🎨 Material & custom shader support (`DebugShader`, `ZDebugShader`)  
+- ⏱️ Built-in Tracy profiler telemetry and rolling average FPS / frame time tracking  
+- 🧠 Pure software rendering pipeline (manual, CPU-based, no GPU rasterization)  
 
 ---
 
@@ -43,10 +46,11 @@ To learn:
 
 ## 🚧 Current limits
 
-- No meshes  
-- No lighting  
-- No depth buffer  
-- CPU only  
+- No dynamic lighting (Phong / Blinn-Phong models)  
+- No `.obj` mesh loader yet (in progress)  
+- No near-plane polygon clipping (currently triangle rejection)  
+- No texture mapping (UV interpolation)  
+- Single-threaded CPU rasterization (no multithreading / SIMD yet)  
 
 ---
 ## Renderer Benchmark
@@ -89,10 +93,22 @@ To learn:
 
 ---
 
-## ⚙️ Build
+## ⚙️ Building
 
+### Requirements
+- C++23 compatible compiler (MSVC 2022 / Clang-cl)
+- CMake 3.10+
+- Windows (SDL3 and Tracy are bundled)
+
+### CMake
 ```bash
-mkdir build
-cd build
-cmake ..
-make
+cmake -B build
+cmake --build build --config Release
+.\build\Release\pixel_ppm.exe
+```
+
+Or run the provided batch scripts:
+```bash
+compile.bat   # Builds Debug configuration
+run.bat       # Runs the executable
+```

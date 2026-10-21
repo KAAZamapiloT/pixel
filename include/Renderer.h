@@ -364,11 +364,11 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
      Vec4f b(p2,1);
      Vec4f c(p3,1);
 
-     
+
      Vec4f a1;
      Vec4f b1;
      Vec4f c1;
-     
+
      Vec3f ndc_a;
      Vec3f ndc_b;
      Vec3f ndc_c;
@@ -376,7 +376,7 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
     {
         ZoneScopedN("Transform");
     Mat4f ProjectionView = cam.GetProjectionView();
-     
+
 
        a1 = (ProjectionView*a);
        b1 = (ProjectionView*b);
@@ -385,7 +385,7 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
       ndc_a=Vec3f(a1.x/a1.w,a1.y/a1.w,a1.z/a1.w);
       ndc_b=Vec3f(b1.x/b1.w,b1.y/b1.w,b1.z/b1.w);
       ndc_c=Vec3f(c1.x/c1.w,c1.y/c1.w,c1.z/c1.w);
-    } 
+    }
 
 
     {
@@ -406,7 +406,7 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
 
     bool crossesNearPlane = (a1.w <= 0 || b1.w <= 0 || c1.w <= 0) &&!allBehind;
 
-    if (crossesNearPlane)  
+    if (crossesNearPlane)
         NearPlaneCrossings++;
 
      if (allBehind)
@@ -416,7 +416,7 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
         FrustumCulls++;
         return;};
     }
-    
+
     Vec2f screen_a,screen_b,screen_c;
 
     {
@@ -441,7 +441,7 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
 
 
      {
-        
+
     ZoneScopedN("Backface Culling");
      //back face culling
      float area = (screen_b.x - screen_a.x)*(screen_c.y - screen_a.y) - (screen_b.y - screen_a.y)*(screen_c.x - screen_a.x);
@@ -480,7 +480,7 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
      Vec3f world_a = p1;
      Vec3f world_b = p2;
      Vec3f world_c = p3;
-     
+
      float inv_w_a=1.0f/a1.w;
      float inv_w_b=1.0f/b1.w;
      float inv_w_c=1.0f/c1.w;
@@ -504,7 +504,7 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
                 std::pair<bool,Vec3f> inside=InsideTrig(Vec2f(i,j),screen_a,screen_b,screen_c);
                   if(inside.first){
                       Vec3f w=inside.second;
-                    
+
                       PixelsInside++;
                       float inv_w=w.x*inv_w_a+w.y*inv_w_b+w.z*inv_w_c;
                       float z=w.x*z_a+w.y*z_b+w.z*z_c;
@@ -519,7 +519,7 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
           }
       }else{
 
-      
+
         ZoneScopedN("Shader Rasterization");
           for(int i=MIx;i<MAx;i++){
               for(int j=MIy;j<MAy;j++){
@@ -549,6 +549,27 @@ void Draw_Cube(class camera&cam,Vec3f p1,Vec3f p2,Vec3f p3,Vec3f p4,
 
 
       }
+
+
+// triangle is just cpombination of lines
+void TriangleLoop3D(Vec3f po,Vec3f p1,Vec3f p2){
+
+    int intersection_point=0;
+    for(int i=po;i<intersection_point;++i){
+
+        int l=0;
+        int r=0;
+        float depth;
+        for(int k=l;k<=r;++k){
+            if(SetDepthBuffer({i,k},depth)){
+                SetPixelColor(Vec2ui16(i,j),f(world_pos))
+            }
+        }
+
+    }
+
+
+}
 
 void RenderMesh(class camera& cam,struct Mesh& ObjectMesh,struct Transform&transform,struct Material & Mat){
 
